@@ -1,0 +1,443 @@
+{
+  "$schema": "https://sdaiaacademy.github.io/engine/schemas/course.schema.json",
+  "engine": "1",
+  "id": "ds-402",
+  "code": "DS-402",
+  "version": "2027.1.0",
+  "lang": "en",
+  "title": {
+    "en": "Causal Machine Learning and Policy Evaluation",
+    "ar": "تعلم الآلة السببي وتقييم السياسات"
+  },
+  "tagline": "REPLACE: one line under the title: what participants can do after the course",
+  "description": "Participants use machine learning to estimate who benefits from a programme and to choose the rule that allocates it. On a fictional employment agency's synthetic coaching pilot and logged caseworker decisions, they estimate average effects by double machine learning, estimate and validate heterogeneous effects, evaluate allocation rules offline and learn a rule under a budget and a fairness constraint. Every rule ends with the trial that would confirm it.",
+  "track": "data-science",
+  "level": 400,
+  "badge": {
+    "name": "Data Science",
+    "level": "Expert"
+  },
+  "audience": "Specialists. Data scientists who have completed the level 300 core or can show equivalent work: a defended analysis with a validated model or a causal estimate that they can explain.",
+  "prerequisites": [
+    "DS-302 Online Experiments and A/B Testing",
+    "DS-303 Causal Inference from Observational Data",
+    "Estimates propensity scores and reads balance diagnostics",
+    "Trains and cross-validates machine learning models in Python"
+  ],
+  "site": {
+    "url": "https://sdaiaacademy.github.io/ds-402/",
+    "repo": "SDAIAAcademy/ds-402"
+  },
+  "outcomes": [
+    {
+      "id": "LO1",
+      "text": "Implement double machine learning with cross-fitting for an average effect and compare it with regression adjustment, given logged data with 60 confounders and a known effect",
+      "level": "Applied",
+      "evidence": "an estimate table with intervals and each method's bias"
+    },
+    {
+      "id": "LO2",
+      "text": "Build conditional average treatment effect (CATE) estimators by three methods and validate them on held-out randomised data, given the randomised coaching pilot",
+      "level": "Performance",
+      "evidence": "calibration and ranking checks per estimator and a justified choice"
+    },
+    {
+      "id": "LO3",
+      "text": "Evaluate allocation rules offline with inverse propensity and augmented estimators and diagnose untrustworthy estimates, given logged decisions with recorded propensities and poor overlap in places",
+      "level": "Performance",
+      "evidence": "a value table with intervals, overlap diagnostics and effective sample sizes"
+    },
+    {
+      "id": "LO4",
+      "text": "Design an allocation rule under a budget and a fairness constraint and compare it with treat-all, risk targeting and current practice, given unit-level effect estimates and one place per five job seekers",
+      "level": "Performance",
+      "evidence": "gains and outcomes by region, gender and disability status, with the attributes the rule may use"
+    },
+    {
+      "id": "LO5",
+      "text": "Review a heterogeneous-effect claim for overfitting, unstable subgroups and reuse of data for discovery and evaluation, given an analysis with seeded faults",
+      "level": "Performance",
+      "evidence": "a review memo naming each fault and its effect"
+    },
+    {
+      "id": "LO6",
+      "text": "Design a confirmatory trial for a learned rule, powered for the comparison with current practice, given the capstone rule and its offline value",
+      "level": "Performance",
+      "evidence": "a protocol with randomisation unit, primary metric, sample size and stopping rule"
+    }
+  ],
+  "case_study": {
+    "name": "REPLACE: the name of the fictional organisation every lab works on",
+    "summary": "REPLACE: two sentences on the case study and its synthetic data"
+  },
+  "format": "intensive",
+  "format_note": "Intensive: 4 teaching days of four sessions and a capstone day, with guided pre-work and a tracked follow-up task",
+  "hours": {
+    "instruction": 6,
+    "lab": 7,
+    "guided_self_study": 6,
+    "assessment": 1,
+    "capstone": 6
+  },
+  "unit": "day",
+  "days": [
+    {
+      "id": "day1",
+      "kind": "day",
+      "title": "Average effects with many confounders",
+      "deck": "slides/day1.html",
+      "sessions": [
+        {
+          "title": "Estimands for allocation",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO1"
+          ],
+          "lab": {
+            "id": "1.1",
+            "title": "Write estimands for three agency questions; flag risk confused with benefit",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D1_1_write_estimands_three.ipynb"
+          }
+        },
+        {
+          "title": "Overlap first",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO1"
+          ],
+          "lab": {
+            "id": "1.2",
+            "title": "Map groups almost never offered coaching, from a propensity model",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D1_2_map_groups_almost.ipynb"
+          }
+        },
+        {
+          "title": "Double machine learning",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO1"
+          ],
+          "lab": {
+            "id": "1.3",
+            "title": "Estimate the average effect and compare plain regression with the truth",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D1_3_estimate_average_effect.ipynb"
+          }
+        },
+        {
+          "title": "Nuisance models and hidden confounding",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO1"
+          ],
+          "lab": {
+            "id": "1.4",
+            "title": "Swap nuisance learners, then bound the estimate for a hidden confounder",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D1_4_swap_nuisance_learners.ipynb"
+          }
+        }
+      ]
+    },
+    {
+      "id": "day2",
+      "kind": "day",
+      "title": "Who benefits",
+      "deck": "slides/day2.html",
+      "sessions": [
+        {
+          "title": "Meta-learners",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO2"
+          ],
+          "lab": {
+            "id": "2.1",
+            "title": "Fit S-, T- and X-learners on the randomised pilot",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D2_1_fit_s_t.ipynb"
+          }
+        },
+        {
+          "title": "Causal forests",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO2"
+          ],
+          "lab": {
+            "id": "2.2",
+            "title": "Fit a causal forest and report the drivers of effect variation",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D2_2_fit_causal_forest.ipynb"
+          }
+        },
+        {
+          "title": "Validating effects",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO2"
+          ],
+          "lab": {
+            "id": "2.3",
+            "title": "Check calibration and ranking on a held-out randomised split",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D2_3_check_calibration_ranking.ipynb"
+          }
+        },
+        {
+          "title": "Uplift for targeting",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO2"
+          ],
+          "lab": {
+            "id": "2.4",
+            "title": "Draw uplift and Qini curves and set a budget threshold",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D2_4_draw_uplift_qini.ipynb"
+          }
+        }
+      ]
+    },
+    {
+      "id": "day3",
+      "kind": "day",
+      "title": "Evaluating rules before using them",
+      "deck": "slides/day3.html",
+      "sessions": [
+        {
+          "title": "Logged decisions",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO3"
+          ],
+          "lab": {
+            "id": "3.1",
+            "title": "Recover the value of current practice from the logs",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D3_1_recover_value_current.ipynb"
+          }
+        },
+        {
+          "title": "Weighted and augmented estimators",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO3"
+          ],
+          "lab": {
+            "id": "3.2",
+            "title": "Evaluate three candidate rules offline with intervals",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D3_2_evaluate_three_candidate.ipynb"
+          }
+        },
+        {
+          "title": "Untrustworthy estimates",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO3"
+          ],
+          "lab": {
+            "id": "3.3",
+            "title": "Diagnose a rule whose value rests on a few heavy weights",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D3_3_diagnose_rule_whose.ipynb"
+          }
+        },
+        {
+          "title": "Reviewing an effects claim",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO5"
+          ],
+          "lab": {
+            "id": "3.4",
+            "title": "Find the seeded faults in a heterogeneous-effects analysis",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D3_4_find_seeded_faults.ipynb"
+          }
+        }
+      ]
+    },
+    {
+      "id": "day4",
+      "kind": "day",
+      "title": "Choosing and testing a policy",
+      "deck": "slides/day4.html",
+      "sessions": [
+        {
+          "title": "Policy learning under a budget",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO4"
+          ],
+          "lab": {
+            "id": "4.1",
+            "title": "Learn a depth-two policy tree; compare with treat-all and risk targeting",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D4_1_learn_depth_two.ipynb"
+          }
+        },
+        {
+          "title": "Fair allocation",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO4"
+          ],
+          "lab": {
+            "id": "4.2",
+            "title": "Decide which attributes may only audit the rule, audit subgroups, add a constraint",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D4_2_decide_which_attributes.ipynb"
+          }
+        },
+        {
+          "title": "The confirmatory trial",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO6"
+          ],
+          "lab": {
+            "id": "4.3",
+            "title": "Size a trial of the learned rule against current practice",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D4_3_size_trial_learned.ipynb"
+          }
+        },
+        {
+          "title": "Explaining a rule",
+          "outcomes": [
+            "REPLACE: what a participant can do after this session"
+          ],
+          "lo": [
+            "LO4"
+          ],
+          "lab": {
+            "id": "4.4",
+            "title": "Draft a one-page rule summary and choose the capstone brief",
+            "summary": "REPLACE: one line on what participants build and take away; then list the steps of the lab in course.json, their minutes adding up to 25",
+            "minutes": 25,
+            "href": "D4_4_draft_one_page.ipynb"
+          }
+        }
+      ]
+    },
+    {
+      "id": "capstone",
+      "kind": "capstone",
+      "title": "Capstone project presentations",
+      "deck": "slides/capstone.html",
+      "subtitle": "REPLACE: the catalog gives 15 minutes for each presentation and nothing about questions; decide whether the questions are inside those minutes, set capstone.talk_minutes and capstone.qa_minutes in course.json and the timers of the now-presenting slide, and remove this line"
+    }
+  ],
+  "capstone": {
+    "summary": "A policy evaluation for one of three synthetic briefs (coaching places, energy-saving visits, food-safety inspections): effects, a constrained rule, its offline value, a subgroup audit and a trial plan, in a public repository whose README reports measured results; 15-minute defence",
+    "submission": "REPLACE: what participants submit and how: a public repository link, or a shared folder for a course without code",
+    "talk_minutes": 15,
+    "rubric": [
+      {
+        "criterion": "Identification",
+        "weight": 15
+      },
+      {
+        "criterion": "Effects and validation",
+        "weight": 25
+      },
+      {
+        "criterion": "Offline evaluation",
+        "weight": 25
+      },
+      {
+        "criterion": "Rule and fairness audit",
+        "weight": 20
+      },
+      {
+        "criterion": "Trial plan and reproducibility",
+        "weight": 15
+      }
+    ]
+  },
+  "labs": {
+    "kind": "notebooks",
+    "base": "labs/"
+  },
+  "tools": [
+    {
+      "slot": "Causal machine learning library",
+      "examples": [
+        "DoubleML",
+        "EconML",
+        "CausalML",
+        "grf for R"
+      ]
+    },
+    {
+      "slot": "Off-policy evaluation and policy learning",
+      "examples": [
+        "course-provided NumPy estimators",
+        "policytree for R"
+      ]
+    },
+    {
+      "slot": "Subgroup fairness metrics",
+      "examples": [
+        "Fairlearn",
+        "course-provided pandas checks"
+      ]
+    },
+    {
+      "slot": "Analysis environment",
+      "examples": [
+        "Python through uv with Jupyter or marimo",
+        "R with Quarto"
+      ]
+    }
+  ]
+}
