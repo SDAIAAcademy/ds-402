@@ -1,7 +1,7 @@
 <!-- academy:title -->
 # Causal Machine Learning and Policy Evaluation
 
-تعلم الآلة السببي وتقييم السياسات
+تعلّم الآلة السببي وتقييم السياسات
 
 Data Science Track · SDAIA Academy · DS-402 · Level 400
 

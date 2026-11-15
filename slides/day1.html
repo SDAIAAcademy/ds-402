@@ -293,7 +293,7 @@ e = cross_val_predict(U.gbm_classifier(), X, t, cv=cv,
     <div class="card c-coral flat"><h4>Same-data fitting</h4><p class="small mb0">Fit and predict on the same rows: residuals look too small, intervals too narrow.</p></div>
   </div>
   <div class="callout tip mt"><b>Two fixes, together.</b> An orthogonal score so small model errors cancel to first order, and cross-fitting so no decision helps predict itself.</div>
-  <aside class="notes"><p>This is the argument of Chernozhukov and co-authors (2018). Keep it intuitive: the score is built so that its derivative with respect to each nuisance model is zero at the truth, which is why a model that is slightly wrong moves the estimate only slightly squared. Sources: Chernozhukov et al. (2018), The Econometrics Journal.</p></aside>
+  <aside class="notes"><p>This is the argument of Chernozhukov and co-authors (2018). Keep it intuitive: the score is built so that its derivative with respect to each nuisance model is zero at the truth, which is why a model that is slightly wrong moves the estimate only by the square of its small error. Sources: Chernozhukov et al. (2018), The Econometrics Journal.</p></aside>
 </section>
 
 <section class="slide" data-label="The score" id="the-irm-score" data-lo="LO1">
@@ -407,7 +407,7 @@ print(irm.summary)</code></pre>
   <div class="kicker">A system change</div>
   <h2>The 2027 extract lost the caseworkers' motivation note, and the estimate rose by almost two points</h2>
   <div class="cols cols-2">
-    <div class="stat center"><div class="big">11.0 → 12.7</div><div class="lbl">points, with and without motivation (truth 10.5)</div></div>
+    <div class="stat center"><div class="big">11.0 → 12.7</div><div class="lbl">points, with and without motivation, cross-fitted by hand (truth 10.5)</div></div>
     <ul class="bullets">
       <li>Motivated seekers were offered coaching more often.</li>
       <li>They also found work more often, coached or not.</li>
@@ -483,7 +483,7 @@ print(irm27.sensitivity_summary)</code></pre>
     <div class="card c-cyan"><h4>Overlap first</h4><p class="small mb0">4.6% of decisions sit in groups almost never offered: name them.</p></div>
     <div class="card c-coral"><h4>DML, then bounds</h4><p class="small mb0">10.8 against a truth of 10.5; a missing column moves it, a bound says how far.</p></div>
   </div>
-  <aside class="notes"><p>Ask each table for the one number they would put in front of Wijdan for Q1, with its interval and its robustness value. Good answer: about 11 points, 10 to 12, trimmed at 0.05, robust to a hidden factor below about 8% on both sides.</p></aside>
+  <aside class="notes"><p>Ask each table for the one number they would put in front of Wijdan for Q1, with its interval and its robustness value. Good answer: about 11 points, 10 to 12, robust to a hidden factor below about 8% on both sides, with the overlap choice of Lab 1.2 stated. Point out that this is the average effect over all logged decisions; Q1 asks for the effect on the offered (the ATT), which is the same code with score="ATTE", and the answer should say which of the two it reports.</p></aside>
 </section>
 
 <section class="slide dark" data-label="Tomorrow" id="tomorrow-who-benefits">

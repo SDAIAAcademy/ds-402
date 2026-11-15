@@ -87,7 +87,7 @@ tau_s = m.predict_proba(one)[:, 1] - m.predict_proba(zero)[:, 1]</code></pre>
     <div class="arrow">→</div>
     <div class="step c-purple"><b>4 · Blend</b><code>e·τ0 + (1-e)·τ1</code></div>
   </div>
-  <div class="callout tip mt"><b>In a lottery</b> <code>e = 0.5</code>: the two halves count equally. With unequal arms, the larger arm's imputation counts more.</div>
+  <div class="callout tip mt"><b>In a lottery</b> <code>e = 0.5</code>: the two halves count equally. With unequal arms, the imputations made with the larger arm's model count more.</div>
   <aside class="notes"><p>Walk through step 2 slowly; it is the step people get backwards. The imputed effect for a coached seeker uses the uncoached model, and the reverse. The X-learner is strongest when one arm is much larger than the other.</p></aside>
 </section>
 
@@ -350,7 +350,7 @@ tau = cf.effect(X)</code></pre>
 
 <section class="slide" data-label="Who changes" id="places-change-hands" data-lo="LO4">
   <div class="kicker">If the agency switched</div>
-  <h2>84% of the places would go to different seekers, and about 117 more per thousand would find work</h2>
+  <h2>84% of the places would go to different seekers, and about 117 more per thousand places would find work</h2>
   <div class="cols cols-3 gap-s">
     <div class="stat center"><div class="big">84%</div><div class="lbl">of the benefit fifth is not in the risk fifth</div></div>
     <div class="stat center"><div class="big">21.0</div><div class="lbl">true gain, benefit fifth (points)</div></div>

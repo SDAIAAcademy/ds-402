@@ -7,7 +7,7 @@
   "lang": "en",
   "title": {
     "en": "Causal Machine Learning and Policy Evaluation",
-    "ar": "تعلم الآلة السببي وتقييم السياسات"
+    "ar": "تعلّم الآلة السببي وتقييم السياسات"
   },
   "tagline": "Estimate who benefits from a programme with machine learning, evaluate allocation rules offline before using them, and choose a rule under a budget and a fairness constraint that ends in the trial that would confirm it",
   "description": "Participants use machine learning to estimate who benefits from a programme and to choose the rule that allocates it. On a fictional employment agency's synthetic coaching pilot and logged caseworker decisions, they estimate average effects by double machine learning, estimate and validate heterogeneous effects, evaluate allocation rules offline and learn a rule under a budget and a fairness constraint. Every rule ends with the trial that would confirm it.",

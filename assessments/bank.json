@@ -723,7 +723,7 @@
         "Nothing: p above 0.05 means no effect",
         "Those cells should be merged into one and tested again",
         "The threshold should have been 0.10",
-        "Cells this small cannot show a real 10-point effect"
+        "Cells this small rarely detect a real 10-point effect"
       ],
       "correct": [
         3
@@ -935,7 +935,7 @@
     {
       "id": "q-trial-02",
       "type": "single",
-      "prompt": "An agency has 11 offices and wants to randomise whole offices so caseworkers never mix the two policies. Employment rates differ between offices (ICC about 0.04). What do you advise?",
+      "prompt": "An agency has 12 offices and wants to randomise whole offices so caseworkers never mix the two policies. Employment rates differ between offices (ICC about 0.04). What do you advise?",
       "options": [
         "Randomise offices: mixing is the bigger risk",
         "Randomise offices, and add more seekers to compensate",

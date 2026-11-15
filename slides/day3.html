@@ -263,7 +263,7 @@ value = np.mean(w * y)</code></pre>
   <div class="kicker">Checkpoint</div>
   <h2>What do you tell the advocacy group?</h2>
   <div class="quiz" data-type="single" data-lo="LO3">
-    <p class="lead">The "reach the unreached" rule has an IPW value close to current practice, an effective sample size of 58 among the seekers it would coach, and moves by a point when weights are clipped. What do you recommend?</p>
+    <p class="lead">The "reach the unreached" rule has an IPW value 1.6 points below current practice, an effective sample size of 58 among the seekers it would coach, and moves by a point when weights are clipped. What do you recommend?</p>
     <div class="opts">
       <div class="opt" data-why="Reads an unreliable estimate as evidence of no effect">Reject the rule: the logs show it adds nothing</div>
       <div class="opt" data-why="Treats clipping as a fix rather than a sensitivity check">Report the value clipped at 20 as the estimate</div>
@@ -325,9 +325,9 @@ value = np.mean(w * y)</code></pre>
 
 <section class="slide" data-label="Multiplicity" id="many-cells" data-lo="LO5">
   <div class="kicker">Fault 3</div>
-  <h2>Eight significant cells out of sixty is little more than chance, and silence is not absence</h2>
+  <h2>Eight significant cells out of sixty do not pick out the targets, and silence is not absence</h2>
   <div class="cols cols-2">
-    <div class="card c-coral"><h4>The targets</h4><p class="small mb0">8 cells at p &lt; 0.05; after a Bonferroni correction, 2. Sixty tests at 0.05 give three by chance alone.</p></div>
+    <div class="card c-coral"><h4>The targets</h4><p class="small mb0">8 cells at p &lt; 0.05; after a Bonferroni correction, 2. Sixty tests at 0.05 give three by chance alone, even if coaching did nothing.</p></div>
     <div class="card c-teal"><h4>The "no effect" cells</h4><p class="small mb0">Their true effect averages 11.3 points: cells of 30 to 60 seekers cannot show it.</p></div>
   </div>
   <aside class="notes"><p>Recap from DS-302 Session 4.2 on many segments. Both halves of the finding are wrong: the significant cells are partly noise, and the insignificant ones are underpowered, not empty. Reporting all 60 with corrected intervals would have shown this.</p></aside>

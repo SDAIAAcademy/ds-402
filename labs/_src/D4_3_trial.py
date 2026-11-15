@@ -116,7 +116,7 @@ U.check(p_A - p_B < 0.03, "the overall difference to detect is under 3 points")
 #
 # If whole offices were randomised instead of seekers (to stop caseworkers mixing the two policies), seekers in an office would share its labour market: the variance grows by the design effect `1 + (m - 1) ICC`, with `m` seekers per office per arm and `ICC` the intra-office correlation of employment.
 #
-# ✏️ **Exercise** · Return seekers per arm, the years of registrations the trial would need, the ICC estimated from the logs (the variance of office employment rates over `p(1-p)`), and the design effect for office randomisation with 11 offices.
+# ✏️ **Exercise** · Return seekers per arm, the years of registrations the trial would need, the ICC estimated from the logs (the variance of office employment rates over `p(1-p)`), and the design effect for office randomisation with all 12 offices (RUM-2 included: a trial would run in every office).
 
 # %%
 def sizes():
@@ -125,7 +125,7 @@ def sizes():
     years = 2 * n / PER_YEAR
     rates = L.groupby("office")["employed_6m"].mean()
     icc = float(rates.var() / (y.mean() * (1 - y.mean())))
-    m = n / (11 / 2)                     # seekers per office if offices, not seekers, are randomised
+    m = n / (12 / 2)                     # seekers per office if the 12 offices, not seekers, are randomised
     deff = 1 + (m - 1) * icc
     return n, years, icc, deff
     # END SOLUTION
@@ -142,7 +142,7 @@ U.check(n > 5000, "the diluted difference needs thousands of seekers per arm")
 U.check(deff > 10, "randomising offices would multiply the sample by more than ten")
 
 # %% [markdown]
-# **Look at** the two answers. Randomising seekers within offices needs about two years of Fursa's registrations; randomising its 11 offices could never be powered. So seekers are randomised, stratified by office, and caseworkers are told which policy decides for each seeker, with a check that they follow it. Two threats remain. **Contamination**: a caseworker who sees the rule may change how she treats arm B. **Displacement**: coached seekers may take jobs other seekers would have found. Crépon and colleagues found exactly this in a large French job-search trial, with gains for the coached partly offset by losses for others in the same labour markets; a seeker-level trial cannot see it, so the protocol names it as a limit.
+# **Look at** the two answers. Randomising seekers within offices needs about two years of Fursa's registrations; randomising its 12 offices could never be powered. So seekers are randomised, stratified by office, and caseworkers are told which policy decides for each seeker, with a check that they follow it. Two threats remain. **Contamination**: a caseworker who sees the rule may change how she treats arm B. **Displacement**: coached seekers may take jobs other seekers would have found. Crépon and colleagues found exactly this in a large French job-search trial, with gains for the coached partly offset by losses for others in the same labour markets; a seeker-level trial cannot see it, so the protocol names it as a limit.
 #
 # ## 4 · A stopping rule and the protocol table (7')
 #
@@ -220,7 +220,7 @@ except NotImplementedError:
 # 1. Why is the difference to detect smaller than the rule's gain per place?
 #    <details><summary>Answer</summary>Both arms coach about one seeker in six, and on most seekers the two policies agree; only the disagreeing quarter can differ.</details>
 # 2. Why not randomise whole offices?
-#    <details><summary>Answer</summary>With 11 offices, the design effect is in the hundreds: the trial could never be powered. Seekers are randomised within offices instead, with a compliance check.</details>
+#    <details><summary>Answer</summary>With 12 offices, the design effect is over a hundred: the trial could never be powered. Seekers are randomised within offices instead, with a compliance check.</details>
 # 3. What can a seeker-level trial not tell you?
 #    <details><summary>Answer</summary>Whether coached seekers displace others in the same labour market: the comparison is between individuals who share that market.</details>
 #
