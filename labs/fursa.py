@@ -354,6 +354,44 @@ def qini_area(curve: pd.DataFrame) -> float:
     return float(np.trapezoid(q - rand, s))
 
 
+def diff_p(a, b) -> tuple[float, float]:
+    """Difference in means of two 0/1 arrays and its two-sided p-value (normal approximation)."""
+    from math import erf, sqrt
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    p1, p0 = a.mean(), b.mean()
+    se = sqrt(max(p1 * (1 - p1), 1e-9) / len(a) + max(p0 * (1 - p0), 1e-9) / len(b))
+    z = abs(p1 - p0) / se
+    return float(p1 - p0), float(2 * (1 - 0.5 * (1 + erf(z / sqrt(2)))))
+
+
+AGE_BANDS = ([17, 24, 29, 34, 39, 44, 49, 60], ["18-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-60"])
+
+
+def review_cells(d: pd.DataFrame, min_n: int = 30) -> pd.DataFrame:
+    """The analyst's search of Lab 3.4: region x gender x age band x education cells with at least min_n
+    seekers, each with its coached-minus-uncoached difference and p-value."""
+    d = d.reset_index(drop=True)
+    band = pd.cut(d["age"], AGE_BANDS[0], labels=AGE_BANDS[1])
+    t, y = d["coached"].to_numpy(), d["employed_6m"].to_numpy()
+    rows = []
+    for key, idx in d.groupby([d["region"], d["gender"], band, d["education"]], observed=True).groups.items():
+        s = np.zeros(len(d), bool)
+        s[np.asarray(idx)] = True
+        if s.sum() < min_n or (s & (t == 1)).sum() < 5 or (s & (t == 0)).sum() < 5:
+            continue
+        eff, pv = diff_p(y[s & (t == 1)], y[s & (t == 0)])
+        rows.append({"region": key[0], "gender": key[1], "age_band": str(key[2]), "education": int(key[3]),
+                     "n": int(s.sum()), "effect": eff, "p": pv})
+    return pd.DataFrame(rows)
+
+
+def in_cell(d: pd.DataFrame, cell) -> np.ndarray:
+    """Rows of d in a cell of review_cells (a dict or a row with region, gender, age_band, education)."""
+    band = pd.cut(d["age"], AGE_BANDS[0], labels=AGE_BANDS[1]).astype(str)
+    return ((d["region"] == cell["region"]) & (d["gender"] == cell["gender"]) & (band == cell["age_band"])
+            & (d["education"] == cell["education"])).to_numpy()
+
+
 # ---------------------------------------------------------------- off-policy evaluation
 
 def policy_weights(a, p1, pi) -> np.ndarray:

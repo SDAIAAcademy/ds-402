@@ -1,158 +1,398 @@
+<!-- ======================= OPENING ======================= -->
 <section class="slide title" id="title" data-auto="title">
-  <aside class="notes">REPLACE: welcome; introduce yourself; one question to the room that calibrates the pace; the rhythm of the day</aside>
+  <aside class="notes"><p>Day 3 is about evaluating a rule before anyone is coached by it. Open with a question: how would you know what a rule is worth without trying it? Most rooms answer "a pilot". Today shows what the logs can tell you first, and when they cannot.</p></aside>
 </section>
 
-<section class="slide" id="agenda" data-auto="agenda"></section>
-
-<!-- Session 1 -->
-
-<section class="slide section" id="s1" data-auto="section" data-session="1"></section>
-
-<section class="slide" id="s1-idea" data-lo="LO3">
-  <div class="kicker">REPLACE: the question this slide answers</div>
-  <h2>REPLACE: one idea, stated as a sentence</h2>
-  <div class="cols cols-2">
-    <ul class="bullets">
-      <li>REPLACE: at most six bullets, each a complete thought</li>
-      <li>REPLACE: bold the key phrase; numbers come from the lab run, not from memory</li>
-    </ul>
-    <div class="card c-teal"><h4>In the case study</h4><p class="small mb0">REPLACE: tie the idea to the case study and its data</p></div>
+<section class="slide" id="review-day-2" data-lo="LO2">
+  <div class="kicker">Review checkpoint · Day 2</div>
+  <h2>Which check would you insist on before targeting with an effect model?</h2>
+  <div class="quiz" data-type="single" data-lo="LO2">
+    <p class="lead">An effect model will decide next year's coaching places. Its builder shows a high correlation between predicted effects and observed outcomes on the training seekers. What do you ask for?</p>
+    <div class="opts">
+      <div class="opt" data-why="Accepts outcome prediction on seen data as evidence about effects">Nothing more: a high correlation on 3,600 seekers is enough</div>
+      <div class="opt" data-why="Checks the model's agreement with another model, not with effects">The correlation of its predictions with the risk score</div>
+      <div class="opt" data-why="Asks for precision on the same seekers, which repeats the flaw">Bootstrap intervals for the same training correlation</div>
+      <div class="opt" data-ok>Observed effects by prediction group on held-out randomised seekers</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> Effects are only observable for groups of randomised seekers, and only seekers the model never saw give an honest check.</div>
   </div>
-  <div class="callout warn mt"><b>What goes wrong.</b> REPLACE: the failure participants will hit, and how to recognise it</div>
-  <aside class="notes">REPLACE: what to say, the demo to run, the question to ask the room, the common failure and its fix</aside>
+  <aside class="notes"><p>Answer: D. Link to Lab 3.4: the analyst made exactly this mistake.</p></aside>
 </section>
 
-<section class="slide" id="s1-steps" data-lo="LO3">
-  <div class="kicker">Step by step</div>
-  <h2>REPLACE: a process, shown one step per key press</h2>
+<section class="slide" id="agenda" data-auto="agenda">
+  <aside class="notes"><p>Day 3 works on the logs again: 40,000 caseworker decisions with the probability the allocation tool recorded for each. The supplied file data/reference/cate_logged.csv.gz holds the course's effect estimates and outcome predictions for every decision, so no lab needs an earlier one.</p></aside>
+</section>
+
+<!-- ======================= SESSION 1 ======================= -->
+<section class="slide section" id="s1" data-auto="section" data-session="1">
+  <aside class="notes"><p>Session 1: what logged decisions are, what a recorded probability buys, and how to check it. The lab is AI-off.</p></aside>
+</section>
+
+<section class="slide" data-label="Logs" id="what-the-logs-hold" data-lo="LO3">
+  <div class="kicker">Logged decisions</div>
+  <h2>Each logged decision carries what was known, what was done, how likely it was, and what happened</h2>
   <div class="flow">
-    <div class="step c-teal"><b>1 · REPLACE: name</b>REPLACE: what happens first</div>
-    <div class="arrow frag" data-frag="b">→</div><div class="step c-cyan frag" data-frag="b"><b>2 · REPLACE: name</b>REPLACE: the next piece</div>
-    <div class="arrow frag" data-frag="c">→</div><div class="step c-coral frag" data-frag="c"><b>3 · REPLACE: name</b>REPLACE: the result</div>
+    <div class="step c-teal"><b>x</b>60 confounders at registration</div>
+    <div class="arrow">→</div>
+    <div class="step c-cyan"><b>p</b>offer probability the tool recorded</div>
+    <div class="arrow">→</div>
+    <div class="step c-coral"><b>a</b>offered or not</div>
+    <div class="arrow">→</div>
+    <div class="step c-purple"><b>y</b>employed within six months</div>
   </div>
-  <div class="callout tip mt frag"><b>Takeaway.</b> REPLACE: the one sentence to remember</div>
-  <aside class="notes">Press once per step and say what each step adds before the next one appears. REPLACE: the example to walk through</aside>
+  <div class="callout tip mt"><b>The recorded <code>p</code> is the key.</b> When it is right, no propensity model is needed, and rules never used can be valued.</div>
+  <aside class="notes"><p>Fursa's allocation tool scored each seeker and offered coaching with a probability rather than by a hard cut-off; that randomness is what makes off-policy evaluation possible. Many real allocation systems log no probability at all; then you are back to Day 1's estimated propensities.</p></aside>
+</section>
+
+<section class="slide" data-label="Current practice" id="value-of-current-practice" data-lo="LO3">
+  <div class="kicker">The baseline every rule must beat</div>
+  <h2>Current practice needs no weights: its value is the employment rate in the logs</h2>
+  <div class="cols cols-2">
+    <div class="stat center"><div class="big">57.6%</div><div class="lbl">employed within six months, 40,000 decisions (Lab 3.1)</div></div>
+    <ul class="bullets">
+      <li>The logs were produced by current practice.</li>
+      <li>Their mean outcome is its value, with a standard error of 0.2 points.</li>
+      <li>Every candidate rule is compared with this number.</li>
+    </ul>
+  </div>
+  <aside class="notes"><p>Without RUM-2 the value is 57.5%; the difference comes from that office's higher offer rate. Ask: is current practice a rule? Yes: a stochastic one, partly written in the tool and partly in caseworkers' heads.</p></aside>
+</section>
+
+<section class="slide" data-label="Weight check" id="weights-average-to-one" data-lo="LO3">
+  <div class="kicker">A check that costs one line</div>
+  <h2>If the recorded probabilities are right, the weights a/p and (1-a)/(1-p) average to 1</h2>
+  <div class="cols cols-2">
+    <pre class="code s" data-file="D3_1_logged.py"><code class="language-python">w1 = a / p
+w0 = (1 - a) / (1 - p)
+print(w1.mean(), w0.mean())</code></pre>
+    <div class="stack">
+      <div class="card c-coral flat"><h4>Fursa's logs</h4><p class="small mb0">Mean of <code>a/p</code>: 1.148, standard error 0.019. Eight standard errors from 1.</p></div>
+      <div class="card c-teal flat"><h4>The other weight</h4><p class="small mb0">Mean of <code>(1-a)/(1-p)</code>: 0.976, standard error 0.003.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><p>From the course's run of Lab 3.1. Both are off: more offers happened than the records predict. This is the simplest test of a logging system, and it is rarely run. Ask: where would you look next? By office, by period, by group.</p></aside>
+</section>
+
+<section class="slide" data-label="By office" id="one-office-overrode" data-lo="LO3">
+  <div class="kicker">Lab 3.1, recorded against actual offers</div>
+  <h2>One office offered coaching two and a half times as often as its records say</h2>
+  <table class="t small">
+    <tr><th>Office</th><th class="num">Decisions</th><th class="num">Recorded</th><th class="num">Offered</th><th class="num">Mean a/p</th><th class="num">z</th></tr>
+    <tr class="hl"><td>RUM-2</td><td class="num">3,961</td><td class="num">13.6%</td><td class="num">33.6%</td><td class="num">2.61</td><td class="num">38.9</td></tr>
+    <tr><td>SAH-2</td><td class="num">6,028</td><td class="num">19.6%</td><td class="num">20.0%</td><td class="num">1.01</td><td class="num">0.8</td></tr>
+    <tr><td>RUM-1</td><td class="num">4,028</td><td class="num">13.5%</td><td class="num">13.2%</td><td class="num">1.03</td><td class="num">-0.6</td></tr>
+    <tr><td>NIJ-2</td><td class="num">1,588</td><td class="num">8.7%</td><td class="num">7.3%</td><td class="num">0.75</td><td class="num">-2.0</td></tr>
+  </table>
+  <p class="caption">Four of twelve offices. The other eight have z between -0.9 and 0.5.</p>
+  <aside class="notes"><p>Duhaim Al-Thumairi, head of caseworkers, confirms: after a staffing change RUM-2's caseworkers overrode the tool, and the tool still recorded its own number. NIJ-2 at z = -2.0 is what twelve offices produce by chance once in a while; watch it, do not act on it alone.</p></aside>
+</section>
+
+<section class="slide" data-label="Decide" id="exclude-or-re-estimate" data-lo="LO3">
+  <div class="kicker">What to do with a broken record</div>
+  <h2>Exclude the office or re-estimate its propensities, and say which</h2>
+  <div class="cols cols-3 gap-s">
+    <div class="card c-teal"><h4>Exclude</h4><p class="small mb0">Lose 10% of the data; every other office's records pass. The course's choice.</p></div>
+    <div class="card c-cyan"><h4>Re-estimate</h4><p class="small mb0">Fit a propensity model for RUM-2 alone, as on Day 1. Needed if a rule targets Rumh.</p></div>
+    <div class="card c-coral"><h4>Keep</h4><p class="small mb0">Offer-to-no-one's IPW value: 54.0% with it, 55.5% without; truth 55.6%.</p></div>
+  </div>
+  <aside class="notes"><p>From the course's run. Keeping the office biases every value by more than a point, which is the size of the differences between rules. From here on the labs use U.logged(drop_override=True).</p></aside>
+</section>
+
+<section class="slide" id="check-logged" data-lo="LO3">
+  <div class="kicker">Checkpoint</div>
+  <h2>What does a mean of a/p equal to 1.15 tell you?</h2>
+  <div class="quiz" data-type="single" data-lo="LO3">
+    <p class="lead">In an agency's logs, the mean of offered divided by the recorded probability is 1.15, with a standard error of 0.02. What follows?</p>
+    <div class="opts">
+      <div class="opt" data-why="Thinks the check measures coaching's effect rather than the records">Coaching raised employment by 15%</div>
+      <div class="opt" data-ok>More offers happened than the records predict, somewhere: the probabilities understate them</div>
+      <div class="opt" data-why="Reads a 15% gap as sampling noise despite eight standard errors">Nothing: weights are noisy and a mean of 1.15 is normal</div>
+      <div class="opt" data-why="Inverts the direction: a/p above 1 means p is too small">The tool records probabilities that are too high</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> With correct probabilities, a/p averages to 1. Above 1 means offers were more frequent than recorded, so recorded p is too small somewhere.</div>
+  </div>
+  <aside class="notes"><p>Answer: B. If many pick D, write E[a] = p on the board: a/p averages to (true rate)/(recorded p).</p></aside>
 </section>
 
 <section class="slide lab" id="lab-3-1" data-auto="lab" data-lab="3.1">
-  <aside class="notes">REPLACE: what to watch for while participants work, the typical problems, and the fallback for anyone who did not finish an earlier lab</aside>
+  <aside class="notes"><p>AI off. All 40,000 decisions; everything runs in seconds. Common problems: averaging p and a over the whole file instead of per office; a z-score without the binomial variance; deciding to keep the office "because the data are what they are".</p></aside>
 </section>
 
-<!-- Session 2 -->
+<!-- ======================= SESSION 2 ======================= -->
+<section class="slide section" id="s2" data-auto="section" data-session="2">
+  <aside class="notes"><p>Session 2: three estimators of a rule's value, and the first value table of the week.</p></aside>
+</section>
 
-<section class="slide section" id="s2" data-auto="section" data-session="2"></section>
+<section class="slide" data-label="IPW" id="ipw-value" data-lo="LO3">
+  <div class="kicker">Inverse propensity value</div>
+  <h2>Keep the decisions the rule agrees with, and weight each by one over its probability</h2>
+  <pre class="code s" data-file="D3_2_offline.py"><code class="language-python">p_a = np.where(a == 1, p, 1 - p)     # probability of what the logs did
+w   = (a == rule) / p_a               # zero where the rule disagrees
+value = np.mean(w * y)</code></pre>
+  <div class="callout note mt"><b>Recap from DS-303.</b> The same weights estimated an average effect there; a rule's value is the weighted mean outcome under one decision per seeker.</div>
+  <aside class="notes"><p>Walk through one decision: a seeker the logs offered with p = 0.25, whom the rule would also offer, counts with weight 4. A seeker the logs did not offer and the rule would offer counts zero: we do not see what coaching would have done for her. Sources: Dudík, Langford and Li, Doubly robust policy evaluation and learning.</p></aside>
+</section>
 
-<section class="slide" id="s2-idea" data-lo="LO3">
-  <div class="kicker">REPLACE: the question this slide answers</div>
-  <h2>REPLACE: one idea, stated as a sentence</h2>
+<section class="slide" data-label="Two refinements" id="snipw-and-augmented" data-lo="LO3">
+  <div class="kicker">Two refinements</div>
+  <h2>Self-normalising tames the weights; augmenting adds an outcome model and keeps the estimate honest</h2>
   <div class="cols cols-2">
-    <ul class="bullets">
-      <li>REPLACE: at most six bullets, each a complete thought</li>
-      <li>REPLACE: bold the key phrase; numbers come from the lab run, not from memory</li>
-    </ul>
-    <div class="card c-teal"><h4>In the case study</h4><p class="small mb0">REPLACE: tie the idea to the case study and its data</p></div>
+    <div class="card c-cyan"><h4>Self-normalised</h4><p class="small mb0">Divide by the sum of the weights, not by n. A little bias, much less variance.</p></div>
+    <div class="card c-teal"><h4>Augmented</h4><p class="small mb0">Start from <code>μ</code> under the rule; add the weighted residual where logs and rule agree. Consistent if either part is right.</p></div>
   </div>
-  <div class="callout warn mt"><b>What goes wrong.</b> REPLACE: the failure participants will hit, and how to recognise it</div>
-  <aside class="notes">REPLACE: what to say, the demo to run, the question to ask the room, the common failure and its fix</aside>
+  <pre class="code s mt" data-file="D3_2_offline.py"><code class="language-python">psi = np.where(rule == 1, mu1, mu0) + w * (y - np.where(a == 1, mu1, mu0))</code></pre>
+  <aside class="notes"><p>The augmented score is Day 1's DML score turned towards a rule: an outcome-model guess, corrected by weighted residuals. The supplied mu0 and mu1 were cross-fitted on the logs, so no decision's own outcome predicts itself.</p></aside>
 </section>
 
-<section class="slide" id="s2-steps" data-lo="LO3">
-  <div class="kicker">Step by step</div>
-  <h2>REPLACE: a process, shown one step per key press</h2>
-  <div class="flow">
-    <div class="step c-teal"><b>1 · REPLACE: name</b>REPLACE: what happens first</div>
-    <div class="arrow frag" data-frag="b">→</div><div class="step c-cyan frag" data-frag="b"><b>2 · REPLACE: name</b>REPLACE: the next piece</div>
-    <div class="arrow frag" data-frag="c">→</div><div class="step c-coral frag" data-frag="c"><b>3 · REPLACE: name</b>REPLACE: the result</div>
+<section class="slide" data-label="Rules" id="three-candidate-rules" data-lo="LO3 LO4">
+  <div class="kicker">The candidates</div>
+  <h2>Three rules that each offer about one place in five</h2>
+  <div class="cols cols-3 gap-s">
+    <div class="card c-coral"><h4>Risk</h4><p class="small mb0">Top fifth by the agency's risk score.</p></div>
+    <div class="card c-teal"><h4>Benefit</h4><p class="small mb0">Top fifth by the causal forest's estimated effect (fitted on the pilot).</p></div>
+    <div class="card c-cyan"><h4>Duration</h4><p class="small mb0">Months unemployed between 10 and 15. A caseworker can apply it by hand.</p></div>
   </div>
-  <div class="callout tip mt frag"><b>Takeaway.</b> REPLACE: the one sentence to remember</div>
-  <aside class="notes">Press once per step and say what each step adds before the next one appears. REPLACE: the example to walk through</aside>
+  <aside class="notes"><p>Ask the room to predict the ranking before the next slide. Most put benefit first. Keep the votes.</p></aside>
+</section>
+
+<section class="slide" data-label="Value table" id="value-table" data-lo="LO3 LO4">
+  <div class="kicker">Lab 3.2, 36,039 decisions without RUM-2</div>
+  <h2>Benefit and duration both beat current practice by over two points; risk targeting does not</h2>
+  <table class="t">
+    <tr><th>Rule</th><th class="num">IPW</th><th class="num">Self-normalised</th><th class="num">Augmented</th><th class="num">95% interval</th><th class="num">Truth</th></tr>
+    <tr class="hl"><td>Duration 10 to 15 months</td><td class="num">59.7</td><td class="num">59.7</td><td class="num">59.9</td><td class="num">59.0 to 60.7</td><td class="num">59.9</td></tr>
+    <tr class="hl"><td>Benefit, top fifth</td><td class="num">59.8</td><td class="num">59.6</td><td class="num">59.8</td><td class="num">59.0 to 60.7</td><td class="num">59.7</td></tr>
+    <tr><td>Current practice</td><td class="num">57.5</td><td class="num">57.5</td><td class="num">57.5</td><td class="num">57.0 to 58.0</td><td class="num">57.5</td></tr>
+    <tr><td>Risk, top fifth</td><td class="num">56.8</td><td class="num">57.7</td><td class="num">57.0</td><td class="num">56.1 to 57.9</td><td class="num">57.4</td></tr>
+  </table>
+  <p class="caption">% employed within six months. The truth column is the generator's; the other columns are what real logs give you.</p>
+  <aside class="notes"><p>From the course's run of Lab 3.2. The augmented standard error for the benefit rule is 0.43 points against 0.73 for IPW. The duration rule ties with the forest's ranking: the forest is too timid (Day 2) and months unemployed is the main driver. The stretch computes the paired difference: benefit minus duration, -0.1 points, interval -0.7 to 0.6.</p></aside>
+</section>
+
+<section class="slide" data-label="Lesson" id="simple-rules-compete" data-lo="LO4">
+  <div class="kicker">What the table teaches</div>
+  <h2>A rule a caseworker can read did as well as the black-box ranking</h2>
+  <ul class="bullets">
+    <li>Risk targeting formalises what caseworkers already do: no gain.</li>
+    <li>The duration rule captures the main driver of the effect in one line.</li>
+    <li>Ties are decided by what you can explain, audit and defend: Day 4 learns such a rule on purpose.</li>
+  </ul>
+  <aside class="notes"><p>Ask: if the two rules are worth the same, which would you put in front of Wijdan and the caseworkers? The readable one, unless the other is clearly better. This motivates the depth-two policy tree of Lab 4.1.</p></aside>
+</section>
+
+<section class="slide" id="check-augmented" data-lo="LO3">
+  <div class="kicker">Checkpoint</div>
+  <h2>When is the augmented value still right?</h2>
+  <div class="quiz" data-type="single" data-lo="LO3">
+    <p class="lead">You value a rule with the augmented estimator. The recorded probabilities have been checked and are right; the outcome model is poor. What happens?</p>
+    <div class="opts">
+      <div class="opt" data-why="Thinks both parts must be right; one is enough">The estimate is biased, because the outcome model is wrong</div>
+      <div class="opt" data-why="Confuses consistency with precision: a poor model costs variance, not validity">The estimate is right and as precise as with a good model</div>
+      <div class="opt" data-ok>The estimate stays consistent, but its interval is wider than with a good outcome model</div>
+      <div class="opt" data-why="Assumes the augmented estimator reduces to plain IPW whatever the model">The estimate equals the IPW value exactly</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> With correct weights the residual term corrects any outcome model on average; a poor model leaves larger residuals, so more variance.</div>
+  </div>
+  <aside class="notes"><p>Answer: C. This is double robustness: correct if either part is right, most precise when both are close.</p></aside>
 </section>
 
 <section class="slide lab" id="lab-3-2" data-auto="lab" data-lab="3.2">
-  <aside class="notes">REPLACE: what to watch for while participants work, the typical problems, and the fallback for anyone who did not finish an earlier lab</aside>
+  <aside class="notes"><p>Common problems: weighting by p for every decision instead of the probability of what was done; forgetting to exclude RUM-2; comparing rules with different budgets (the duration rule must be close to 20%). Early finishers: the paired difference stretch.</p></aside>
 </section>
 
-<!-- Session 3 -->
+<!-- ======================= SESSION 3 ======================= -->
+<section class="slide section" id="s3" data-auto="section" data-session="3">
+  <aside class="notes"><p>Session 3: the same estimators produce a number for any rule. When should you refuse to report it?</p></aside>
+</section>
 
-<section class="slide section" id="s3" data-auto="section" data-session="3"></section>
-
-<section class="slide" id="s3-idea" data-lo="LO3">
-  <div class="kicker">REPLACE: the question this slide answers</div>
-  <h2>REPLACE: one idea, stated as a sentence</h2>
+<section class="slide" data-label="Unreached" id="reach-the-unreached" data-lo="LO3">
+  <div class="kicker">A rule from outside</div>
+  <h2>"Reach the unreached": coach the groups the logs almost never coached</h2>
   <div class="cols cols-2">
     <ul class="bullets">
-      <li>REPLACE: at most six bullets, each a complete thought</li>
-      <li>REPLACE: bold the key phrase; numbers come from the lab run, not from memory</li>
+      <li>Disabled seekers in Rumh and Nijad.</li>
+      <li>Seekers unemployed more than 36 months.</li>
+      <li>Seekers over 55.</li>
+      <li>8.1% of seekers; the logs offered them coaching in 2% to 5% of decisions.</li>
     </ul>
-    <div class="card c-teal"><h4>In the case study</h4><p class="small mb0">REPLACE: tie the idea to the case study and its data</p></div>
+    <div class="card c-navy tint"><h4>A fair question</h4><p class="small mb0">The rule comes from an advocacy group. Its aim is legitimate; the question is whether the logs can value it.</p></div>
   </div>
-  <div class="callout warn mt"><b>What goes wrong.</b> REPLACE: the failure participants will hit, and how to recognise it</div>
-  <aside class="notes">REPLACE: what to say, the demo to run, the question to ask the room, the common failure and its fix</aside>
+  <aside class="notes"><p>Be careful with tone: the rule is not foolish, and Day 4's fairness session takes its concern seriously. The point here is narrower: the logs hold almost no evidence about coaching these groups.</p></aside>
 </section>
 
-<section class="slide" id="s3-steps" data-lo="LO3">
-  <div class="kicker">Step by step</div>
-  <h2>REPLACE: a process, shown one step per key press</h2>
-  <div class="flow">
-    <div class="step c-teal"><b>1 · REPLACE: name</b>REPLACE: what happens first</div>
-    <div class="arrow frag" data-frag="b">→</div><div class="step c-cyan frag" data-frag="b"><b>2 · REPLACE: name</b>REPLACE: the next piece</div>
-    <div class="arrow frag" data-frag="c">→</div><div class="step c-coral frag" data-frag="c"><b>3 · REPLACE: name</b>REPLACE: the result</div>
+<section class="slide" data-label="ESS" id="effective-sample-size" data-lo="LO3">
+  <div class="kicker">Lab 3.3, the rule's weights</div>
+  <h2>2,922 seekers to coach, 126 coached in the logs, worth 58 decisions</h2>
+  <div class="cols cols-3 gap-s">
+    <div class="stat center"><div class="big">126</div><div class="lbl">of the 2,922 the logs actually coached</div></div>
+    <div class="stat center"><div class="big">58</div><div class="lbl">effective sample size of their weights</div></div>
+    <div class="stat center"><div class="big">33%</div><div class="lbl">of their weight in the ten heaviest decisions</div></div>
   </div>
-  <div class="callout tip mt frag"><b>Takeaway.</b> REPLACE: the one sentence to remember</div>
-  <aside class="notes">Press once per step and say what each step adds before the next one appears. REPLACE: the example to walk through</aside>
+  <div class="callout warn mt"><b>Kish's effective sample size</b> <code>(Σw)² / Σw²</code>: how many equally weighted decisions the estimate is worth.</div>
+  <aside class="notes"><p>From the course's run of Lab 3.3. The heaviest single weight is 100: a decision with a recorded probability of 0.01. Ask: would you report an average of 58 people as the value of a programme for 2,922?</p></aside>
+</section>
+
+<section class="slide" data-label="Clipping" id="clipping-moves-the-answer" data-lo="LO3">
+  <div class="kicker">Lab 3.3, sensitivity to the heaviest weights</div>
+  <h2>Clipping the weights moves the value by a point, which is the size of the differences between rules</h2>
+  <div class="bars">
+    <div class="row"><span>IPW</span><div class="bar c-teal" style="--w:80%"></div><span class="val">55.9%</span></div>
+    <div class="row"><span>Clipped at 50</span><div class="bar c-cyan" style="--w:76%"></div><span class="val">55.5%</span></div>
+    <div class="row"><span>Clipped at 20</span><div class="bar c-coral" style="--w:68%"></div><span class="val">54.8%</span></div>
+    <div class="row"><span>Augmented</span><div class="bar c-purple" style="--w:72%"></div><span class="val">55.2%</span></div>
+  </div>
+  <p class="caption">Employed within six months, all seekers, under the rule. The generator's truth: 56.0%.</p>
+  <aside class="notes"><p>Here plain IPW lands near the truth; that is luck you cannot see in real data. The diagnosis is about trust, not about this one number: the estimate depends on a few decisions, and clipping, which adds unknown bias, moves it. The augmented value leans on an outcome model that saw few coached seekers like these.</p></aside>
+</section>
+
+<section class="slide" data-label="Diagnose" id="diagnose-untrustworthy" data-lo="LO3">
+  <div class="kicker">A checklist for every value you report</div>
+  <h2>Report the effective sample size, the heaviest weights and the clipped values with every rule's value</h2>
+  <table class="t small">
+    <tr><th>Diagnostic</th><th>Warning sign</th></tr>
+    <tr><td>Share of rule-treated seekers the logs treated</td><td>Under one in ten</td></tr>
+    <tr><td>Effective sample size among them</td><td>Under a few hundred</td></tr>
+    <tr><td>Weight in the ten heaviest decisions</td><td>Over 10%</td></tr>
+    <tr><td>Change when clipping at 20</td><td>Larger than the gap to the next rule</td></tr>
+    <tr><td>Recorded probabilities under 0.02</td><td>Any decision the rule relies on</td></tr>
+  </table>
+  <aside class="notes"><p>The thresholds are rules of thumb, not standards: say so. The remedy for an unevaluable rule is data: a small randomised pilot with the groups in question. That is the answer to the advocacy group.</p></aside>
+</section>
+
+<section class="slide" id="check-heavy-weights" data-lo="LO3">
+  <div class="kicker">Checkpoint</div>
+  <h2>What do you tell the advocacy group?</h2>
+  <div class="quiz" data-type="single" data-lo="LO3">
+    <p class="lead">The "reach the unreached" rule has an IPW value close to current practice, an effective sample size of 58 among the seekers it would coach, and moves by a point when weights are clipped. What do you recommend?</p>
+    <div class="opts">
+      <div class="opt" data-why="Reads an unreliable estimate as evidence of no effect">Reject the rule: the logs show it adds nothing</div>
+      <div class="opt" data-why="Treats clipping as a fix rather than a sensitivity check">Report the value clipped at 20 as the estimate</div>
+      <div class="opt" data-ok>Say the logs cannot value it, and propose a small randomised pilot with those groups</div>
+      <div class="opt" data-why="Assumes an outcome model can stand in for missing data">Report the augmented value, which does not depend on the weights</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> The estimate rests on a few heavy weights and an extrapolating outcome model; only new data on these seekers can answer the question.</div>
+  </div>
+  <aside class="notes"><p>Answer: C. Option D is the subtle trap: the augmented estimator does depend on the weights, and where weights are huge it leans on mu1 for seekers the outcome model barely saw.</p></aside>
 </section>
 
 <section class="slide lab" id="lab-3-3" data-auto="lab" data-lab="3.3">
-  <aside class="notes">REPLACE: what to watch for while participants work, the typical problems, and the fallback for anyone who did not finish an earlier lab</aside>
+  <aside class="notes"><p>Common problems: computing the effective sample size over all decisions (where most weights are near 1) instead of among the rule-coached seekers; sorting weights ascending; clipping the weights and forgetting that clipped IPW is biased. Early finishers: the augmented value and why it disagrees.</p></aside>
 </section>
 
-<!-- Session 4 -->
+<!-- ======================= SESSION 4 ======================= -->
+<section class="slide section" id="s4" data-auto="section" data-session="4">
+  <aside class="notes"><p>Session 4 is a review exercise: reading someone else's heterogeneous-effect claim the way a reviewer, a regulator or an auditor would.</p></aside>
+</section>
 
-<section class="slide section" id="s4" data-auto="section" data-session="4"></section>
+<section class="slide" data-label="The claim" id="the-analysts-claim" data-lo="LO5">
+  <div class="kicker">A draft on the director's desk</div>
+  <h2>An analyst found who benefits most, and recommends whom to coach first</h2>
+  <div class="stack">
+    <div class="card c-coral flat"><p class="small mb0"><b>1.</b> Seekers who attended four or more sessions gain 27.0 points.</p></div>
+    <div class="card c-coral flat"><p class="small mb0"><b>2.</b> Men aged 40 to 44 in Sahil with secondary education gain 49.5 points (n = 36, p = 0.001).</p></div>
+    <div class="card c-coral flat"><p class="small mb0"><b>3.</b> 8 of 60 cells had p &lt; 0.05: the targets. In the others coaching showed no effect.</p></div>
+    <div class="card c-coral flat"><p class="small mb0"><b>4.</b> Predicted and observed effects agree across deciles: correlation above 0.9.</p></div>
+  </div>
+  <aside class="notes"><p>The draft is labs/data/review/anwar_analysis.md, by Anwar Al-Mohaimeed. Read it aloud. Ask the room to vote: which finding would you trust most? Then spend the session showing that none survives.</p></aside>
+</section>
 
-<section class="slide" id="s4-idea" data-lo="LO5">
-  <div class="kicker">REPLACE: the question this slide answers</div>
-  <h2>REPLACE: one idea, stated as a sentence</h2>
+<section class="slide" data-label="Post-treatment" id="post-treatment-subgroup" data-lo="LO5">
+  <div class="kicker">Fault 1</div>
+  <h2>A subgroup defined after the lottery is selected, not randomised</h2>
   <div class="cols cols-2">
+    <div class="stat center"><div class="big">3.42 vs 2.50</div><div class="lbl">motivation before the lottery: four or more sessions against fewer</div></div>
     <ul class="bullets">
-      <li>REPLACE: at most six bullets, each a complete thought</li>
-      <li>REPLACE: bold the key phrase; numbers come from the lab run, not from memory</li>
+      <li>Only coached seekers have sessions; no comparable uncoached group exists.</li>
+      <li>Attenders were more motivated before anything happened.</li>
+      <li>The randomised effect for everyone offered is 10.6 points, not 27.0.</li>
     </ul>
-    <div class="card c-teal"><h4>In the case study</h4><p class="small mb0">REPLACE: tie the idea to the case study and its data</p></div>
   </div>
-  <div class="callout warn mt"><b>What goes wrong.</b> REPLACE: the failure participants will hit, and how to recognise it</div>
-  <aside class="notes">REPLACE: what to say, the demo to run, the question to ask the room, the common failure and its fix</aside>
+  <aside class="notes"><p>From the course's run of Lab 3.4. Sessions attended is a post-treatment variable: it may be affected by coaching itself and by the same traits that drive employment. The honest question about attendance needs another design: principal stratification, or encouraging attendance at random.</p></aside>
 </section>
 
-<section class="slide" id="s4-steps" data-lo="LO5">
-  <div class="kicker">Step by step</div>
-  <h2>REPLACE: a process, shown one step per key press</h2>
-  <div class="flow">
-    <div class="step c-teal"><b>1 · REPLACE: name</b>REPLACE: what happens first</div>
-    <div class="arrow frag" data-frag="b">→</div><div class="step c-cyan frag" data-frag="b"><b>2 · REPLACE: name</b>REPLACE: the next piece</div>
-    <div class="arrow frag" data-frag="c">→</div><div class="step c-coral frag" data-frag="c"><b>3 · REPLACE: name</b>REPLACE: the result</div>
+<section class="slide" data-label="Dredging" id="dredged-cell" data-lo="LO5">
+  <div class="kicker">Fault 2</div>
+  <h2>The largest of 60 cells is mostly the noise that made it the largest</h2>
+  <div class="bars">
+    <div class="row"><span>The analyst's cell, claimed</span><div class="bar c-coral" style="--w:90%"></div><span class="val">49.5</span></div>
+    <div class="row"><span>The same cell, true effect</span><div class="bar c-teal" style="--w:18%"></div><span class="val">9.7</span></div>
+    <div class="row"><span>Honest search: top five, training</span><div class="bar c-purple" style="--w:42%"></div><span class="val">23.3</span></div>
+    <div class="row"><span>The same five, held out</span><div class="bar c-cyan" style="--w:23%"></div><span class="val">12.4</span></div>
   </div>
-  <div class="callout tip mt frag"><b>Takeaway.</b> REPLACE: the one sentence to remember</div>
-  <aside class="notes">Press once per step and say what each step adds before the next one appears. REPLACE: the example to walk through</aside>
+  <p class="caption">Points of employment. Discover on one split, evaluate on another.</p>
+  <aside class="notes"><p>The analyst searched all 6,000 seekers, so his cell cannot be re-tested on held-out seekers: they were part of the search. The truth (9.7 points) is the generator's. Searching on the training split and testing on the held-out split shows the general pattern: winners shrink by about half. The national bias guide calls this data-dredging bias.</p></aside>
+</section>
+
+<section class="slide" data-label="Multiplicity" id="many-cells" data-lo="LO5">
+  <div class="kicker">Fault 3</div>
+  <h2>Eight significant cells out of sixty is little more than chance, and silence is not absence</h2>
+  <div class="cols cols-2">
+    <div class="card c-coral"><h4>The targets</h4><p class="small mb0">8 cells at p &lt; 0.05; after a Bonferroni correction, 2. Sixty tests at 0.05 give three by chance alone.</p></div>
+    <div class="card c-teal"><h4>The "no effect" cells</h4><p class="small mb0">Their true effect averages 11.3 points: cells of 30 to 60 seekers cannot show it.</p></div>
+  </div>
+  <aside class="notes"><p>Recap from DS-302 Session 4.2 on many segments. Both halves of the finding are wrong: the significant cells are partly noise, and the insignificant ones are underpowered, not empty. Reporting all 60 with corrected intervals would have shown this.</p></aside>
+</section>
+
+<section class="slide" data-label="In-sample" id="in-sample-agreement" data-lo="LO5">
+  <div class="kicker">Fault 4</div>
+  <h2>A model checked on the seekers it was fitted to agrees with itself</h2>
+  <div class="cols cols-2">
+    <div class="stat center"><div class="big">0.99</div><div class="lbl">decile correlation, fitted and checked on all seekers</div></div>
+    <div class="stat center"><div class="big">0.81</div><div class="lbl">fitted on training, checked on held-out seekers</div></div>
+  </div>
+  <div class="callout tip mt"><b>The held-out number is still good.</b> The fault is not that the model is useless; it is that the evidence offered for it proves nothing.</div>
+  <aside class="notes"><p>From the course's run of Lab 3.4, with the course's lightly regularised boosting as the analyst's model. The national bias guide's name for judging a model on data unlike its use is evaluation bias.</p></aside>
+</section>
+
+<section class="slide" data-label="The memo" id="review-memo" data-lo="LO5">
+  <div class="kicker">The review memo</div>
+  <h2>Name each fault, show its evidence, state its effect on the claim</h2>
+  <table class="t small">
+    <tr><th>Fault</th><th>Evidence</th><th>Effect on the claim</th></tr>
+    <tr><td>Post-treatment subgroup</td><td>Motivation 3.42 against 2.50</td><td>27 points mixes coaching with motivation; randomised effect 11</td></tr>
+    <tr><td>Same data for discovery and evaluation</td><td>Winners shrink from 23 to 12 points</td><td>The 50-point cell is mostly noise</td></tr>
+    <tr><td>Multiplicity; silence as absence</td><td>2 survive correction; others gain 11</td><td>Target list largely chance</td></tr>
+    <tr><td>In-sample validation</td><td>0.99 against 0.81</td><td>No evidence for the ranking offered</td></tr>
+  </table>
+  <aside class="notes"><p>The memo is the evidence of LO5. Tone: the analyst is a colleague, and every fault here is common. A good memo also says what would make the claim credible: pre-registered subgroups, a split for discovery and one for evaluation, all cells reported with corrected intervals.</p></aside>
+</section>
+
+<section class="slide" id="check-review" data-lo="LO5">
+  <div class="kicker">Checkpoint</div>
+  <h2>Which fix answers the dredged cell?</h2>
+  <div class="quiz" data-type="single" data-lo="LO5">
+    <p class="lead">A colleague wants to keep the analyst's best cell but make it credible. Which step does that?</p>
+    <div class="opts">
+      <div class="opt" data-why="Thinks a smaller p-value repairs selection; it was selected for being small">Report the p-value to three decimals so readers see it is 0.001</div>
+      <div class="opt" data-why="Adds more searching, which makes selection worse">Search more cells to show the finding is robust</div>
+      <div class="opt" data-why="Uses the same seekers twice in a different way">Bootstrap the cell's 36 seekers and report the interval</div>
+      <div class="opt" data-ok>Test the cell, chosen in advance, on seekers who were not part of the search</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> Only data not used in the search can estimate the effect of a cell without the inflation that selection added.</div>
+  </div>
+  <aside class="notes"><p>Answer: D. In practice: Fursa's 2027 cohort, or a randomised pilot. The capstone brief for coaching has exactly such a cohort.</p></aside>
 </section>
 
 <section class="slide lab" id="lab-3-4" data-auto="lab" data-lab="3.4">
-  <aside class="notes">REPLACE: what to watch for while participants work, the typical problems, and the fallback for anyone who did not finish an earlier lab</aside>
+  <aside class="notes"><p>Common problems: re-testing the analyst's own cell on the held-out split and calling it a fresh test (his search used those seekers); reading "no significance" as "no effect"; forgetting that sessions exist only for the coached. Early finishers: tag each fault with the bias guide's names.</p></aside>
 </section>
 
-<section class="slide" id="wrap-up">
-  <div class="kicker">Day 3 · wrap-up</div>
-  <h2>Three things to keep</h2>
-  <div class="cols cols-3">
-    <div class="card c-teal"><h4>Remember</h4><p class="small mb0">REPLACE: one idea participants keep</p></div>
-    <div class="card c-coral"><h4>Remember</h4><p class="small mb0">REPLACE: one idea participants keep</p></div>
-    <div class="card c-purple"><h4>Remember</h4><p class="small mb0">REPLACE: one idea participants keep</p></div>
+<!-- ======================= CLOSING ======================= -->
+<section class="slide" data-label="Recap" id="day-3-recap">
+  <div class="kicker">Day 3 recap</div>
+  <h2>Check the records, value with intervals, refuse what rests on a few weights, review claims for reuse</h2>
+  <div class="cols cols-4 gap-s">
+    <div class="card c-teal"><h4>Records</h4><p class="small mb0">Weights average to 1, by office.</p></div>
+    <div class="card c-cyan"><h4>Values</h4><p class="small mb0">IPW, self-normalised, augmented; intervals.</p></div>
+    <div class="card c-coral"><h4>Trust</h4><p class="small mb0">Effective sample size, heaviest weights, clipping.</p></div>
+    <div class="card c-purple"><h4>Review</h4><p class="small mb0">Post-treatment, dredging, multiplicity, in-sample.</p></div>
   </div>
+  <aside class="notes"><p>Ask each table for the one diagnostic they will add to their own reports from Monday. The effective sample size is the most common answer, and a good one.</p></aside>
 </section>
 
-<section class="slide dark" id="next" data-label="Next">
-  <div class="kicker">Next</div>
-  <h2>Day 4: Choosing and testing a policy</h2>
-  <p class="lead">REPLACE: what participants prepare before then; unfinished labs can be finished at home</p>
-  <aside class="notes">REPLACE: accounts, installs or reading participants need before the next unit</aside>
+<section class="slide dark" data-label="Tomorrow" id="tomorrow-choose-a-policy">
+  <div class="kicker">Tomorrow · Day 4</div>
+  <h2>Choosing and testing a policy</h2>
+  <p class="lead">Tomorrow you learn a depth-two rule under one place per five seekers, decide which attributes may drive it, audit it by region, gender and disability status, size the trial that would confirm it, and choose your capstone brief.</p>
+  <aside class="notes"><p>Ask participants to glance at labs/capstone/ tonight: three briefs, coaching places, energy-saving visits and food-safety inspections. They choose one in Lab 4.4.</p></aside>
 </section>

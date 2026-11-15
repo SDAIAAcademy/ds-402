@@ -435,6 +435,316 @@
       "pool": "practice",
       "weight": 1,
       "timer": 90
+    },
+    {
+      "id": "q-logs-01",
+      "type": "single",
+      "prompt": "An agency hands you 30,000 logged decisions with the probability its tool recorded for each. Before valuing any rule, what do you check first?",
+      "options": [
+        "That the outcome model fitted on the logs has a high AUC",
+        "That offered divided by recorded probability averages to about 1, overall and by office",
+        "That the recorded probabilities lie between 0.05 and 0.95",
+        "That the offer rate equals the target budget"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "With correct probabilities the weights average to 1; a group where they do not is a group whose records misdescribe the decisions.",
+      "misconceptions": [
+        "Checks the outcome model, which the recorded probabilities do not depend on",
+        "",
+        "Checks a range, which says nothing about whether they describe what happened",
+        "Compares with a plan rather than with the records"
+      ],
+      "lo": [
+        "LO3"
+      ],
+      "day": "day3",
+      "session": 1,
+      "slide": "weights-average-to-one",
+      "level": "apply",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-logs-02",
+      "type": "single",
+      "prompt": "One office overrode the allocation tool for a year while the tool kept recording its own probabilities. A candidate rule targets seekers in that office's region. What do you do?",
+      "options": [
+        "Use the recorded probabilities: they are the official record",
+        "Drop the office and value the rule on the other offices only, without comment",
+        "Re-estimate that office's propensities from its covariates and say so in the report",
+        "Clip the office's weights at 20"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "When the office matters to the rule, its propensities must be modelled as on Day 1, and the report must say the records were replaced.",
+      "misconceptions": [
+        "Trusts a record the check has shown to be wrong",
+        "Drops the region the rule targets and hides the change of population",
+        "",
+        "Treats wrong probabilities as a variance problem"
+      ],
+      "lo": [
+        "LO3"
+      ],
+      "day": "day3",
+      "session": 1,
+      "slide": "exclude-or-re-estimate",
+      "level": "evaluate",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-ope-01",
+      "type": "single",
+      "prompt": "In inverse propensity valuation of a rule, a seeker whom the logs did not coach but the rule would coach contributes what?",
+      "options": [
+        "Her outcome, weighted by one over the probability of coaching",
+        "Nothing: the logs did not do what the rule would do",
+        "Her outcome plus the average effect of coaching",
+        "Her outcome with weight one"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Only decisions where the logs agree with the rule show the outcome the rule would produce; the weights let them stand in for the rest.",
+      "misconceptions": [
+        "Uses an outcome observed without coaching as if it were under coaching",
+        "",
+        "Imputes an effect the plain IPW estimator never imputes",
+        "Forgets that disagreeing decisions are dropped"
+      ],
+      "lo": [
+        "LO3"
+      ],
+      "day": "day3",
+      "session": 2,
+      "slide": "ipw-value",
+      "level": "understand",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-ope-02",
+      "type": "single",
+      "prompt": "You value three rules with inverse propensity weighting and with the augmented estimator. The augmented intervals are all narrower. Why?",
+      "options": [
+        "The augmented estimator uses more data",
+        "The outcome model explains part of the outcome, so the weighted residuals vary less than the weighted outcomes",
+        "The augmented estimator clips the weights",
+        "The augmented estimator assumes no confounding and IPW does not"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Weighting residuals rather than raw outcomes shrinks the variance, while the correction keeps the estimate consistent.",
+      "misconceptions": [
+        "Both use the same decisions",
+        "",
+        "Confuses augmentation with clipping",
+        "Both rely on the same identification; the difference is variance"
+      ],
+      "lo": [
+        "LO3"
+      ],
+      "day": "day3",
+      "session": 2,
+      "slide": "snipw-and-augmented",
+      "level": "analyze",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-ope-03",
+      "type": "single",
+      "prompt": "Two rules have the same estimated value, within 0.1 points: a caseworker rule on months unemployed and a top fifth ranked by a causal forest. Which choice is best defended?",
+      "options": [
+        "The forest: a model that uses more information must be better",
+        "Either, chosen by coin toss, since they are equal",
+        "The rule caseworkers can read, unless a paired interval shows the other is clearly better",
+        "Neither, until a larger dataset separates them"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "When the values tie, transparency, auditability and ease of use decide; a paired interval for the difference checks the tie.",
+      "misconceptions": [
+        "Ignores that the table shows no difference in value",
+        "Ignores what else separates them",
+        "",
+        "Delays a decision that the table already supports"
+      ],
+      "lo": [
+        "LO4"
+      ],
+      "day": "day3",
+      "session": 2,
+      "slide": "value-table",
+      "level": "evaluate",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-ess-01",
+      "type": "single",
+      "prompt": "A rule would coach 3,000 seekers. The logs coached 130 of them, and their weights have an effective sample size of 60. What does this mean for the value estimate?",
+      "options": [
+        "It rests on the equivalent of about 60 decisions, so it can move a lot with a few of them",
+        "It is fine, because 130 coached seekers is above the usual minimum of 30",
+        "It is biased downwards by a factor of 60 over 3,000",
+        "It is fine if the logs hold 40,000 decisions in total"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Kish's effective sample size tells how many equally weighted decisions carry the estimate; 60 cannot speak reliably for 3,000.",
+      "misconceptions": [
+        "",
+        "Counts decisions without regard to how unequal their weights are",
+        "Treats the effective sample size as a bias correction",
+        "Looks at the whole file, not at the seekers the rule changes"
+      ],
+      "lo": [
+        "LO3"
+      ],
+      "day": "day3",
+      "session": 3,
+      "slide": "effective-sample-size",
+      "level": "apply",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-ess-02",
+      "type": "single",
+      "prompt": "Clipping the weights at 20 moves a rule's value from 55.9% to 54.8%; the next best rule differs by 0.8 points. What do you report?",
+      "options": [
+        "The clipped value, since clipping reduces variance",
+        "The unclipped value, since clipping adds bias",
+        "The average of the two",
+        "That the logs cannot rank this rule, with both values and the effective sample size"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "When the sensitivity to a few weights exceeds the gap between rules, the honest report is that the data cannot decide.",
+      "misconceptions": [
+        "Treats a biased fix as the estimate",
+        "Hides a sensitivity that is larger than the decision margin",
+        "Invents an estimator with no justification",
+        ""
+      ],
+      "lo": [
+        "LO3"
+      ],
+      "day": "day3",
+      "session": 3,
+      "slide": "clipping-moves-the-answer",
+      "level": "evaluate",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-review-01",
+      "type": "single",
+      "prompt": "An analyst reports that seekers who attended four or more coaching sessions gained 27 points. Which flaw matters most?",
+      "options": [
+        "The subgroup is too small",
+        "The subgroup is defined by something that happened after the lottery, so it is selected, not randomised",
+        "The p-value should be corrected for multiple tests",
+        "The analyst should have used a causal forest"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Attendance exists only for coached seekers and depends on traits like motivation; the comparison mixes coaching with selection.",
+      "misconceptions": [
+        "Over 1,500 seekers: size is not the problem",
+        "",
+        "One pre-chosen comparison; the flaw is in its design",
+        "A different estimator cannot fix a subgroup defined after treatment"
+      ],
+      "lo": [
+        "LO5"
+      ],
+      "day": "day3",
+      "session": 4,
+      "slide": "post-treatment-subgroup",
+      "level": "analyze",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-review-02",
+      "type": "single",
+      "prompt": "A memo picks the largest of 60 subgroup effects, 49.5 points in 36 seekers, estimated on the same data used to search. What is your best estimate of its true effect without new data?",
+      "options": [
+        "49.5 points, since the p-value is 0.001",
+        "Much smaller: the winner of a search is inflated by the noise that made it win",
+        "Zero, because dredged findings are always false",
+        "Exactly the average effect, since all cells are equal"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Selection inflates the largest estimate; honest searches show winners shrinking by about half on fresh seekers.",
+      "misconceptions": [
+        "Ignores that the cell was chosen for being large",
+        "",
+        "Overcorrects: the cell may still benefit",
+        "Assumes no real heterogeneity"
+      ],
+      "lo": [
+        "LO5"
+      ],
+      "day": "day3",
+      "session": 4,
+      "slide": "dredged-cell",
+      "level": "evaluate",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-review-03",
+      "type": "single",
+      "prompt": "Of 60 cells, 52 have p above 0.05. The memo says coaching \"showed no effect\" in them. What is wrong?",
+      "options": [
+        "Nothing: p above 0.05 means no effect",
+        "Cells of 30 to 60 seekers have too little power to show a real effect of about 10 points",
+        "The threshold should have been 0.10",
+        "Those cells should be merged into one and tested again"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "A non-significant small cell is uninformative; its interval includes both no effect and the average effect.",
+      "misconceptions": [
+        "Reads absence of significance as evidence of absence",
+        "",
+        "Moves the threshold instead of reading the uncertainty",
+        "A remedy, not a diagnosis of what the memo got wrong"
+      ],
+      "lo": [
+        "LO5"
+      ],
+      "day": "day3",
+      "session": 4,
+      "slide": "many-cells",
+      "level": "analyze",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
     }
   ]
 }
