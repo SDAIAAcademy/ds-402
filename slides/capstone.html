@@ -1,19 +1,50 @@
 <section class="slide title" id="title" data-auto="title">
-  <aside class="notes">Today is theirs: keep your own talking to the opening and the closing. Confirm the running order and the demo setup (screen sharing, accounts, a recorded backup) first.</aside>
+  <aside class="notes"><p>Today is theirs: keep your own talking to the opening and the closing. Each participant defends one policy evaluation, on one of the three briefs. Confirm the running order and that every repository opens and reruns on this screen.</p></aside>
 </section>
 
 <section class="slide" id="agenda" data-label="Agenda">
   <div class="kicker">Capstone</div>
-  <h2>How the presentations run</h2>
+  <h2>How the defences run</h2>
   <div class="agenda">
-    <div class="item now"><div><b>Expectations and final prep</b><small>the rubric, a last rehearsal, then the first presentations</small></div></div>
-    <div class="item"><div><b>Presentations</b><small>each one timed, with questions after it</small></div></div>
-    <div class="item"><div><b>Review and closing</b><small>peer feedback, the trainer's review, what next</small></div></div>
+    <div class="item now"><div><b>The briefs and final prep</b><small>the rubric, the live change, a last rerun of each analysis</small></div></div>
+    <div class="item"><div><b>Defences</b><small>fifteen minutes each, including the live change, one participant at a time</small></div></div>
+    <div class="item"><div><b>Review and closing</b><small>peer feedback, the trainer's review, the follow-up task</small></div></div>
   </div>
+  <aside class="notes"><p>The catalog gives fifteen minutes per defence and no separate question time, so the live change happens inside the fifteen minutes. With eight participants the defences take about two and a half hours including changeovers. Breaks are not slides: press B when the room needs one.</p></aside>
+</section>
+
+<section class="slide" id="the-briefs" data-label="The briefs">
+  <div class="kicker">The briefs</div>
+  <h2>One brief, the whole chain of the week</h2>
+  <table class="t small">
+    <tr><th>Brief</th><th>Budget</th><th>Fairness constraint</th><th>Audit groups</th></tr>
+    <tr><td>Siraj Power Distribution: energy-saving visits</td><td>15% of households</td><td>low-income households get at least their share of visits</td><td>district, income band, elderly member</td></tr>
+    <tr><td>Al-Nakheel food safety: unannounced inspections</td><td>25% of restaurants</td><td>every district between half and twice the average rate</td><td>district, size band, chain</td></tr>
+    <tr><td>Fursa 2027: coaching places</td><td>20% of seekers</td><td>every region at least 20% of its seekers</td><td>region, gender, disability</td></tr>
+  </table>
+  <p class="small mt">Each brief: a randomised pilot, logs with recorded probabilities, a <code>BRIEF.md</code>. Submission rules: <code>labs/capstone/README.md</code>.</p>
+  <aside class="notes"><p>The true values are in each brief's truth folder; the capstone is assessed on the chain and the defence, not on recovering them. Each brief has one district or office with poor overlap in the logs: a README that values a rule there without diagnostics loses marks under offline evaluation. In the Siraj brief the effect is largest in old homes and high-use homes, so need targeting by consumption is a reasonable but not the best rule; in Nakheel, restaurants with the worst records are not the ones inspections change most.</p></aside>
+</section>
+
+<section class="slide" id="readme-reports" data-label="What the README reports">
+  <div class="kicker">The submission</div>
+  <h2>The README reports measured results, in this order</h2>
+  <div class="cols cols-2">
+    <ol class="bullets small">
+      <li>The estimand, and the average effect with its overlap</li>
+      <li>Effect estimates validated on the held-out randomised split</li>
+      <li>A rule under the budget and the constraint, with the attribute register</li>
+      <li>Its offline value with intervals and diagnostics, against treat-all, risk or need targeting and current practice</li>
+      <li>The audit by the brief's groups, and the constraint's price</li>
+      <li>The confirmatory trial: arms, difference, seekers or units per arm, stopping rule</li>
+    </ol>
+    <div class="card c-navy tint"><h4>And with it</h4><p class="small mb0">Notebooks that rerun from the raw data with a fixed seed, the commit history, the run log, and a verification note on every assisted step.</p></div>
+  </div>
+  <aside class="notes"><p>AI-full in the capstone: participants may use assistants for anything, and the verification note says what was assisted and how each result was checked. The live change is how the panel checks that the participant understands what the code does.</p></aside>
 </section>
 
 <section class="slide" id="rubric" data-label="The rubric">
-  <div class="kicker">How presentations are scored</div>
+  <div class="kicker">How evaluations are scored</div>
   <h2>The rubric</h2>
   <div class="bars">
     <div class="row"><span>Identification</span><div class="bar c-teal" style="--w:60%"></div><span class="val">15%</span></div>
@@ -22,73 +53,91 @@
     <div class="row"><span>Rule and fairness audit</span><div class="bar c-purple" style="--w:80%"></div><span class="val">20%</span></div>
     <div class="row"><span>Trial plan and reproducibility</span><div class="bar c-amber" style="--w:60%"></div><span class="val">15%</span></div>
   </div>
-  <div class="callout tip mt"><b>Show results from at least two measured runs.</b> A claim without a number is a plan, not a result.</div>
-  <aside class="notes">Walk through each criterion with one example of what full marks look like.</aside>
+  <div class="callout tip mt"><b>Every number reruns.</b> A number the panel cannot regenerate from the repository scores as a claim, not a result.</div>
+  <aside class="notes"><p>Full marks, briefly. Identification: estimand in five parts, overlap shown and acted on. Effects and validation: at least two estimators, calibration and a best-linear-predictor slope on the held-out split. Offline evaluation: augmented values with intervals, effective sample sizes, the recorded probabilities checked. Rule and fairness audit: a register with reasons, selection rates and gains by group, the constraint priced with a paired interval. Trial plan and reproducibility: dilution, unit, stopping rule, limits; a clean clone reruns.</p></aside>
 </section>
 
 <section class="slide" id="format" data-label="Format">
   <div class="kicker">Format</div>
-  <h2>15 minutes for each presentation</h2>
+  <h2>Fifteen minutes: the evaluation, then one live change</h2>
   <div class="cols cols-3">
-    <div class="card c-teal"><h4>1 · The problem</h4><p class="small mb0">Who, what, why now. One slide.</p></div>
-    <div class="card c-cyan"><h4>2 · What you built</h4><p class="small mb0">Design, decisions, trade-offs. Then the live demo.</p></div>
-    <div class="card c-coral"><h4>3 · What you measured</h4><p class="small mb0">Baseline, improvement, failures found, what comes next.</p></div>
+    <div class="card c-teal"><h4>1 · The question</h4><p class="small mb0">Who decides, the budget, the estimand. One slide.</p></div>
+    <div class="card c-cyan"><h4>2 · The evidence</h4><p class="small mb0">Effects validated, the rule, its value against the alternatives, the audit.</p></div>
+    <div class="card c-coral"><h4>3 · The live change</h4><p class="small mb0">The panel changes the budget or the constraint; predict, then rerun.</p></div>
   </div>
-  <div class="callout note mt"><b>Peer feedback.</b> After each talk, everyone writes one strength, one question and one suggestion.</div>
+  <div class="callout note mt"><b>Peer feedback.</b> After each defence, everyone writes one strength, one question and one suggestion.</div>
+  <aside class="notes"><p>Call the live change at about minute ten, whatever has been covered; what was not said is not scored.</p></aside>
+</section>
+
+<section class="slide" id="live-change" data-label="The live change">
+  <div class="kicker">What the panel changes</div>
+  <h2>One change to the budget or the constraint, predicted before it is rerun</h2>
+  <div class="cols cols-2">
+    <div class="card c-navy"><h4>The change</h4><p class="small mb0">Halve the budget, double it, or remove the fairness constraint. The participant first predicts the direction and rough size of the change in the rule's value and in the audit, then reruns and shows it.</p></div>
+    <ul class="bullets small">
+      <li>"With half the places, does the value per place rise or fall? Why?"</li>
+      <li>"Without the constraint, which group loses places, and how many outcomes do you gain?"</li>
+      <li>"What is the effective sample size of your rule's weights now?"</li>
+      <li>"How many units per arm would the trial need at the new budget?"</li>
+    </ul>
+  </div>
+  <aside class="notes"><p>Use the same change for everyone on the same brief so defences are comparable. A good prediction: halving the budget raises the gain per place (the best places are kept) and lowers the total; removing the constraint raises the value by about the constraint's price, which may be zero within its interval. A participant who cannot rerun within two minutes has a reproducibility problem.</p></aside>
 </section>
 
 <section class="slide order" id="running-order" data-label="Running order">
   <div class="kicker">Running order</div>
-  <h2>Who presents when</h2>
+  <h2>Who defends when</h2>
   <table class="t small">
-    <tr><th>#</th><th>Presenter</th><th>Project</th></tr>
-    <tr><td>1</td><td><input placeholder="name"></td><td><input placeholder="Project"></td></tr>
-    <tr><td>2</td><td><input placeholder="name"></td><td><input placeholder="Project"></td></tr>
-    <tr><td>3</td><td><input placeholder="name"></td><td><input placeholder="Project"></td></tr>
-    <tr><td>4</td><td><input placeholder="name"></td><td><input placeholder="Project"></td></tr>
-    <tr><td>5</td><td><input placeholder="name"></td><td><input placeholder="Project"></td></tr>
-    <tr><td>6</td><td><input placeholder="name"></td><td><input placeholder="Project"></td></tr>
-    <tr><td>7</td><td><input placeholder="name"></td><td><input placeholder="Project"></td></tr>
-    <tr><td>8</td><td><input placeholder="name"></td><td><input placeholder="Project"></td></tr>
+    <tr><th>#</th><th>Participant</th><th>Brief</th></tr>
+    <tr><td>1</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>2</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>3</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>4</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>5</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>6</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>7</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>8</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
   </table>
-  <aside class="notes">Type the names in at the start; the fields can be edited live and are not saved, so keep the list in your notes too.</aside>
+  <aside class="notes"><p>Type the names in at the start; the fields can be edited live and are not saved, so keep the list in your notes too. Group participants by brief so the panel compares like with like.</p></aside>
 </section>
 
-<section class="slide dark" id="final-prep" data-label="Before the first presentation">
-  <div class="kicker">Before the first presentation</div>
+<section class="slide dark" id="final-prep" data-label="Before the first defence">
+  <div class="kicker">Before the first defence</div>
   <h1>Final prep · 20 minutes</h1>
   <div class="timer" data-minutes="20"></div>
-  <p class="lead">Rehearse once, record a backup, try the demo on this screen.</p>
-  <aside class="notes">Press T to start the timer. Breaks are not slides: press B when the room needs one.</aside>
+  <p class="lead">Rerun your analysis from a clean clone, rehearse once, open your repository on this screen.</p>
+  <aside class="notes"><p>Press T to start the timer. Walk the room and ask each participant to change the budget in their code and rerun: anyone who cannot has twenty minutes to fix it.</p></aside>
 </section>
 
 <section class="slide dark presenting" id="now-presenting" data-label="Now presenting">
-  <div class="kicker center">Now presenting</div>
-  <div class="center"><input placeholder="Presenter · project"></div>
+  <div class="kicker center">Now defending</div>
+  <div class="center"><input placeholder="Participant · brief"></div>
   <div class="timers mt">
-    <div><h3>Talk and demo</h3><div class="timer" data-minutes="15"></div></div>
+    <div><h3>Evaluation and live change</h3><div class="timer" data-minutes="15"></div></div>
   </div>
-  <aside class="notes">Type the presenter's name and press T to start the timer. Reuse this slide for every presenter.</aside>
+  <aside class="notes"><p>Type the participant's name and press T to start the timer. Reuse this slide for every defence. Score the rubric during the talk and the live change at the end; check the commit history, run log and verification note before the next participant.</p></aside>
 </section>
 
 <section class="slide" id="review" data-label="Trainer review">
   <div class="kicker">Trainer review</div>
-  <h2>What the presentations showed</h2>
+  <h2>What the defences showed</h2>
   <div class="cols cols-3">
-    <div class="card c-teal"><h4>Strongest patterns</h4><p class="small mb0">What several projects got right.</p></div>
-    <div class="card c-coral"><h4>Common gaps</h4><p class="small mb0">What most projects would fix next.</p></div>
+    <div class="card c-teal"><h4>Strongest patterns</h4><p class="small mb0">What several evaluations got right.</p></div>
+    <div class="card c-coral"><h4>Common gaps</h4><p class="small mb0">What most evaluations would fix next.</p></div>
     <div class="card c-purple"><h4>One surprise</h4><p class="small mb0">Something nobody expected.</p></div>
   </div>
-  <aside class="notes">Fill these in from your scoring notes during the last break. Name projects for strengths; keep gaps anonymous.</aside>
+  <aside class="notes"><p>Fill these in from your scoring notes during the last break. Name evaluations for strengths; keep gaps anonymous. Gaps worth looking for: effect estimates checked on training data, a value with no effective sample size, a rule that uses an audit attribute, a constraint reported as free, a trial sized for the per-unit gain instead of the diluted difference.</p></aside>
 </section>
 
 <section class="slide" id="what-next" data-label="After the course">
   <div class="kicker">After the course</div>
   <h2>Keep going</h2>
   <ul class="bullets">
-    <li><b>Your project stays yours:</b> keep it reproducible and add the next improvement you named today</li>
-    <li><b>Next Academy course:</b> REPLACE: the course that follows this one</li>
+    <li><b>Follow-up task:</b> within three weeks, review one eligibility rule from your workplace or a public service (<code>labs/followup/README.md</code>).</li>
+    <li><b>Your evaluation stays yours:</b> keep it rerunnable and add the check you named as the next one.</li>
+    <li><b>Measuring programmes at scale:</b> DS-406 Measuring the Impact of Data and AI Programmes.</li>
   </ul>
+  <aside class="notes"><p>The follow-up task is tracked; tell participants when it is due and where to submit it.</p></aside>
 </section>
 
 <section class="slide dark" id="thanks" data-label="Thank you">
