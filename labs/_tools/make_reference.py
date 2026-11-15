@@ -32,8 +32,8 @@ ALLOWED = ["months_unemployed", "digital_skills", "education", "prior_jobs", "ha
 
 def meta_learners(Xtr, ttr, ytr, Xall):
     from sklearn.base import clone
-    base = U.gbm_classifier(1)
-    reg = U.gbm_regressor(2)
+    base = U.pilot_classifier(1)
+    reg = U.pilot_regressor(2)
     # S
     s = clone(base).fit(np.column_stack([Xtr, ttr]), ytr)
     s_cate = s.predict_proba(np.column_stack([Xall, np.ones(len(Xall))]))[:, 1] - s.predict_proba(np.column_stack([Xall, np.zeros(len(Xall))]))[:, 1]
@@ -79,7 +79,7 @@ def main():
     # DR scores on the training split (randomised: e = 0.5), with cross-fitted outcome models
     Ptr = P[tr].reset_index(drop=True)
     Xtr = U.design(Ptr)
-    mu0, mu1 = U.outcome_models_crossfit(Ptr["employed_6m"], Ptr["coached"], Xtr, seed=3)
+    mu0, mu1 = U.outcome_models_crossfit(Ptr["employed_6m"], Ptr["coached"], Xtr, model=U.pilot_classifier(3), seed=3)
     g = U.dr_scores(Ptr["employed_6m"], Ptr["coached"], 0.5, mu0, mu1)
     pd.DataFrame({"seeker_id": Ptr["seeker_id"], "dr_score": g.round(5)}).to_csv(U.REF / "dr_pilot.csv", index=False, lineterminator="\n")
 

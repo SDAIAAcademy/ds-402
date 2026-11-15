@@ -1,20 +1,13 @@
 {
- "value": 70.19080502634836,
+ "value": 32.95620379673206,
  "feature": "months_unemployed",
- "threshold": 15.0,
+ "threshold": 10.0,
  "left": {
-  "feature": "months_unemployed",
-  "threshold": 10.0,
-  "left": {
-   "leaf": 0
-  },
-  "right": {
-   "leaf": 1
-  }
+  "leaf": 0
  },
  "right": {
-  "feature": "digital_skills",
-  "threshold": 2.0,
+  "feature": "months_unemployed",
+  "threshold": 15.0,
   "left": {
    "leaf": 1
   },
@@ -22,7 +15,7 @@
    "leaf": 0
   }
  },
- "cost": 0.12165972551040487,
+ "cost": 0.16988231593972689,
  "features": [
   "months_unemployed",
   "digital_skills",

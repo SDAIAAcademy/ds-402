@@ -1,158 +1,400 @@
+<!-- ======================= OPENING ======================= -->
 <section class="slide title" id="title" data-auto="title">
-  <aside class="notes">REPLACE: welcome; introduce yourself; one question to the room that calibrates the pace; the rhythm of the day</aside>
+  <aside class="notes"><p>Day 2 moves from one average to one effect per seeker. Ask the room what they would need to believe before giving a seeker a place because a model said she would benefit. Keep the answers on the board; the day's validation session answers them.</p></aside>
 </section>
 
-<section class="slide" id="agenda" data-auto="agenda"></section>
+<section class="slide" id="review-day-1" data-lo="LO1">
+  <div class="kicker">Review checkpoint · Day 1</div>
+  <h2>Which number goes to the director for Q1?</h2>
+  <div class="quiz" data-type="single" data-lo="LO1">
+    <p class="lead">On the logs, regression with 60 controls gives 13.5 points with a narrow interval; cross-fitted DML gives 10.8 points with a wider one. The DML robustness value is 8.5%. What do you report?</p>
+    <div class="opts">
+      <div class="opt" data-why="Treats a narrow interval as evidence that the model is right">The regression estimate, because its interval is narrower</div>
+      <div class="opt" data-why="Averages a biased and an unbiased estimator, keeping half the bias">The average of the two estimates</div>
+      <div class="opt" data-ok>The DML estimate, its interval and its robustness value</div>
+      <div class="opt" data-why="Reads a sensitivity analysis as a test that the effect is zero">Nothing: the robustness value shows the effect may be zero</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> DML allows the nonlinear confounding the regression cannot follow, and the robustness value tells the director how strong a hidden factor would have to be.</div>
+  </div>
+  <aside class="notes"><p>Answer: C. Two minutes. If the room splits between A and C, show Day 1's estimate table again: the regression interval did not contain the truth.</p></aside>
+</section>
 
-<!-- Session 1 -->
+<section class="slide" id="agenda" data-auto="agenda">
+  <aside class="notes"><p>All of Day 2 works on the randomised pilot: 6,000 seekers, coached by lottery. Confounding is gone; the difficulty now is noise. The pilot's split column fixes 3,600 training and 2,400 held-out seekers for every lab.</p></aside>
+</section>
 
-<section class="slide section" id="s1" data-auto="section" data-session="1"></section>
+<!-- ======================= SESSION 1 ======================= -->
+<section class="slide section" id="s1" data-auto="section" data-session="1">
+  <aside class="notes"><p>Session 1 builds effect estimators from ordinary prediction models. The lab is AI-off: the day's first estimator.</p></aside>
+</section>
 
-<section class="slide" id="s1-idea" data-lo="LO2">
-  <div class="kicker">REPLACE: the question this slide answers</div>
-  <h2>REPLACE: one idea, stated as a sentence</h2>
+<section class="slide" data-label="Why a trial" id="why-the-pilot" data-lo="LO2">
+  <div class="kicker">Where heterogeneous effects are learnt</div>
+  <h2>A randomised pilot removes confounding, so every remaining problem is noise</h2>
   <div class="cols cols-2">
     <ul class="bullets">
-      <li>REPLACE: at most six bullets, each a complete thought</li>
-      <li>REPLACE: bold the key phrase; numbers come from the lab run, not from memory</li>
+      <li>A lottery within each office: the propensity is <b>0.5</b> for everyone.</li>
+      <li>Any group fixed before the lottery can be compared directly.</li>
+      <li>6,000 seekers, a binary outcome: individual effects are never seen, and groups are noisy.</li>
     </ul>
-    <div class="card c-teal"><h4>In the case study</h4><p class="small mb0">REPLACE: tie the idea to the case study and its data</p></div>
+    <div class="card c-navy tint"><h4>Real programmes</h4><p class="small mb0">Job-search programmes show effects that differ by person; Knaus, Lechner and Strittmatter (2022) estimated them with machine learning on Swiss administrative data.</p></div>
   </div>
-  <div class="callout warn mt"><b>What goes wrong.</b> REPLACE: the failure participants will hit, and how to recognise it</div>
-  <aside class="notes">REPLACE: what to say, the demo to run, the question to ask the room, the common failure and its fix</aside>
+  <aside class="notes"><p>Make the contrast with Day 1 explicit: there the hard part was who was offered; here it is how little one binary outcome per person tells us. Sources: Knaus, Lechner and Strittmatter (2022), Journal of Human Resources.</p></aside>
 </section>
 
-<section class="slide" id="s1-steps" data-lo="LO2">
-  <div class="kicker">Step by step</div>
-  <h2>REPLACE: a process, shown one step per key press</h2>
-  <div class="flow">
-    <div class="step c-teal"><b>1 · REPLACE: name</b>REPLACE: what happens first</div>
-    <div class="arrow frag" data-frag="b">→</div><div class="step c-cyan frag" data-frag="b"><b>2 · REPLACE: name</b>REPLACE: the next piece</div>
-    <div class="arrow frag" data-frag="c">→</div><div class="step c-coral frag" data-frag="c"><b>3 · REPLACE: name</b>REPLACE: the result</div>
+<section class="slide" data-label="Meta-learners" id="three-meta-learners" data-lo="LO2">
+  <div class="kicker">Any classifier, three ways</div>
+  <h2>Meta-learners turn a prediction model into an effect estimator</h2>
+  <div class="cols cols-3 gap-s">
+    <div class="card c-teal"><h4>S-learner</h4><p class="small mb0">One model <code>μ(x, t)</code>; effect <code>μ(x,1) - μ(x,0)</code>.</p></div>
+    <div class="card c-cyan"><h4>T-learner</h4><p class="small mb0">Two models, one per arm; effect <code>μ1(x) - μ0(x)</code>.</p></div>
+    <div class="card c-coral"><h4>X-learner</h4><p class="small mb0">Impute each seeker's effect with the other arm's model, then model the imputed effects.</p></div>
   </div>
-  <div class="callout tip mt frag"><b>Takeaway.</b> REPLACE: the one sentence to remember</div>
-  <aside class="notes">Press once per step and say what each step adds before the next one appears. REPLACE: the example to walk through</aside>
+  <aside class="notes"><p>Künzel, Sekhon, Bickel and Yu (2019) named and compared them. Ask: which of the three can ignore coaching completely? The S-learner, if its trees never split on the coaching column. Sources: Künzel et al. (2019), PNAS.</p></aside>
+</section>
+
+<section class="slide" data-label="S-learner bias" id="s-learner-shrinks" data-lo="LO2">
+  <div class="kicker">S-learner</div>
+  <h2>One model with coaching as a feature tends to shrink effects towards zero</h2>
+  <pre class="code s" data-file="D2_1_metalearners.py"><code class="language-python">m = clone(BASE).fit(np.column_stack([Xtr, ttr]), ytr)
+one  = np.column_stack([X, np.ones(len(X))])
+zero = np.column_stack([X, np.zeros(len(X))])
+tau_s = m.predict_proba(one)[:, 1] - m.predict_proba(zero)[:, 1]</code></pre>
+  <div class="callout warn mt"><b>What goes wrong.</b> Regularised trees split on the strongest predictors of employment. Coaching is one column of nineteen; effects that differ by seeker need splits on coaching inside each branch.</div>
+  <aside class="notes"><p>In the course's run the S-learner's effects have a standard deviation of 6.1 points against a true 10.1: compressed, as the slide says. It still ranks reasonably, which Session 3 measures.</p></aside>
+</section>
+
+<section class="slide" data-label="T-learner" id="t-learner-noise" data-lo="LO2">
+  <div class="kicker">T-learner</div>
+  <h2>Two separate models subtract their errors, and the difference looks like heterogeneity</h2>
+  <div class="cols cols-2">
+    <div class="card c-cyan flat"><h4>What it does well</h4><p class="small mb0">Lets each arm have its own shape; nothing forces effects to be small.</p></div>
+    <div class="card c-coral flat"><h4>What it gets wrong</h4><p class="small mb0">Each model fits noise in its own arm; their difference adds the two noises.</p></div>
+  </div>
+  <div class="stat center mt"><div class="big">10.5 vs 10.1</div><div class="lbl">spread of T-learner effects against the truth (points, sd)</div></div>
+  <aside class="notes"><p>With strongly regularised gradient boosting (200 seekers per leaf) the T-learner's spread is close to the truth; with the defaults of Day 1 (40 per leaf) it was more than twice the truth in the course's first run. Regularisation is the main lever of every meta-learner on a small pilot.</p></aside>
+</section>
+
+<section class="slide" data-label="X-learner" id="x-learner-steps" data-lo="LO2">
+  <div class="kicker">X-learner</div>
+  <h2>The X-learner models imputed effects, which are smoother than outcomes</h2>
+  <div class="flow">
+    <div class="step c-teal"><b>1 · T-learner</b><code>μ1</code>, <code>μ0</code></div>
+    <div class="arrow">→</div>
+    <div class="step c-cyan"><b>2 · Impute</b><code>y - μ0(x)</code> for the coached, <code>μ1(x) - y</code> for the others</div>
+    <div class="arrow">→</div>
+    <div class="step c-coral"><b>3 · Model</b><code>τ1</code>, <code>τ0</code> on the imputed effects</div>
+    <div class="arrow">→</div>
+    <div class="step c-purple"><b>4 · Blend</b><code>e·τ0 + (1-e)·τ1</code></div>
+  </div>
+  <div class="callout tip mt"><b>In a lottery</b> <code>e = 0.5</code>: the two halves count equally. With unequal arms, the larger arm's imputation counts more.</div>
+  <aside class="notes"><p>Walk through step 2 slowly; it is the step people get backwards. The imputed effect for a coached seeker uses the uncoached model, and the reverse. The X-learner is strongest when one arm is much larger than the other.</p></aside>
+</section>
+
+<section class="slide" data-label="Results" id="learners-against-truth" data-lo="LO2">
+  <div class="kicker">Lab 2.1, 2,400 held-out seekers</div>
+  <h2>Against the generator's truth, the X-learner made the smallest error</h2>
+  <table class="t">
+    <tr><th>Learner</th><th class="num">Error (PEHE)</th><th class="num">Correlation</th><th class="num">Mean</th><th class="num">Spread</th></tr>
+    <tr><td>S-learner</td><td class="num">8.0</td><td class="num">0.65</td><td class="num">7.6</td><td class="num">6.1</td></tr>
+    <tr><td>T-learner</td><td class="num">8.9</td><td class="num">0.64</td><td class="num">8.5</td><td class="num">10.5</td></tr>
+    <tr class="hl"><td>X-learner</td><td class="num">7.0</td><td class="num">0.74</td><td class="num">8.5</td><td class="num">8.4</td></tr>
+    <tr><td>Truth</td><td class="num"></td><td class="num"></td><td class="num">9.9</td><td class="num">10.1</td></tr>
+  </table>
+  <p class="caption">Points of employment within six months. Error and correlation need the truth; real data give you only the last two columns.</p>
+  <aside class="notes"><p>From the course's full run of Lab 2.1. The linear base model of the stretch is much worse (correlations near 0.3): the true effect peaks at about a year unemployed, a shape no straight line follows. Ask: on real data, how would you have chosen between these three? Session 3 answers.</p></aside>
+</section>
+
+<section class="slide" id="check-meta-learners" data-lo="LO2">
+  <div class="kicker">Checkpoint</div>
+  <h2>Why might the S-learner report almost no difference between seekers?</h2>
+  <div class="quiz" data-type="single" data-lo="LO2">
+    <p class="lead">A colleague's S-learner on the pilot gives nearly the same effect, about 8 points, for every seeker. The trial was 1:1 and large. What is the most likely reason?</p>
+    <div class="opts">
+      <div class="opt" data-why="Takes a model's output as a fact about the world">Coaching truly has the same effect for everyone</div>
+      <div class="opt" data-why="Blames confounding in a randomised pilot, where there is none">Confounding in the pilot has flattened the effects</div>
+      <div class="opt" data-why="Thinks the sample is the problem; the S-learner shrinks effects at any size">The pilot is too small for any learner to find differences</div>
+      <div class="opt" data-ok>The trees rarely split on the coaching column, so its interactions are shrunk away</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> The S-learner's regularisation treats coaching like any other feature; differences in effect need interactions with it, which shallow, regularised trees often leave out.</div>
+  </div>
+  <aside class="notes"><p>Answer: D. Option C is partly true for noisy data, but the T- and X-learners find the variation in the same pilot.</p></aside>
 </section>
 
 <section class="slide lab" id="lab-2-1" data-auto="lab" data-lab="2.1">
-  <aside class="notes">REPLACE: what to watch for while participants work, the typical problems, and the fallback for anyone who did not finish an earlier lab</aside>
+  <aside class="notes"><p>AI off. Common problems: fitting the S-learner without the coaching column; predicting the X-learner's second stage with a classifier (the imputed effects are continuous: use the regressor); computing the error on the training split. Each fit takes seconds.</p></aside>
 </section>
 
-<!-- Session 2 -->
+<!-- ======================= SESSION 2 ======================= -->
+<section class="slide section" id="s2" data-auto="section" data-session="2">
+  <aside class="notes"><p>Session 2 introduces a method designed for effects rather than adapted from prediction: the causal forest.</p></aside>
+</section>
 
-<section class="slide section" id="s2" data-auto="section" data-session="2"></section>
-
-<section class="slide" id="s2-idea" data-lo="LO2">
-  <div class="kicker">REPLACE: the question this slide answers</div>
-  <h2>REPLACE: one idea, stated as a sentence</h2>
+<section class="slide" data-label="Split on effects" id="split-on-effects" data-lo="LO2">
+  <div class="kicker">The causal forest's idea</div>
+  <h2>A causal forest splits where the effect changes, not where the outcome changes</h2>
   <div class="cols cols-2">
-    <ul class="bullets">
-      <li>REPLACE: at most six bullets, each a complete thought</li>
-      <li>REPLACE: bold the key phrase; numbers come from the lab run, not from memory</li>
-    </ul>
-    <div class="card c-teal"><h4>In the case study</h4><p class="small mb0">REPLACE: tie the idea to the case study and its data</p></div>
+    <div class="card c-coral flat"><h4>A prediction tree</h4><p class="small mb0">Splits on months unemployed because employment falls with it.</p></div>
+    <div class="card c-teal flat"><h4>A causal tree</h4><p class="small mb0">Splits on months unemployed only if coaching works differently on each side.</p></div>
   </div>
-  <div class="callout warn mt"><b>What goes wrong.</b> REPLACE: the failure participants will hit, and how to recognise it</div>
-  <aside class="notes">REPLACE: what to say, the demo to run, the question to ask the room, the common failure and its fix</aside>
+  <aside class="notes"><p>Wager and Athey (2018) proved the estimates are consistent and asymptotically normal; Athey, Tibshirani and Wager (2019) generalised the idea (grf). Sources: both papers are in the course sources.</p></aside>
 </section>
 
-<section class="slide" id="s2-steps" data-lo="LO2">
-  <div class="kicker">Step by step</div>
-  <h2>REPLACE: a process, shown one step per key press</h2>
-  <div class="flow">
-    <div class="step c-teal"><b>1 · REPLACE: name</b>REPLACE: what happens first</div>
-    <div class="arrow frag" data-frag="b">→</div><div class="step c-cyan frag" data-frag="b"><b>2 · REPLACE: name</b>REPLACE: the next piece</div>
-    <div class="arrow frag" data-frag="c">→</div><div class="step c-coral frag" data-frag="c"><b>3 · REPLACE: name</b>REPLACE: the result</div>
+<section class="slide" data-label="Local centring" id="local-centring" data-lo="LO2">
+  <div class="kicker">Two ingredients</div>
+  <h2>Local centring removes the outcome level; honesty keeps the splits from grading themselves</h2>
+  <div class="cols cols-2">
+    <div class="card c-cyan"><h4>Local centring</h4><p class="small mb0">Residualise <code>y</code> and <code>t</code> on <code>x</code> first, as in DML, so splits chase effects, not levels.</p></div>
+    <div class="card c-purple"><h4>Honesty</h4><p class="small mb0">Half of each subsample picks the splits; the other half estimates the leaf effects.</p></div>
   </div>
-  <div class="callout tip mt frag"><b>Takeaway.</b> REPLACE: the one sentence to remember</div>
-  <aside class="notes">Press once per step and say what each step adds before the next one appears. REPLACE: the example to walk through</aside>
+  <aside class="notes"><p>EconML's CausalForestDML does both: its model_y and model_t are the residualising models, fitted with cross-fitting. Honesty is on by default. Ask: in a 1:1 lottery, how much does residualising the treatment matter? Little, since e(x) is 0.5; on observational data it is essential.</p></aside>
+</section>
+
+<section class="slide" data-label="Code" id="causal-forest-code" data-lo="LO2">
+  <div class="kicker">EconML, as one example</div>
+  <h2>CausalForestDML fits the nuisance models and the forest in one call</h2>
+  <pre class="code s" data-file="D2_2_causal_forest.py"><code class="language-python">cf = CausalForestDML(
+    model_y=HistGradientBoostingRegressor(min_samples_leaf=40),
+    model_t=HistGradientBoostingClassifier(min_samples_leaf=40),
+    discrete_treatment=True, n_estimators=400,
+    min_samples_leaf=20, cv=5, random_state=U.SEED)
+cf.fit(y[tr], t[tr], X=X[tr])
+tau = cf.effect(X)</code></pre>
+  <div class="callout note mt"><b>Interchangeable.</b> grf for R is the reference implementation; CausalML offers uplift trees. The concepts carry over.</div>
+  <aside class="notes"><p>Version used: EconML 0.17.0. A fit on 3,600 seekers takes well under a minute on a laptop. cf.effect_interval gives intervals per seeker; we do not use them for targeting because Session 3's group checks are more reliable on a binary outcome.</p></aside>
+</section>
+
+<section class="slide" data-label="Drivers" id="importance-of-drivers" data-lo="LO2">
+  <div class="kicker">Lab 2.2, feature importances</div>
+  <h2>Months unemployed, distance and age drive most of the variation in effects</h2>
+  <div class="bars">
+    <div class="row"><span>Months unemployed</span><div class="bar c-teal" style="--w:90%"></div><span class="val">0.23</span></div>
+    <div class="row"><span>Distance to office</span><div class="bar c-cyan" style="--w:78%"></div><span class="val">0.20</span></div>
+    <div class="row"><span>Age</span><div class="bar c-coral" style="--w:54%"></div><span class="val">0.14</span></div>
+    <div class="row"><span>Risk score</span><div class="bar c-purple" style="--w:38%"></div><span class="val">0.10</span></div>
+    <div class="row"><span>Prior wage</span><div class="bar c-amber" style="--w:36%"></div><span class="val">0.09</span></div>
+  </div>
+  <p class="caption">Share of split importance, causal forest on the training split. The top five are the same with another seed.</p>
+  <aside class="notes"><p>From the course's full run. Importance says where effects vary, not which way, and not why. The risk score appears because it is a function of months unemployed: correlated features share importance. Digital skills, which matters in the truth, ranks sixth for the same reason.</p></aside>
+</section>
+
+<section class="slide" data-label="Profiles" id="effect-profiles" data-lo="LO2">
+  <div class="kicker">Lab 2.2, held-out seekers</div>
+  <h2>The effect peaks for seekers unemployed about a year; the forest sees the shape but flattens it</h2>
+  <figure class="figure">
+    <img src="../assets/effect_profiles.png" alt="Left: the forest's mean effect by months unemployed rises from 7 points to 12 at 7 to 14 months and falls back to 7; the true effect rises from minus 4 to 22 and falls to minus 1. Right: the forest's effect falls slowly from about 10 points at digital skills 0 to 8 at 10" width="1000">
+    <figcaption>Forest (solid) against the generator's truth (dashed). Right: forest effect by digital skills, in points.</figcaption>
+  </figure>
+  <aside class="notes"><p>The newly unemployed lose from coaching in the truth (minus 4 points: coaching delays their job search); the forest says plus 7. A forest averages over leaves and shrinks extremes. Session 3 measures that shrinkage on held-out data without the truth.</p></aside>
+</section>
+
+<section class="slide" data-label="Limits" id="importance-is-not-cause" data-lo="LO2">
+  <div class="kicker">What not to say</div>
+  <h2>A driver of effect variation is a description, not a lever</h2>
+  <ul class="bullets">
+    <li>"Distance matters" does not mean moving seekers closer would raise the effect.</li>
+    <li>Correlated covariates share importance: risk score and months unemployed.</li>
+    <li>A zero importance may mean a correlated column took the splits.</li>
+    <li>Say who gains more, and stop there until a trial tests a change.</li>
+  </ul>
+  <aside class="notes"><p>The effects are causal (coaching against no coaching); the variation across covariates is not. Months unemployed is a moderator, not a treatment. This distinction comes back in Lab 3.4, where an analyst treats a post-treatment variable as a driver.</p></aside>
+</section>
+
+<section class="slide" id="check-causal-forest" data-lo="LO2">
+  <div class="kicker">Checkpoint</div>
+  <h2>What does honesty protect against?</h2>
+  <div class="quiz" data-type="single" data-lo="LO2">
+    <p class="lead">An analyst grows a causal tree on all 3,600 training seekers and estimates each leaf's effect on the same seekers that chose the splits. What goes wrong?</p>
+    <div class="opts">
+      <div class="opt" data-ok>Leaf effects are exaggerated, because the splits were chosen where the noise made effects look large</div>
+      <div class="opt" data-why="Confuses honesty with residualising, which handles the outcome level">The splits follow employment levels rather than effects</div>
+      <div class="opt" data-why="Thinks honesty is about confounding; the pilot was randomised">The estimates are confounded by who was coached</div>
+      <div class="opt" data-why="Believes reusing data only costs computing time">The fit takes twice as long as it needs to</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> A split search finds the cut where the observed difference is largest, noise included; estimating on the same seekers reports that noise as effect.</div>
+  </div>
+  <aside class="notes"><p>Answer: A. This is the same fault as the analyst's dredged subgroup in Lab 3.4, on a smaller scale.</p></aside>
 </section>
 
 <section class="slide lab" id="lab-2-2" data-auto="lab" data-lab="2.2">
-  <aside class="notes">REPLACE: what to watch for while participants work, the typical problems, and the fallback for anyone who did not finish an earlier lab</aside>
+  <aside class="notes"><p>Common problems: passing the treatment as a float without discrete_treatment=True; computing profiles on the training split; reading importance as direction. Early finishers: refit with another seed and compare the top five.</p></aside>
 </section>
 
-<!-- Session 3 -->
+<!-- ======================= SESSION 3 ======================= -->
+<section class="slide section" id="s3" data-auto="section" data-session="3">
+  <aside class="notes"><p>Session 3 is the most important of the day: how to know whether an effect model can be trusted without a truth column.</p></aside>
+</section>
 
-<section class="slide section" id="s3" data-auto="section" data-session="3"></section>
-
-<section class="slide" id="s3-idea" data-lo="LO2">
-  <div class="kicker">REPLACE: the question this slide answers</div>
-  <h2>REPLACE: one idea, stated as a sentence</h2>
+<section class="slide" data-label="No truth" id="no-truth-column" data-lo="LO2 LO5">
+  <div class="kicker">The problem</div>
+  <h2>Individual effects are never observed, so an effect model cannot be scored seeker by seeker</h2>
   <div class="cols cols-2">
     <ul class="bullets">
-      <li>REPLACE: at most six bullets, each a complete thought</li>
-      <li>REPLACE: bold the key phrase; numbers come from the lab run, not from memory</li>
+      <li>No row has both outcomes: the usual test set metrics do not exist.</li>
+      <li>Groups do have observable effects, if the groups were randomised.</li>
+      <li>So validation compares <b>groups defined by the prediction</b> with their observed effects.</li>
     </ul>
-    <div class="card c-teal"><h4>In the case study</h4><p class="small mb0">REPLACE: tie the idea to the case study and its data</p></div>
+    <div class="card c-teal"><h4>Held out and randomised</h4><p class="small mb0">2,400 pilot seekers the models never saw, coached by the same lottery.</p></div>
   </div>
-  <div class="callout warn mt"><b>What goes wrong.</b> REPLACE: the failure participants will hit, and how to recognise it</div>
-  <aside class="notes">REPLACE: what to say, the demo to run, the question to ask the room, the common failure and its fix</aside>
+  <aside class="notes"><p>This is the logic of Chernozhukov, Demirer, Duflo and Fernández-Val: use the prediction only to form groups, then estimate group effects with the experiment. Sources: arXiv 1712.04802.</p></aside>
 </section>
 
-<section class="slide" id="s3-steps" data-lo="LO2">
-  <div class="kicker">Step by step</div>
-  <h2>REPLACE: a process, shown one step per key press</h2>
-  <div class="flow">
-    <div class="step c-teal"><b>1 · REPLACE: name</b>REPLACE: what happens first</div>
-    <div class="arrow frag" data-frag="b">→</div><div class="step c-cyan frag" data-frag="b"><b>2 · REPLACE: name</b>REPLACE: the next piece</div>
-    <div class="arrow frag" data-frag="c">→</div><div class="step c-coral frag" data-frag="c"><b>3 · REPLACE: name</b>REPLACE: the result</div>
+<section class="slide" data-label="Calibration" id="calibration-by-quintile" data-lo="LO2">
+  <div class="kicker">Check 1 · Calibration by group</div>
+  <h2>Sort by prediction into five groups and compare predicted with observed effects</h2>
+  <figure class="figure">
+    <img src="../assets/calibration.png" alt="Four panels of predicted against observed effects by quintile: all four rise with the prediction; the causal forest's predictions span only 5 to 14 points while observed effects span minus 4 to 25" width="1200">
+    <figcaption>Held-out pilot, five groups of about 480 seekers; bars are 95% intervals. Dashed: perfect calibration.</figcaption>
+  </figure>
+  <aside class="notes"><p>From the course's run of Lab 2.3. All four estimators rank: observed effects rise from the bottom group to the top. They differ in scale. The forest's points lie on a line far steeper than the diagonal: it is too timid. Each group's observed effect has a standard error of about 4.4 points, so do not read single dots.</p></aside>
+</section>
+
+<section class="slide" data-label="BLP" id="best-linear-predictor" data-lo="LO2">
+  <div class="kicker">Check 2 · The best linear predictor</div>
+  <h2>Regress an unbiased effect score on the prediction: a slope near 1 means right in scale</h2>
+  <table class="t">
+    <tr><th>Estimator</th><th class="num">Slope</th><th class="num">Standard error</th><th>Reading</th></tr>
+    <tr><td>S-learner</td><td class="num">1.35</td><td class="num">0.31</td><td>Signal; slightly timid</td></tr>
+    <tr><td>T-learner</td><td class="num">0.86</td><td class="num">0.18</td><td>Signal; slightly overconfident</td></tr>
+    <tr class="hl"><td>X-learner</td><td class="num">1.20</td><td class="num">0.23</td><td>Signal; close to calibrated</td></tr>
+    <tr><td>Causal forest</td><td class="num">3.14</td><td class="num">0.62</td><td>Signal; far too timid</td></tr>
+  </table>
+  <aside class="notes"><p>The score regressed is the doubly robust effect score, with outcome models cross-fitted within the held-out seekers; the plain inverse-probability score gives the same slopes with standard errors about twice as large. A slope of 0 would mean no signal at all. From the course's run of Lab 2.3.</p></aside>
+</section>
+
+<section class="slide" data-label="Ranking" id="ranking-top-fifth" data-lo="LO2 LO4">
+  <div class="kicker">Check 3 · Ranking where the budget cuts</div>
+  <h2>Every effect estimator's top fifth gained more than twice what the risk score's did</h2>
+  <div class="bars">
+    <div class="row"><span>X-learner</span><div class="bar c-teal" style="--w:85%"></div><span class="val">28.4</span></div>
+    <div class="row"><span>S-learner</span><div class="bar c-cyan" style="--w:84%"></div><span class="val">28.1</span></div>
+    <div class="row"><span>T-learner</span><div class="bar c-purple" style="--w:80%"></div><span class="val">26.7</span></div>
+    <div class="row"><span>Causal forest</span><div class="bar c-amber" style="--w:75%"></div><span class="val">25.1</span></div>
+    <div class="row"><span>Risk score</span><div class="bar c-coral" style="--w:34%"></div><span class="val">11.5</span></div>
   </div>
-  <div class="callout tip mt frag"><b>Takeaway.</b> REPLACE: the one sentence to remember</div>
-  <aside class="notes">Press once per step and say what each step adds before the next one appears. REPLACE: the example to walk through</aside>
+  <p class="caption">Observed effect in each ranking's top fifth, held-out pilot, points. Each has a standard error near 4.4.</p>
+  <aside class="notes"><p>The four estimators cannot be told apart by this check alone: their differences are smaller than one standard error. The risk score's top fifth is clearly worse. A rank-weighted average treatment effect (RATE, Yadlowsky and co-authors) summarises the whole ranking in one number; the Qini area of Session 4 is a close relative.</p></aside>
+</section>
+
+<section class="slide" data-label="Choosing" id="choose-with-reasons" data-lo="LO2 LO5">
+  <div class="kicker">The choice</div>
+  <h2>Choose the estimator that ranks well and is right in scale, and say what the truth showed afterwards</h2>
+  <div class="cols cols-2">
+    <div class="card c-teal"><h4>Chosen: X-learner</h4><p class="small mb0">Top fifth 28.4 points; slope 1.20; quintiles rise in order.</p></div>
+    <div class="card c-navy tint"><h4>Then the truth</h4><p class="small mb0">Smallest error (7.0) and true top-fifth gain of 20.8 points, against 21.0 for the forest.</p></div>
+  </div>
+  <div class="callout warn mt"><b>What goes wrong.</b> Validating on the training seekers: every flexible estimator looks calibrated on the data it fitted.</div>
+  <aside class="notes"><p>The observed top-fifth effects (25 to 28 points) are higher than the true ones (about 21) because the held-out sample happened to show a larger average effect, 13.5 points against a true 10.2. Two thousand four hundred seekers is not many for a binary outcome: this is why the checks are combined, and why Day 4 ends in a trial.</p></aside>
+</section>
+
+<section class="slide" id="check-validation" data-lo="LO2">
+  <div class="kicker">Checkpoint</div>
+  <h2>What does a best-linear-predictor slope of 3 tell you?</h2>
+  <div class="quiz" data-type="single" data-lo="LO2">
+    <p class="lead">On held-out randomised seekers, an estimator's predicted effects range from 5 to 14 points and its best-linear-predictor slope is 3.1 (standard error 0.6). What do you conclude?</p>
+    <div class="opts">
+      <div class="opt" data-why="Reads any slope far from 1 as failure; a steep slope still means strong signal">The estimator has no useful signal</div>
+      <div class="opt" data-ok>It ranks seekers well, but real differences are about three times larger than it predicts</div>
+      <div class="opt" data-why="Inverts the slope: below 1 would mean overconfident">It exaggerates differences between seekers</div>
+      <div class="opt" data-why="Treats calibration of scale as a property of the average, not of differences">Its average effect is three times too small</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> The slope scales differences around the mean: each point of predicted difference brings about three points of observed difference.</div>
+  </div>
+  <aside class="notes"><p>Answer: B. This is the course's causal forest. For a fixed budget it would still select a good top fifth; for a decision that compares an effect with a cost per place, its numbers would mislead.</p></aside>
 </section>
 
 <section class="slide lab" id="lab-2-3" data-auto="lab" data-lab="2.3">
-  <aside class="notes">REPLACE: what to watch for while participants work, the typical problems, and the fallback for anyone who did not finish an earlier lab</aside>
+  <aside class="notes"><p>The lab starts from data/reference/cate_pilot.csv, so nobody depends on Labs 2.1 or 2.2. Common problems: using the training split; computing the BLP without centring the prediction; choosing by the truth table, which is printed only after the choice. Early finishers: the bootstrap stretch shows how often the choice would change.</p></aside>
 </section>
 
-<!-- Session 4 -->
+<!-- ======================= SESSION 4 ======================= -->
+<section class="slide section" id="s4" data-auto="section" data-session="4">
+  <aside class="notes"><p>Session 4 turns a validated ranking into places: curves, a threshold, and the seekers who would gain or lose a place if the agency switched.</p></aside>
+</section>
 
-<section class="slide section" id="s4" data-auto="section" data-session="4"></section>
+<section class="slide" data-label="Uplift" id="uplift-by-share" data-lo="LO2 LO4">
+  <div class="kicker">Lab 2.4, held-out pilot</div>
+  <h2>The top tenth by estimated benefit gained 33 points; by risk, 5</h2>
+  <table class="t">
+    <tr><th>Share coached</th><th class="num">10%</th><th class="num">20%</th><th class="num">30%</th><th class="num">50%</th><th class="num">100%</th></tr>
+    <tr class="hl"><td>By estimated benefit</td><td class="num">33.4</td><td class="num">25.1</td><td class="num">28.6</td><td class="num">22.7</td><td class="num">13.5</td></tr>
+    <tr><td>By risk score</td><td class="num">4.6</td><td class="num">11.5</td><td class="num">11.7</td><td class="num">13.2</td><td class="num">13.5</td></tr>
+  </table>
+  <p class="caption">Observed effect among the top share, in points. Causal forest predictions; at 100% both rankings coach everyone.</p>
+  <aside class="notes"><p>From the course's run of Lab 2.4. The benefit column should fall as the share grows; here 30% is above 20%, which is noise of about 4 points. Ask the room what they would tell the director about that bump: nothing, it is within the noise.</p></aside>
+</section>
 
-<section class="slide" id="s4-idea" data-lo="LO2">
-  <div class="kicker">REPLACE: the question this slide answers</div>
-  <h2>REPLACE: one idea, stated as a sentence</h2>
+<section class="slide" data-label="Qini" id="qini-curves" data-lo="LO2 LO4">
+  <div class="kicker">The whole ranking at once</div>
+  <h2>The Qini curve of estimated benefit stays above random; the risk score's hugs the line</h2>
+  <figure class="figure">
+    <img src="../assets/qini.png" alt="Qini curves: the benefit ranking rises steeply to 2.4 extra employed per 100 seekers at 20% coached and stays above the random line; the risk ranking stays on or below the random line until 60%" width="900">
+    <figcaption>Extra employed per 100 seekers in the population, when the top share is coached. Dotted line: one place in five.</figcaption>
+  </figure>
+  <aside class="notes"><p>The Qini curve counts extra employed among the coached in the top share, per seeker in the population. In the pilot half of the top fifth was coached, so its height at 20% is about 0.2 × 0.5 × 25 points, or 2.5 per 100 seekers. Qini area: 15.1 per thousand seekers for benefit, 0.6 for risk. Sources: CausalML documentation on uplift; Yadlowsky et al. on RATE.</p></aside>
+</section>
+
+<section class="slide" data-label="Threshold" id="threshold-for-the-budget" data-lo="LO4">
+  <div class="kicker">From a rank to a rule</div>
+  <h2>Offer coaching when the estimated benefit is at least 11.6 points</h2>
   <div class="cols cols-2">
+    <div class="stat center"><div class="big">11.6</div><div class="lbl">points: the threshold that selects one seeker in five</div></div>
     <ul class="bullets">
-      <li>REPLACE: at most six bullets, each a complete thought</li>
-      <li>REPLACE: bold the key phrase; numbers come from the lab run, not from memory</li>
+      <li>Next year's seekers arrive one at a time; a threshold decides each.</li>
+      <li>Watch the share above it: if it drifts from 20%, the population changed.</li>
+      <li>Observed effect above it on the held-out pilot: 25.2 points.</li>
     </ul>
-    <div class="card c-teal"><h4>In the case study</h4><p class="small mb0">REPLACE: tie the idea to the case study and its data</p></div>
   </div>
-  <div class="callout warn mt"><b>What goes wrong.</b> REPLACE: the failure participants will hit, and how to recognise it</div>
-  <aside class="notes">REPLACE: what to say, the demo to run, the question to ask the room, the common failure and its fix</aside>
+  <aside class="notes"><p>The threshold is in the forest's units, which Session 3 showed are compressed: the real effects above it are larger than 11.6. That does not matter for a ranking under a budget, but it would matter for a cost-per-place argument with finance.</p></aside>
 </section>
 
-<section class="slide" id="s4-steps" data-lo="LO2">
-  <div class="kicker">Step by step</div>
-  <h2>REPLACE: a process, shown one step per key press</h2>
-  <div class="flow">
-    <div class="step c-teal"><b>1 · REPLACE: name</b>REPLACE: what happens first</div>
-    <div class="arrow frag" data-frag="b">→</div><div class="step c-cyan frag" data-frag="b"><b>2 · REPLACE: name</b>REPLACE: the next piece</div>
-    <div class="arrow frag" data-frag="c">→</div><div class="step c-coral frag" data-frag="c"><b>3 · REPLACE: name</b>REPLACE: the result</div>
+<section class="slide" data-label="Who changes" id="places-change-hands" data-lo="LO4">
+  <div class="kicker">If the agency switched</div>
+  <h2>84% of the places would go to different seekers, and about 117 more per thousand would find work</h2>
+  <div class="cols cols-3 gap-s">
+    <div class="stat center"><div class="big">84%</div><div class="lbl">of the benefit fifth is not in the risk fifth</div></div>
+    <div class="stat center"><div class="big">21.0</div><div class="lbl">true gain, benefit fifth (points)</div></div>
+    <div class="stat center"><div class="big">9.3</div><div class="lbl">true gain, risk fifth (points)</div></div>
   </div>
-  <div class="callout tip mt frag"><b>Takeaway.</b> REPLACE: the one sentence to remember</div>
-  <aside class="notes">Press once per step and say what each step adds before the next one appears. REPLACE: the example to walk through</aside>
+  <div class="callout warn mt"><b>Who loses a place.</b> Most of the risk fifth: the long-term unemployed and the least qualified. Day 4 asks whether that is acceptable, and audits it.</div>
+  <aside class="notes"><p>From the course's run of Lab 2.4, using the generator's truth. Say it plainly: a rule that maximises jobs moves places away from the people the agency now prioritises. That is a value choice for the director, not a modelling result; the data scientist's job is to show it clearly.</p></aside>
+</section>
+
+<section class="slide" id="check-qini" data-lo="LO2 LO4">
+  <div class="kicker">Checkpoint</div>
+  <h2>What does a Qini curve check?</h2>
+  <div class="quiz" data-type="single" data-lo="LO2">
+    <p class="lead">An estimator's Qini curve lies well above the random line at every share. Which claim does that support?</p>
+    <div class="opts">
+      <div class="opt" data-why="Confuses ranking with calibration in scale">Its predicted effects are correct in size</div>
+      <div class="opt" data-why="Treats a curve on one sample as proof for every population">It will rank next year's seekers just as well</div>
+      <div class="opt" data-ok>Coaching its top seekers first yields more extra jobs than random allocation</div>
+      <div class="opt" data-why="Takes a curve that dominates random for one that dominates every alternative">No other ranking could do better at any budget</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> A Qini curve measures how the ranking concentrates the effect; it says nothing about the scale of the predictions or about other rankings.</div>
+  </div>
+  <aside class="notes"><p>Answer: C. Option B is the bridge to Day 4: whether the ranking holds next year is what the confirmatory trial tests.</p></aside>
 </section>
 
 <section class="slide lab" id="lab-2-4" data-auto="lab" data-lab="2.4">
-  <aside class="notes">REPLACE: what to watch for while participants work, the typical problems, and the fallback for anyone who did not finish an earlier lab</aside>
+  <aside class="notes"><p>Common problems: ranking ascending instead of descending; computing the Qini curve on the training split; reading the curve's height as the effect in the top share. Early finishers: the three budgets stretch, and the question of why the 30% value is above the 20% one.</p></aside>
 </section>
 
-<section class="slide" id="wrap-up">
-  <div class="kicker">Day 2 · wrap-up</div>
-  <h2>Three things to keep</h2>
-  <div class="cols cols-3">
-    <div class="card c-teal"><h4>Remember</h4><p class="small mb0">REPLACE: one idea participants keep</p></div>
-    <div class="card c-coral"><h4>Remember</h4><p class="small mb0">REPLACE: one idea participants keep</p></div>
-    <div class="card c-purple"><h4>Remember</h4><p class="small mb0">REPLACE: one idea participants keep</p></div>
+<!-- ======================= CLOSING ======================= -->
+<section class="slide" data-label="Recap" id="day-2-recap">
+  <div class="kicker">Day 2 recap</div>
+  <h2>Effects per seeker are estimated, then validated on randomised data, then turned into a threshold</h2>
+  <div class="cols cols-3 gap-s">
+    <div class="card c-teal"><h4>Estimate</h4><p class="small mb0">S, T, X and a causal forest; regularise hard on a small pilot.</p></div>
+    <div class="card c-cyan"><h4>Validate</h4><p class="small mb0">Calibration by group, the best linear predictor, the top fifth, on held-out seekers.</p></div>
+    <div class="card c-coral"><h4>Target</h4><p class="small mb0">Qini curves and a threshold; 84% of places would change hands.</p></div>
   </div>
+  <aside class="notes"><p>Ask each table for the one check they would insist on before any rule is used. Good answer: the observed effect in the selected group, on randomised data the model never saw.</p></aside>
 </section>
 
-<section class="slide dark" id="next" data-label="Next">
-  <div class="kicker">Next</div>
-  <h2>Day 3: Evaluating rules before using them</h2>
-  <p class="lead">REPLACE: what participants prepare before then; unfinished labs can be finished at home</p>
-  <aside class="notes">REPLACE: accounts, installs or reading participants need before the next unit</aside>
+<section class="slide dark" data-label="Tomorrow" id="tomorrow-rules-offline">
+  <div class="kicker">Tomorrow · Day 3</div>
+  <h2>Evaluating rules before using them</h2>
+  <p class="lead">Tomorrow you value current practice and three candidate rules on 40,000 logged decisions with inverse propensity and augmented estimators, find the estimates you should not believe, and review an analyst's subgroup claim.</p>
+  <aside class="notes"><p>Day 3 labs start from data/reference/cate_logged.csv.gz, the course's effect predictions for every logged decision, so no one depends on today's results.</p></aside>
 </section>

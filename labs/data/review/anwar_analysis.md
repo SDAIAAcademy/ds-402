@@ -12,10 +12,10 @@ coached and not coached seekers, and kept the cells with a p-value below 0.05.
 
 ## Findings
 
-1. **Seekers who attended four or more coaching sessions** gain 25.8 points over the
-   seekers who were not coached (n = 1556 coached seekers, p < 0.001). Coaching works when
+1. **Seekers who attended four or more coaching sessions** gain 27.0 points over the
+   seekers who were not coached (n = 1559 coached seekers, p < 0.001). Coaching works when
    seekers engage with it.
-2. **Men aged 40-44 in Sahil with secondary education** gain 42.9 points (n = 36, p = 0.005). This is our strongest
+2. **Men aged 40-44 in Sahil with secondary education** gain 49.5 points (n = 36, p = 0.001). This is our strongest
    demographic finding.
 3. 8 of the 60 cells had p < 0.05. They are listed in the appendix as the targets
    for next year; in the other cells coaching showed no effect.

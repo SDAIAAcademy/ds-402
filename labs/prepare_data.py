@@ -115,9 +115,9 @@ def effect(df: pd.DataFrame) -> np.ndarray:
     """Coaching's effect on the chance of employment, before clipping: it peaks near a year unemployed."""
     mo = df["months_unemployed"].to_numpy()
     bump = np.exp(-((mo - 12) / 8.0) ** 2)
-    return (0.015 + 0.13 * bump + 0.05 * (df["digital_skills"] <= 3) + 0.04 * df["disability"]
-            + 0.03 * (df["age"] <= 29) - 0.03 * (df["education"] == 3) - 0.05 * (mo <= 2)
-            - 0.06 * (df["distance_km"] > 60)).to_numpy()
+    return (-0.02 + 0.22 * bump + 0.07 * (df["digital_skills"] <= 3) + 0.05 * df["disability"]
+            + 0.04 * (df["age"] <= 29) - 0.04 * (df["education"] == 3) - 0.08 * (mo <= 2)
+            - 0.08 * (df["distance_km"] > 60)).to_numpy()
 
 
 def risk_score(df: pd.DataFrame) -> np.ndarray:

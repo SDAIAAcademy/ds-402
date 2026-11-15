@@ -2,18 +2,18 @@
   "about": "True values written by prepare_data.py. Real data never give you these.",
   "pilot": {
     "rows": 6000,
-    "ate": 0.0907,
-    "ate_test": 0.0896,
-    "share_harmed": 0.0978
+    "ate": 0.1022,
+    "ate_test": 0.0995,
+    "share_harmed": 0.1823
   },
   "logged": {
     "rows": 40000,
-    "ate": 0.0923,
-    "att": 0.1013,
-    "offer_rate": 0.1846,
-    "value_current_practice": 0.5736,
-    "value_treat_none": 0.5549,
-    "value_treat_all": 0.6472
+    "ate": 0.1046,
+    "att": 0.1165,
+    "offer_rate": 0.1856,
+    "value_current_practice": 0.5762,
+    "value_treat_none": 0.5546,
+    "value_treat_all": 0.6592
   },
   "planted": {
     "override_office": "RUM-2",
@@ -27,43 +27,43 @@
     "effect_peaks_at_months_unemployed": 12
   },
   "review": {
-    "f1_effect": 0.2579,
-    "f1_n": 1556,
+    "f1_effect": 0.2699,
+    "f1_n": 1559,
     "f2": {
       "region": "Sahil",
       "gender": "male",
       "age_band": "40-44",
       "education": 1,
       "n": 36,
-      "effect": 0.4286,
-      "p": 0.0051
+      "effect": 0.4952,
+      "p": 0.0008
     },
     "cells": 60,
     "cells_significant": 8,
-    "cells_bonferroni": 1
+    "cells_bonferroni": 2
   },
   "capstone": {
     "siraj-energy-visits": {
       "pilot": {
         "rows": 5000,
-        "treated_share": 0.4968,
-        "true_ate": 2.6952
+        "treated_share": 0.4972,
+        "true_ate": 2.6799
       },
       "logged": {
         "rows": 30000,
-        "treated_share": 0.1721,
-        "true_ate": 2.7112
+        "treated_share": 0.1713,
+        "true_ate": 2.7138
       }
     },
     "nakheel-inspections": {
       "pilot": {
         "rows": 3000,
-        "treated_share": 0.4937,
-        "true_ate": 0.0938
+        "treated_share": 0.4943,
+        "true_ate": 0.0939
       },
       "logged": {
         "rows": 15000,
-        "treated_share": 0.3019,
+        "treated_share": 0.2967,
         "true_ate": 0.0932
       }
     },

@@ -214,6 +214,19 @@ def gbm_regressor(seed: int = 0):
                                          min_samples_leaf=40, random_state=SEED + seed)
 
 
+def pilot_classifier(seed: int = 0):
+    """The gradient boosting of the pilot labs: 3,600 training seekers and a binary outcome need strong regularisation."""
+    from sklearn.ensemble import HistGradientBoostingClassifier
+    return HistGradientBoostingClassifier(max_iter=150, learning_rate=0.03, max_leaf_nodes=15,
+                                          min_samples_leaf=200, random_state=SEED + seed)
+
+
+def pilot_regressor(seed: int = 0):
+    from sklearn.ensemble import HistGradientBoostingRegressor
+    return HistGradientBoostingRegressor(max_iter=150, learning_rate=0.03, max_leaf_nodes=15,
+                                         min_samples_leaf=200, random_state=SEED + seed)
+
+
 def folds(n: int, k: int = 5, seed: int = 0) -> np.ndarray:
     """A fold number for each of n rows, balanced and seeded."""
     f = np.arange(n) % k
@@ -293,12 +306,17 @@ def calibration_table(cate_hat, y, t, e=0.5, groups: int = 5, mu0=None, mu1=None
     return pd.DataFrame(rows)
 
 
-def blp_slope(cate_hat, y, t, e=0.5) -> tuple[float, float]:
-    """Best linear predictor check: regress the IPW effect score on the centred prediction.
+def blp_slope(cate_hat, y, t, e=0.5, mu0=None, mu1=None) -> tuple[float, float]:
+    """Best linear predictor check: regress a per-seeker effect score on the centred prediction.
+    With mu0 and mu1 (outcome predictions fitted without these seekers' own rows) the score is
+    doubly robust and much less noisy; without them it is the plain inverse-probability score.
     A slope near 1 says the predictions are calibrated in scale; near 0, they carry no signal."""
     import statsmodels.api as sm
     cate_hat, y, t = np.asarray(cate_hat, float), np.asarray(y, float), np.asarray(t, float)
-    score = y * (t / e - (1 - t) / (1 - e))
+    if mu0 is None:
+        score = y * (t / e - (1 - t) / (1 - e))
+    else:
+        score = dr_scores(y, t, e, mu0, mu1)
     Z = sm.add_constant(cate_hat - cate_hat.mean())
     fit = sm.OLS(score, Z).fit(cov_type="HC1")
     return float(fit.params[1]), float(fit.bse[1])

@@ -129,7 +129,7 @@
     {
       "id": "q-dml-02",
       "type": "single",
-      "prompt": "On 40,000 logged decisions, regression adjustment with 60 controls gives 11.3 points (10.1 to 12.4) and DoubleML gives 9.3 (7.9 to 10.6). Without knowing the truth, which reasoning should guide the report?",
+      "prompt": "On 40,000 logged decisions, regression adjustment with 60 controls gives 13.5 points (12.4 to 14.7) and DoubleML gives 10.8 (9.6 to 12.1). Without knowing the truth, which reasoning should guide the report?",
       "options": [
         "Report the regression: its interval is narrower",
         "Report the average of the two as a compromise",
@@ -160,12 +160,12 @@
     {
       "id": "q-sensitivity-01",
       "type": "single",
-      "prompt": "On the 2027 extract the DoubleML estimate is 11.6 points with a robustness value of 7.8%. What may you tell the director?",
+      "prompt": "On the 2027 extract the DoubleML estimate is 12.8 points with a robustness value of 8.5%. What may you tell the director?",
       "options": [
-        "Coaching raised employment by 11.6 points, whatever is missing from the data",
-        "A hidden factor explaining under 7.8% of the remaining variation of both the offer and employment cannot erase the effect",
-        "There is a 7.8% chance that the effect is zero",
-        "The bias from the missing column is at most 7.8 points"
+        "Coaching raised employment by 12.8 points, whatever is missing from the data",
+        "A hidden factor explaining under 8.5% of the remaining variation of both the offer and employment cannot erase the effect",
+        "There is an 8.5% chance that the effect is zero",
+        "The bias from the missing column is at most 8.5 points"
       ],
       "correct": [
         1
@@ -191,7 +191,7 @@
     {
       "id": "q-learners-01",
       "type": "single",
-      "prompt": "Four nuisance learners give DML estimates from 9.3 to 12.8 points. How should the learner for the report be chosen?",
+      "prompt": "Four nuisance learners give DML estimates from 11.0 to 14.2 points. How should the learner for the report be chosen?",
       "options": [
         "By the lowest out-of-fold losses of the propensity and outcome models, fixed before seeing the estimates",
         "By the estimate closest to what the caseworkers expect",
@@ -215,6 +215,223 @@
       "session": 4,
       "slide": "choose-by-loss",
       "level": "apply",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-meta-01",
+      "type": "single",
+      "prompt": "In the X-learner on a 1:1 pilot, what is the imputed effect for a coached seeker who found work?",
+      "options": [
+        "1 minus the coached model's predicted chance for her",
+        "1 minus the uncoached model's predicted chance for her",
+        "The uncoached model's predicted chance minus 1",
+        "The difference between the two models' predictions for her"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "For a coached seeker the missing outcome is the uncoached one, so the imputed effect is her observed outcome minus the uncoached model's prediction.",
+      "misconceptions": [
+        "Uses her own arm's model, which predicts her observed outcome, not her missing one",
+        "",
+        "Reverses the sign used for the coached arm",
+        "Describes the T-learner, not the imputation step"
+      ],
+      "lo": [
+        "LO2"
+      ],
+      "day": "day2",
+      "session": 1,
+      "slide": "x-learner-steps",
+      "level": "apply",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-meta-02",
+      "type": "single",
+      "prompt": "A T-learner fitted with lightly regularised boosting on 1,800 seekers per arm predicts effects from minus 40 to plus 60 points. The true effects range from minus 10 to plus 30. What is the most likely cause?",
+      "options": [
+        "Each arm's model fits its own noise, and the difference of two noisy predictions exaggerates heterogeneity",
+        "Confounding between the arms in the pilot",
+        "The outcome is binary, so effects cannot be estimated",
+        "The T-learner always shrinks effects towards zero"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Two separately fitted models subtract their errors; with weak regularisation the spread of predicted effects is mostly noise.",
+      "misconceptions": [
+        "",
+        "Blames confounding in a lottery",
+        "Treats a binary outcome as a barrier rather than a source of noise",
+        "Describes the S-learner's failure, the opposite of this one"
+      ],
+      "lo": [
+        "LO2"
+      ],
+      "day": "day2",
+      "session": 1,
+      "slide": "t-learner-noise",
+      "level": "analyze",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-forest-01",
+      "type": "single",
+      "prompt": "The causal forest ranks distance to the office as the second driver of effect variation. A manager proposes moving coaching closer to remote seekers to raise its effect. What do you say?",
+      "options": [
+        "Agree: the forest shows distance causes smaller effects",
+        "Disagree: importance describes where effects differ, not what would happen if distance changed; a trial of the change would tell",
+        "Disagree: importance near the top is always an artefact of correlated features",
+        "Agree, if the forest's importance has a confidence interval above zero"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "The effect of coaching is causal; how it varies with distance is a description, and moving the service is a different intervention.",
+      "misconceptions": [
+        "Reads a moderator as a lever that can be changed",
+        "",
+        "Overgeneralises a real caveat into a rule",
+        "Thinks statistical precision turns a description into a causal claim about a different intervention"
+      ],
+      "lo": [
+        "LO2"
+      ],
+      "day": "day2",
+      "session": 2,
+      "slide": "importance-is-not-cause",
+      "level": "evaluate",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-validate-01",
+      "type": "single",
+      "prompt": "You want to check whether an effect model trained on the pilot's training split can be trusted. Which check is valid?",
+      "options": [
+        "Compare its predictions with the observed outcomes of the training seekers",
+        "Sort the held-out randomised seekers into groups by prediction and compare each group's coached-minus-uncoached difference with its mean prediction",
+        "Compute the correlation between its predictions and the risk score",
+        "Report its R-squared on the held-out outcomes"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Individual effects are never observed, but group effects on held-out randomised data are, so groups formed by the prediction can be checked.",
+      "misconceptions": [
+        "Uses outcomes, which are not effects, and seekers the model has seen",
+        "",
+        "Checks agreement with another model, not with effects",
+        "Measures outcome prediction, not effect prediction"
+      ],
+      "lo": [
+        "LO2"
+      ],
+      "day": "day2",
+      "session": 3,
+      "slide": "calibration-by-quintile",
+      "level": "apply",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-validate-02",
+      "type": "single",
+      "prompt": "On held-out seekers, estimator A has a best-linear-predictor slope of 0.9 (se 0.2) and estimator B a slope of 0.1 (se 0.2). Both have the same mean prediction. Which conclusion holds?",
+      "options": [
+        "A's predictions carry real signal about differences in effect; B's carry almost none",
+        "B is better calibrated because its slope is closer to zero",
+        "Both are equally useful because their averages agree",
+        "A overstates differences by 10%"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The slope measures how much observed differences follow predicted ones: near 1 is calibrated, near 0 is no signal.",
+      "misconceptions": [
+        "",
+        "Thinks the target slope is zero",
+        "Judges an effect model by its average, which says nothing about targeting",
+        "Reads a slope below 1, within one standard error, as a precise overstatement"
+      ],
+      "lo": [
+        "LO2"
+      ],
+      "day": "day2",
+      "session": 3,
+      "slide": "best-linear-predictor",
+      "level": "evaluate",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-qini-01",
+      "type": "single",
+      "prompt": "Why do the Qini curves of every ranking end at the same point?",
+      "options": [
+        "Because every ranking was trained on the same data",
+        "Because at 100% every ranking coaches everyone, so the extra employed equal the whole effect",
+        "Because the curves are normalised to end at 1",
+        "Because random allocation is the best any ranking can do at full budget"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "At full budget the ranking no longer matters: everyone is coached.",
+      "misconceptions": [
+        "Confuses training data with the end point of the curve",
+        "",
+        "Assumes a normalisation the Qini curve does not use",
+        "Reads the shared end point as a limit on rankings"
+      ],
+      "lo": [
+        "LO2"
+      ],
+      "day": "day2",
+      "session": 4,
+      "slide": "qini-curves",
+      "level": "understand",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-uplift-01",
+      "type": "single",
+      "prompt": "Switching from ranking by risk to ranking by estimated benefit would move 84% of the places to different seekers and raise the jobs found. What is the data scientist's responsibility here?",
+      "options": [
+        "Recommend the switch: more jobs settle the question",
+        "Recommend keeping the risk score, because changing who gets support is unfair",
+        "Show who gains and who loses a place, with the jobs at stake, and leave the choice of priority to the decision owner with an audit",
+        "Average the two rankings to split the difference"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Who should be prioritised is a value choice; the analysis makes the trade-off visible and audited.",
+      "misconceptions": [
+        "Treats a value choice about who receives support as a technical result",
+        "Decides the value question in the other direction without showing the trade-off",
+        "",
+        "Mixes two rules without measuring what the mixture buys or costs"
+      ],
+      "lo": [
+        "LO4"
+      ],
+      "day": "day2",
+      "session": 4,
+      "slide": "places-change-hands",
+      "level": "evaluate",
       "pool": "practice",
       "weight": 1,
       "timer": 90
