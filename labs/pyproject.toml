@@ -1,0 +1,20 @@
+[project]
+name = "ds-402-labs"
+version = "2027.1.0"
+description = "Lab notebooks for the SDAIA Academy course DS-402 Causal Machine Learning and Policy Evaluation"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "scipy>=1.14",
+    "scikit-learn>=1.5",
+    "statsmodels>=0.14.4",
+    "matplotlib>=3.9",
+    "doubleml>=0.11",
+    "econml>=0.16",
+    "fairlearn>=0.13",
+    "jupyterlab>=4.4",
+]
+
+[tool.uv]
+package = false

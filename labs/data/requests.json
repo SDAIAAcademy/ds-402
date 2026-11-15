@@ -1,0 +1,17 @@
+{
+  "from": "Wijdan Al-Hazzaa, director of employment services",
+  "questions": [
+    {
+      "id": "Q1",
+      "text": "Did coaching help the job seekers we offered it to in 2025 and 2026?"
+    },
+    {
+      "id": "Q2",
+      "text": "Next year we have one coaching place for every five job seekers. Who should get them?"
+    },
+    {
+      "id": "Q3",
+      "text": "Our risk score finds the people least likely to find work. Should places go to the highest scores?"
+    }
+  ]
+}

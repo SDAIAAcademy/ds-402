@@ -1,0 +1,79 @@
+{
+  "about": "True values written by prepare_data.py. Real data never give you these.",
+  "pilot": {
+    "rows": 6000,
+    "ate": 0.0907,
+    "ate_test": 0.0896,
+    "share_harmed": 0.0978
+  },
+  "logged": {
+    "rows": 40000,
+    "ate": 0.0923,
+    "att": 0.1013,
+    "offer_rate": 0.1846,
+    "value_current_practice": 0.5736,
+    "value_treat_none": 0.5549,
+    "value_treat_all": 0.6472
+  },
+  "planted": {
+    "override_office": "RUM-2",
+    "never_offered": [
+      "disability in Rumh or Nijad",
+      "more than 36 months unemployed",
+      "older than 55"
+    ],
+    "hidden_confounder_in_2027_extract": "motivation",
+    "far_from_office_km": 60,
+    "effect_peaks_at_months_unemployed": 12
+  },
+  "review": {
+    "f1_effect": 0.2579,
+    "f1_n": 1556,
+    "f2": {
+      "region": "Sahil",
+      "gender": "male",
+      "age_band": "40-44",
+      "education": 1,
+      "n": 36,
+      "effect": 0.4286,
+      "p": 0.0051
+    },
+    "cells": 60,
+    "cells_significant": 8,
+    "cells_bonferroni": 1
+  },
+  "capstone": {
+    "siraj-energy-visits": {
+      "pilot": {
+        "rows": 5000,
+        "treated_share": 0.4968,
+        "true_ate": 2.6952
+      },
+      "logged": {
+        "rows": 30000,
+        "treated_share": 0.1721,
+        "true_ate": 2.7112
+      }
+    },
+    "nakheel-inspections": {
+      "pilot": {
+        "rows": 3000,
+        "treated_share": 0.4937,
+        "true_ate": 0.0938
+      },
+      "logged": {
+        "rows": 15000,
+        "treated_share": 0.3019,
+        "true_ate": 0.0932
+      }
+    },
+    "fursa-coaching-2027": {
+      "pilot": {
+        "rows": 4000
+      },
+      "logged": {
+        "rows": 20000
+      }
+    }
+  }
+}
