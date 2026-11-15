@@ -3,166 +3,221 @@
   "version": 1,
   "questions": [
     {
-      "id": "q-example-1",
+      "id": "q-estimand-01",
       "type": "single",
-      "prompt": "REPLACE: a practice question on LO1, as a short scenario",
+      "prompt": "Duhaim, head of caseworkers, asks: \"Did coaching raise employment for the seekers my caseworkers chose to coach last year?\" Which summary answers him?",
       "options": [
-        "REPLACE: a wrong option that a common misconception makes tempting",
-        "REPLACE: the right answer",
-        "REPLACE: a wrong option that a common misconception makes tempting",
-        "REPLACE: a wrong option that a common misconception makes tempting"
+        "The average effect over every registered seeker",
+        "The effect on the seekers who were offered coaching",
+        "The value of the best rule under next year's budget",
+        "The difference in employment between coached and uncoached seekers"
       ],
       "correct": [
         1
       ],
-      "explanation": "REPLACE: why the right answer is right, in one sentence",
+      "explanation": "He asks about the seekers who were offered coaching, so the estimand is the effect on the offered (ATT), not the average over everyone.",
       "misconceptions": [
-        "REPLACE: the misconception behind this option",
+        "Answers for everyone, though he asked about the seekers his team chose",
         "",
-        "REPLACE: the misconception behind this option",
-        "REPLACE: the misconception behind this option"
+        "Answers a forward-looking decision, not a question about last year",
+        "Reads an observed difference as the effect, ignoring how caseworkers chose"
       ],
       "lo": [
         "LO1"
       ],
       "day": "day1",
       "session": 1,
+      "slide": "five-parts-of-an-estimand",
       "level": "apply",
       "pool": "practice",
-      "weight": 1
+      "weight": 1,
+      "timer": 90
     },
     {
-      "id": "q-example-2",
-      "type": "tf",
-      "prompt": "REPLACE: a statement on LO2 that is true",
-      "options": [
-        "True",
-        "False"
-      ],
-      "correct": [
-        0
-      ],
-      "explanation": "REPLACE: why the right answer is right, in one sentence",
-      "misconceptions": [
-        "",
-        "REPLACE: the misconception behind this option"
-      ],
-      "lo": [
-        "LO2"
-      ],
-      "day": "day1",
-      "session": 1,
-      "level": "understand",
-      "pool": "practice",
-      "weight": 1
-    },
-    {
-      "id": "q-example-3",
+      "id": "q-risk-benefit-01",
       "type": "single",
-      "prompt": "REPLACE: a practice question on LO3, as a short scenario",
+      "prompt": "A vendor shows that Fursa's risk score predicts unemployment at six months with an AUC of 0.85 and proposes giving places to the top fifth by score. What is the main flaw?",
       "options": [
-        "REPLACE: a wrong option that a common misconception makes tempting",
-        "REPLACE: the right answer",
-        "REPLACE: a wrong option that a common misconception makes tempting",
-        "REPLACE: a wrong option that a common misconception makes tempting"
+        "An AUC of 0.85 is too low for a public decision",
+        "The score was trained on old data and may have drifted",
+        "The score ranks by need without coaching, not by what coaching changes",
+        "Places should be given at random to be fair"
       ],
       "correct": [
-        1
+        2
       ],
-      "explanation": "REPLACE: why the right answer is right, in one sentence",
+      "explanation": "The score predicts the outcome without coaching; the places should follow the difference coaching makes, which is a different quantity.",
       "misconceptions": [
-        "REPLACE: the misconception behind this option",
+        "Treats the score's accuracy as the issue; a perfect score would have the same flaw",
+        "Names a real risk, but not the one that makes the ranking wrong",
         "",
-        "REPLACE: the misconception behind this option",
-        "REPLACE: the misconception behind this option"
-      ],
-      "lo": [
-        "LO3"
-      ],
-      "day": "day1",
-      "session": 1,
-      "level": "apply",
-      "pool": "practice",
-      "weight": 1
-    },
-    {
-      "id": "q-example-4",
-      "type": "tf",
-      "prompt": "REPLACE: a statement on LO4 that is true",
-      "options": [
-        "True",
-        "False"
-      ],
-      "correct": [
-        0
-      ],
-      "explanation": "REPLACE: why the right answer is right, in one sentence",
-      "misconceptions": [
-        "",
-        "REPLACE: the misconception behind this option"
+        "Confuses fairness of process with getting the most jobs from a budget"
       ],
       "lo": [
         "LO4"
       ],
       "day": "day1",
       "session": 1,
-      "level": "understand",
+      "slide": "risk-is-not-benefit",
+      "level": "analyze",
       "pool": "practice",
-      "weight": 1
+      "weight": 1,
+      "timer": 90
     },
     {
-      "id": "q-example-5",
+      "id": "q-overlap-01",
       "type": "single",
-      "prompt": "REPLACE: a practice question on LO5, as a short scenario",
+      "prompt": "In the logs, disabled seekers in Nijad were offered coaching in under 1% of decisions. A colleague still reports a doubly robust effect for them. What do you say?",
       "options": [
-        "REPLACE: a wrong option that a common misconception makes tempting",
-        "REPLACE: the right answer",
-        "REPLACE: a wrong option that a common misconception makes tempting",
-        "REPLACE: a wrong option that a common misconception makes tempting"
+        "The doubly robust estimator protects the estimate, so it can stand",
+        "The estimate for them rests on the outcome model's extrapolation; report it as such or not at all",
+        "Trim them out and report the trimmed effect as the effect for all seekers",
+        "Increase the number of folds so the group appears in every fold"
       ],
       "correct": [
         1
       ],
-      "explanation": "REPLACE: why the right answer is right, in one sentence",
+      "explanation": "Without offered seekers like them, no weighting or matching can compare; only a model's extrapolation speaks for them.",
       "misconceptions": [
-        "REPLACE: the misconception behind this option",
+        "Believes double robustness repairs a lack of overlap",
         "",
-        "REPLACE: the misconception behind this option",
-        "REPLACE: the misconception behind this option"
+        "Trims without saying that the estimand changed",
+        "Thinks a resampling choice can create data that were never collected"
       ],
       "lo": [
-        "LO5"
+        "LO1"
       ],
       "day": "day1",
-      "session": 1,
-      "level": "apply",
+      "session": 2,
+      "slide": "positivity",
+      "level": "analyze",
       "pool": "practice",
-      "weight": 1
+      "weight": 1,
+      "timer": 90
     },
     {
-      "id": "q-example-6",
-      "type": "tf",
-      "prompt": "REPLACE: a statement on LO6 that is true",
+      "id": "q-dml-01",
+      "type": "single",
+      "prompt": "Why does double machine learning use a score with residual corrections instead of averaging the difference of two outcome-model predictions?",
       "options": [
-        "True",
-        "False"
+        "The corrections make the estimate insensitive to small errors in the nuisance models",
+        "The corrections remove the need for a propensity model",
+        "The corrections make the estimate unbiased even with a hidden confounder",
+        "The corrections speed up the fitting of gradient boosting"
       ],
       "correct": [
         0
       ],
-      "explanation": "REPLACE: why the right answer is right, in one sentence",
+      "explanation": "The orthogonal score has zero derivative in the nuisance models at the truth, so their regularisation errors enter only to second order.",
       "misconceptions": [
         "",
-        "REPLACE: the misconception behind this option"
+        "Inverts the role of the corrections: they are built from the propensity model",
+        "Expects an estimator to fix information missing from the data",
+        "Mistakes a statistical property for a computational one"
       ],
       "lo": [
-        "LO6"
+        "LO1"
       ],
       "day": "day1",
-      "session": 1,
+      "session": 3,
+      "slide": "plug-in-bias",
       "level": "understand",
       "pool": "practice",
-      "weight": 1
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-dml-02",
+      "type": "single",
+      "prompt": "On 40,000 logged decisions, regression adjustment with 60 controls gives 11.3 points (10.1 to 12.4) and DoubleML gives 9.3 (7.9 to 10.6). Without knowing the truth, which reasoning should guide the report?",
+      "options": [
+        "Report the regression: its interval is narrower",
+        "Report the average of the two as a compromise",
+        "Report DoubleML: flexible nuisances and cross-fitting allow for nonlinear confounding that a linear model cannot follow",
+        "Report neither: the two disagree, so the data cannot answer"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "The regression assumes linear confounding; DoubleML does not, and its interval is valid under weaker assumptions.",
+      "misconceptions": [
+        "Treats a narrow interval as evidence of a correct model",
+        "Averages a biased and an unbiased estimator, keeping part of the bias",
+        "",
+        "Takes disagreement between a restrictive and a flexible model as a sign that nothing is identified"
+      ],
+      "lo": [
+        "LO1"
+      ],
+      "day": "day1",
+      "session": 3,
+      "slide": "estimate-table",
+      "level": "evaluate",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-sensitivity-01",
+      "type": "single",
+      "prompt": "On the 2027 extract the DoubleML estimate is 11.6 points with a robustness value of 7.8%. What may you tell the director?",
+      "options": [
+        "Coaching raised employment by 11.6 points, whatever is missing from the data",
+        "A hidden factor explaining under 7.8% of the remaining variation of both the offer and employment cannot erase the effect",
+        "There is a 7.8% chance that the effect is zero",
+        "The bias from the missing column is at most 7.8 points"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "The robustness value is the confounder strength, on both partial R2 scales, that would bring the estimate to zero.",
+      "misconceptions": [
+        "Reads a point estimate as robust to hidden confounding",
+        "",
+        "Reads the robustness value as a probability",
+        "Confuses the strength of a confounder with the size of the bias"
+      ],
+      "lo": [
+        "LO1"
+      ],
+      "day": "day1",
+      "session": 4,
+      "slide": "reading-the-bound",
+      "level": "evaluate",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-learners-01",
+      "type": "single",
+      "prompt": "Four nuisance learners give DML estimates from 9.3 to 12.8 points. How should the learner for the report be chosen?",
+      "options": [
+        "By the lowest out-of-fold losses of the propensity and outcome models, fixed before seeing the estimates",
+        "By the estimate closest to what the caseworkers expect",
+        "By the smallest standard error",
+        "By the median of the four estimates"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Nuisance learners are judged by how well they predict, out of fold; choosing by the estimate invalidates the interval.",
+      "misconceptions": [
+        "",
+        "Lets the desired answer choose the method: a forking path",
+        "Treats precision as accuracy",
+        "Averages over learners known to be poor, keeping their bias"
+      ],
+      "lo": [
+        "LO1"
+      ],
+      "day": "day1",
+      "session": 4,
+      "slide": "choose-by-loss",
+      "level": "apply",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
     }
   ]
 }
