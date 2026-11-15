@@ -105,7 +105,7 @@ print(w1.mean(), w0.mean())</code></pre>
     <p class="lead">In an agency's logs, the mean of offered divided by the recorded probability is 1.15, with a standard error of 0.02. What follows?</p>
     <div class="opts">
       <div class="opt" data-why="Thinks the check measures coaching's effect rather than the records">Coaching raised employment by 15%</div>
-      <div class="opt" data-ok>More offers happened than the records predict, somewhere: the probabilities understate them</div>
+      <div class="opt" data-ok>More offers happened than recorded: some probabilities are too low</div>
       <div class="opt" data-why="Reads a 15% gap as sampling noise despite eight standard errors">Nothing: weights are noisy and a mean of 1.15 is normal</div>
       <div class="opt" data-why="Inverts the direction: a/p above 1 means p is too small">The tool records probabilities that are too high</div>
     </div>
@@ -188,7 +188,7 @@ value = np.mean(w * y)</code></pre>
     <div class="opts">
       <div class="opt" data-why="Thinks both parts must be right; one is enough">The estimate is biased, because the outcome model is wrong</div>
       <div class="opt" data-why="Confuses consistency with precision: a poor model costs variance, not validity">The estimate is right and as precise as with a good model</div>
-      <div class="opt" data-ok>The estimate stays consistent, but its interval is wider than with a good outcome model</div>
+      <div class="opt" data-ok>It stays consistent, with a wider interval</div>
       <div class="opt" data-why="Assumes the augmented estimator reduces to plain IPW whatever the model">The estimate equals the IPW value exactly</div>
     </div>
     <div class="callout tip why"><b>Why.</b> With correct weights the residual term corrects any outcome model on average; a poor model leaves larger residuals, so more variance.</div>
@@ -267,7 +267,7 @@ value = np.mean(w * y)</code></pre>
     <div class="opts">
       <div class="opt" data-why="Reads an unreliable estimate as evidence of no effect">Reject the rule: the logs show it adds nothing</div>
       <div class="opt" data-why="Treats clipping as a fix rather than a sensitivity check">Report the value clipped at 20 as the estimate</div>
-      <div class="opt" data-ok>Say the logs cannot value it, and propose a small randomised pilot with those groups</div>
+      <div class="opt" data-ok>Say the logs cannot value it; propose a small pilot</div>
       <div class="opt" data-why="Assumes an outcome model can stand in for missing data">Report the augmented value, which does not depend on the weights</div>
     </div>
     <div class="callout tip why"><b>Why.</b> The estimate rests on a few heavy weights and an extrapolating outcome model; only new data on these seekers can answer the question.</div>
@@ -366,7 +366,7 @@ value = np.mean(w * y)</code></pre>
       <div class="opt" data-why="Thinks a smaller p-value repairs selection; it was selected for being small">Report the p-value to three decimals so readers see it is 0.001</div>
       <div class="opt" data-why="Adds more searching, which makes selection worse">Search more cells to show the finding is robust</div>
       <div class="opt" data-why="Uses the same seekers twice in a different way">Bootstrap the cell's 36 seekers and report the interval</div>
-      <div class="opt" data-ok>Test the cell, chosen in advance, on seekers who were not part of the search</div>
+      <div class="opt" data-ok>Test the cell on seekers outside the search</div>
     </div>
     <div class="callout tip why"><b>Why.</b> Only data not used in the search can estimate the effect of a cell without the inflation that selection added.</div>
   </div>

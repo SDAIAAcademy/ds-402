@@ -10,7 +10,7 @@
     <p class="lead">A colleague reports a candidate rule's inverse propensity value as 61.2% employed, with a 95% interval. What else must the report show before anyone relies on it?</p>
     <div class="opts">
       <div class="opt" data-why="Thinks a narrow interval rules out instability from a few weights">Nothing: the interval already shows the uncertainty</div>
-      <div class="opt" data-ok>The effective sample size among the seekers the rule would coach, and how the value moves when weights are clipped</div>
+      <div class="opt" data-ok>Its effective sample size, and how it moves when weights are clipped</div>
       <div class="opt" data-why="Checks the outcome model, which plain IPW does not use">The outcome model's accuracy on the logs</div>
       <div class="opt" data-why="Uses the generator's truth, which real data never give">The rule's true value from the generator</div>
     </div>
@@ -116,7 +116,7 @@
   <div class="quiz" data-type="single" data-lo="LO4">
     <p class="lead">A colleague proposes to learn the allocation tree by predicting employment within six months and offering places to the leaves with the lowest predicted employment. What is wrong?</p>
     <div class="opts">
-      <div class="opt" data-ok>It targets low employment, not the difference coaching makes: it rebuilds the risk score</div>
+      <div class="opt" data-ok>It targets need, not gain: it rebuilds the risk score</div>
       <div class="opt" data-why="Thinks the problem is the model class, not the target">A depth-two tree is too simple to predict employment well</div>
       <div class="opt" data-why="Thinks prediction on the pilot is biased; randomisation does not change that the target is wrong">The pilot is too small for prediction</div>
       <div class="opt" data-why="Inverts the advice: lowest employment is exactly what risk targeting picks">Nothing, if the leaves are chosen on held-out data</div>
@@ -216,11 +216,11 @@
   <div class="kicker">Checkpoint</div>
   <h2>What does an equal selection rate prove?</h2>
   <div class="quiz" data-type="single" data-lo="LO4">
-    <p class="lead">An audit shows a rule offers places to disabled and non-disabled seekers at the same rate. A board member concludes the rule is fair to disabled seekers. What do you add?</p>
+    <p class="lead">A rule offers places to disabled and non-disabled seekers at the same rate. A board member calls it fair to disabled seekers. What do you add?</p>
     <div class="opts">
       <div class="opt" data-why="Treats one metric as a full fairness assessment">Nothing: equal rates are the definition of fairness</div>
       <div class="opt" data-why="Proposes using a sensitive attribute to decide without a policy decision">The rule should use disability to offer more places</div>
-      <div class="opt" data-ok>Equal rates say who is offered, not who gains; disabled seekers may gain more per place, which a choice to prioritise them would weigh</div>
+      <div class="opt" data-ok>Rates show who is offered, not who gains</div>
       <div class="opt" data-why="Inverts the direction: unequal rates are what the audit looks for">Equal rates show the rule ignores disability, which is discrimination</div>
     </div>
     <div class="callout tip why"><b>Why.</b> Selection rates are one view; gains by group are another. Disabled seekers truly gain 26 points per place against 21; deciding whether that justifies priority is a policy choice.</div>
@@ -297,14 +297,14 @@
   <div class="kicker">Checkpoint</div>
   <h2>Why is the trial so large when the rule finds twice the jobs per place?</h2>
   <div class="quiz" data-type="single" data-lo="LO6">
-    <p class="lead">The rule finds 20.7 jobs per 100 places against current practice's 11.4, yet the trial needs about 18,000 seekers per arm. Why?</p>
+    <p class="lead">The rule finds 20.7 jobs per 100 places against 11.4 for current practice, yet the trial needs about 18,000 seekers per arm. Why?</p>
     <div class="opts">
       <div class="opt" data-why="Thinks the sample size is driven by the per-place gain, not by the population difference">The per-place gain is too small to detect</div>
-      <div class="opt" data-ok>Only one seeker in six gets a place in either arm, and the arms agree on most seekers, so the difference across all seekers is 1.4 points</div>
+      <div class="opt" data-ok>The arms mostly agree, so across everyone the difference is 1.4 points</div>
       <div class="opt" data-why="Confuses the stopping rule's small cost with the main driver">The interim look doubles the sample size</div>
       <div class="opt" data-why="Office clustering applies only if offices are randomised">Offices are clustered, so the design effect inflates the sample</div>
     </div>
-    <div class="callout tip why"><b>Why.</b> The trial compares everyone in one arm with everyone in the other; a large gain for a few seekers is a small difference for the whole population.</div>
+    <div class="callout tip why"><b>Why.</b> The trial compares everyone in one arm with everyone in the other: a large gain for a few is a small difference for all.</div>
   </div>
   <aside class="notes"><p>Answer: B. Dilution is the most common reason trials of targeting rules are underpowered.</p></aside>
 </section>
@@ -367,7 +367,7 @@
       <div class="opt" data-why="Uses jargon and overclaims a proven effect">The policy's doubly robust value proves a CATE-driven uplift of 1.4 points</div>
       <div class="opt" data-why="States a precise number without uncertainty or comparison">The rule will employ 58.9% of seekers</div>
       <div class="opt" data-why="Turns an offline estimate into a promise">The rule guarantees more jobs than current practice</div>
-      <div class="opt" data-ok>On 2025 and 2026 records, about 14 more seekers per 1,000 would be in work than under current practice, with a range of about 6 to 22</div>
+      <div class="opt" data-ok>On past records, about 14 more per 1,000 in work than today (6 to 22)</div>
     </div>
     <div class="callout tip why"><b>Why.</b> It names the source, compares with current practice, counts people, and keeps the uncertainty.</div>
   </div>

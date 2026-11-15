@@ -7,18 +7,18 @@
       "type": "single",
       "prompt": "Duhaim, head of caseworkers, asks: \"Did coaching raise employment for the seekers my caseworkers chose to coach last year?\" Which summary answers him?",
       "options": [
-        "The average effect over every registered seeker",
         "The effect on the seekers who were offered coaching",
+        "The average effect over every registered seeker",
         "The value of the best rule under next year's budget",
         "The difference in employment between coached and uncoached seekers"
       ],
       "correct": [
-        1
+        0
       ],
       "explanation": "He asks about the seekers who were offered coaching, so the estimand is the effect on the offered (ATT), not the average over everyone.",
       "misconceptions": [
-        "Answers for everyone, though he asked about the seekers his team chose",
         "",
+        "Answers for everyone, though he asked about the seekers his team chose",
         "Answers a forward-looking decision, not a question about last year",
         "Reads an observed difference as the effect, ignoring how caseworkers chose"
       ],
@@ -39,18 +39,18 @@
       "prompt": "A vendor shows that Fursa's risk score predicts unemployment at six months with an AUC of 0.85 and proposes giving places to the top fifth by score. What is the main flaw?",
       "options": [
         "An AUC of 0.85 is too low for a public decision",
+        "It ranks need without coaching, not what coaching changes",
         "The score was trained on old data and may have drifted",
-        "The score ranks by need without coaching, not by what coaching changes",
         "Places should be given at random to be fair"
       ],
       "correct": [
-        2
+        1
       ],
       "explanation": "The score predicts the outcome without coaching; the places should follow the difference coaching makes, which is a different quantity.",
       "misconceptions": [
         "Treats the score's accuracy as the issue; a perfect score would have the same flaw",
-        "Names a real risk, but not the one that makes the ranking wrong",
         "",
+        "Names a real risk, but not the one that makes the ranking wrong",
         "Confuses fairness of process with getting the most jobs from a budget"
       ],
       "lo": [
@@ -70,18 +70,18 @@
       "prompt": "In the logs, disabled seekers in Nijad were offered coaching in under 1% of decisions. A colleague still reports a doubly robust effect for them. What do you say?",
       "options": [
         "The doubly robust estimator protects the estimate, so it can stand",
-        "The estimate for them rests on the outcome model's extrapolation; report it as such or not at all",
         "Trim them out and report the trimmed effect as the effect for all seekers",
+        "It rests on the outcome model's extrapolation; say so or drop it",
         "Increase the number of folds so the group appears in every fold"
       ],
       "correct": [
-        1
+        2
       ],
       "explanation": "Without offered seekers like them, no weighting or matching can compare; only a model's extrapolation speaks for them.",
       "misconceptions": [
         "Believes double robustness repairs a lack of overlap",
-        "",
         "Trims without saying that the estimand changed",
+        "",
         "Thinks a resampling choice can create data that were never collected"
       ],
       "lo": [
@@ -100,20 +100,20 @@
       "type": "single",
       "prompt": "Why does double machine learning use a score with residual corrections instead of averaging the difference of two outcome-model predictions?",
       "options": [
-        "The corrections make the estimate insensitive to small errors in the nuisance models",
+        "The corrections speed up the fitting of gradient boosting",
         "The corrections remove the need for a propensity model",
         "The corrections make the estimate unbiased even with a hidden confounder",
-        "The corrections speed up the fitting of gradient boosting"
+        "The corrections make the estimate insensitive to small errors in the nuisance models"
       ],
       "correct": [
-        0
+        3
       ],
       "explanation": "The orthogonal score has zero derivative in the nuisance models at the truth, so their regularisation errors enter only to second order.",
       "misconceptions": [
-        "",
+        "Mistakes a statistical property for a computational one",
         "Inverts the role of the corrections: they are built from the propensity model",
         "Expects an estimator to fix information missing from the data",
-        "Mistakes a statistical property for a computational one"
+        ""
       ],
       "lo": [
         "LO1"
@@ -131,19 +131,19 @@
       "type": "single",
       "prompt": "On 40,000 logged decisions, regression adjustment with 60 controls gives 13.5 points (12.4 to 14.7) and DoubleML gives 10.8 (9.6 to 12.1). Without knowing the truth, which reasoning should guide the report?",
       "options": [
-        "Report the regression: its interval is narrower",
+        "DoubleML: flexible nuisances follow nonlinear confounding",
         "Report the average of the two as a compromise",
-        "Report DoubleML: flexible nuisances and cross-fitting allow for nonlinear confounding that a linear model cannot follow",
+        "Report the regression: its interval is narrower",
         "Report neither: the two disagree, so the data cannot answer"
       ],
       "correct": [
-        2
+        0
       ],
       "explanation": "The regression assumes linear confounding; DoubleML does not, and its interval is valid under weaker assumptions.",
       "misconceptions": [
-        "Treats a narrow interval as evidence of a correct model",
-        "Averages a biased and an unbiased estimator, keeping part of the bias",
         "",
+        "Averages a biased and an unbiased estimator, keeping part of the bias",
+        "Treats a narrow interval as evidence of a correct model",
         "Takes disagreement between a restrictive and a flexible model as a sign that nothing is identified"
       ],
       "lo": [
@@ -163,7 +163,7 @@
       "prompt": "On the 2027 extract the DoubleML estimate is 12.8 points with a robustness value of 8.5%. What may you tell the director?",
       "options": [
         "Coaching raised employment by 12.8 points, whatever is missing from the data",
-        "A hidden factor explaining under 8.5% of the remaining variation of both the offer and employment cannot erase the effect",
+        "A hidden factor explaining under 8.5% of both cannot erase it",
         "There is an 8.5% chance that the effect is zero",
         "The bias from the missing column is at most 8.5 points"
       ],
@@ -193,19 +193,19 @@
       "type": "single",
       "prompt": "Four nuisance learners give DML estimates from 11.0 to 14.2 points. How should the learner for the report be chosen?",
       "options": [
-        "By the lowest out-of-fold losses of the propensity and outcome models, fixed before seeing the estimates",
-        "By the estimate closest to what the caseworkers expect",
         "By the smallest standard error",
+        "By the estimate closest to what the caseworkers expect",
+        "By out-of-fold nuisance losses, fixed before the estimates",
         "By the median of the four estimates"
       ],
       "correct": [
-        0
+        2
       ],
       "explanation": "Nuisance learners are judged by how well they predict, out of fold; choosing by the estimate invalidates the interval.",
       "misconceptions": [
-        "",
-        "Lets the desired answer choose the method: a forking path",
         "Treats precision as accuracy",
+        "Lets the desired answer choose the method: a forking path",
+        "",
         "Averages over learners known to be poor, keeping their bias"
       ],
       "lo": [
@@ -225,19 +225,19 @@
       "prompt": "In the X-learner on a 1:1 pilot, what is the imputed effect for a coached seeker who found work?",
       "options": [
         "1 minus the coached model's predicted chance for her",
-        "1 minus the uncoached model's predicted chance for her",
+        "The difference between the two models' predictions for her",
         "The uncoached model's predicted chance minus 1",
-        "The difference between the two models' predictions for her"
+        "1 minus the uncoached model's predicted chance for her"
       ],
       "correct": [
-        1
+        3
       ],
       "explanation": "For a coached seeker the missing outcome is the uncoached one, so the imputed effect is her observed outcome minus the uncoached model's prediction.",
       "misconceptions": [
         "Uses her own arm's model, which predicts her observed outcome, not her missing one",
-        "",
+        "Describes the T-learner, not the imputation step",
         "Reverses the sign used for the coached arm",
-        "Describes the T-learner, not the imputation step"
+        ""
       ],
       "lo": [
         "LO2"
@@ -255,7 +255,7 @@
       "type": "single",
       "prompt": "A T-learner fitted with lightly regularised boosting on 1,800 seekers per arm predicts effects from minus 40 to plus 60 points. The true effects range from minus 10 to plus 30. What is the most likely cause?",
       "options": [
-        "Each arm's model fits its own noise, and the difference of two noisy predictions exaggerates heterogeneity",
+        "Each arm's model fits its own noise, which the difference adds up",
         "Confounding between the arms in the pilot",
         "The outcome is binary, so effects cannot be estimated",
         "The T-learner always shrinks effects towards zero"
@@ -287,7 +287,7 @@
       "prompt": "The causal forest ranks distance to the office as the second driver of effect variation. A manager proposes moving coaching closer to remote seekers to raise its effect. What do you say?",
       "options": [
         "Agree: the forest shows distance causes smaller effects",
-        "Disagree: importance describes where effects differ, not what would happen if distance changed; a trial of the change would tell",
+        "Disagree: importance describes, a trial of the change would tell",
         "Disagree: importance near the top is always an artefact of correlated features",
         "Agree, if the forest's importance has a confidence interval above zero"
       ],
@@ -318,18 +318,18 @@
       "prompt": "You want to check whether an effect model trained on the pilot's training split can be trusted. Which check is valid?",
       "options": [
         "Compare its predictions with the observed outcomes of the training seekers",
-        "Sort the held-out randomised seekers into groups by prediction and compare each group's coached-minus-uncoached difference with its mean prediction",
         "Compute the correlation between its predictions and the risk score",
+        "Compare group effects by prediction on held-out randomised seekers",
         "Report its R-squared on the held-out outcomes"
       ],
       "correct": [
-        1
+        2
       ],
       "explanation": "Individual effects are never observed, but group effects on held-out randomised data are, so groups formed by the prediction can be checked.",
       "misconceptions": [
         "Uses outcomes, which are not effects, and seekers the model has seen",
-        "",
         "Checks agreement with another model, not with effects",
+        "",
         "Measures outcome prediction, not effect prediction"
       ],
       "lo": [
@@ -348,20 +348,20 @@
       "type": "single",
       "prompt": "On held-out seekers, estimator A has a best-linear-predictor slope of 0.9 (se 0.2) and estimator B a slope of 0.1 (se 0.2). Both have the same mean prediction. Which conclusion holds?",
       "options": [
-        "A's predictions carry real signal about differences in effect; B's carry almost none",
+        "A overstates differences by 10%",
         "B is better calibrated because its slope is closer to zero",
         "Both are equally useful because their averages agree",
-        "A overstates differences by 10%"
+        "A carries real signal about effect differences; B almost none"
       ],
       "correct": [
-        0
+        3
       ],
       "explanation": "The slope measures how much observed differences follow predicted ones: near 1 is calibrated, near 0 is no signal.",
       "misconceptions": [
-        "",
+        "Reads a slope below 1, within one standard error, as a precise overstatement",
         "Thinks the target slope is zero",
         "Judges an effect model by its average, which says nothing about targeting",
-        "Reads a slope below 1, within one standard error, as a precise overstatement"
+        ""
       ],
       "lo": [
         "LO2"
@@ -379,18 +379,18 @@
       "type": "single",
       "prompt": "Why do the Qini curves of every ranking end at the same point?",
       "options": [
+        "At 100% every ranking coaches everyone",
         "Because every ranking was trained on the same data",
-        "Because at 100% every ranking coaches everyone, so the extra employed equal the whole effect",
         "Because the curves are normalised to end at 1",
         "Because random allocation is the best any ranking can do at full budget"
       ],
       "correct": [
-        1
+        0
       ],
       "explanation": "At full budget the ranking no longer matters: everyone is coached.",
       "misconceptions": [
-        "Confuses training data with the end point of the curve",
         "",
+        "Confuses training data with the end point of the curve",
         "Assumes a normalisation the Qini curve does not use",
         "Reads the shared end point as a limit on rankings"
       ],
@@ -411,18 +411,18 @@
       "prompt": "Switching from ranking by risk to ranking by estimated benefit would move 84% of the places to different seekers and raise the jobs found. What is the data scientist's responsibility here?",
       "options": [
         "Recommend the switch: more jobs settle the question",
+        "Show who gains and loses a place, and leave priority to its owner",
         "Recommend keeping the risk score, because changing who gets support is unfair",
-        "Show who gains and who loses a place, with the jobs at stake, and leave the choice of priority to the decision owner with an audit",
         "Average the two rankings to split the difference"
       ],
       "correct": [
-        2
+        1
       ],
       "explanation": "Who should be prioritised is a value choice; the analysis makes the trade-off visible and audited.",
       "misconceptions": [
         "Treats a value choice about who receives support as a technical result",
-        "Decides the value question in the other direction without showing the trade-off",
         "",
+        "Decides the value question in the other direction without showing the trade-off",
         "Mixes two rules without measuring what the mixture buys or costs"
       ],
       "lo": [
@@ -442,18 +442,18 @@
       "prompt": "An agency hands you 30,000 logged decisions with the probability its tool recorded for each. Before valuing any rule, what do you check first?",
       "options": [
         "That the outcome model fitted on the logs has a high AUC",
-        "That offered divided by recorded probability averages to about 1, overall and by office",
         "That the recorded probabilities lie between 0.05 and 0.95",
+        "That offered divided by recorded probability averages to 1, by office",
         "That the offer rate equals the target budget"
       ],
       "correct": [
-        1
+        2
       ],
       "explanation": "With correct probabilities the weights average to 1; a group where they do not is a group whose records misdescribe the decisions.",
       "misconceptions": [
         "Checks the outcome model, which the recorded probabilities do not depend on",
-        "",
         "Checks a range, which says nothing about whether they describe what happened",
+        "",
         "Compares with a plan rather than with the records"
       ],
       "lo": [
@@ -474,18 +474,18 @@
       "options": [
         "Use the recorded probabilities: they are the official record",
         "Drop the office and value the rule on the other offices only, without comment",
-        "Re-estimate that office's propensities from its covariates and say so in the report",
-        "Clip the office's weights at 20"
+        "Clip the office's weights at 20",
+        "Re-estimate that office's propensities from its covariates and say so in the report"
       ],
       "correct": [
-        2
+        3
       ],
       "explanation": "When the office matters to the rule, its propensities must be modelled as on Day 1, and the report must say the records were replaced.",
       "misconceptions": [
         "Trusts a record the check has shown to be wrong",
         "Drops the region the rule targets and hides the change of population",
-        "",
-        "Treats wrong probabilities as a variance problem"
+        "Treats wrong probabilities as a variance problem",
+        ""
       ],
       "lo": [
         "LO3"
@@ -503,18 +503,18 @@
       "type": "single",
       "prompt": "In inverse propensity valuation of a rule, a seeker whom the logs did not coach but the rule would coach contributes what?",
       "options": [
-        "Her outcome, weighted by one over the probability of coaching",
         "Nothing: the logs did not do what the rule would do",
+        "Her outcome, weighted by one over the probability of coaching",
         "Her outcome plus the average effect of coaching",
         "Her outcome with weight one"
       ],
       "correct": [
-        1
+        0
       ],
       "explanation": "Only decisions where the logs agree with the rule show the outcome the rule would produce; the weights let them stand in for the rest.",
       "misconceptions": [
-        "Uses an outcome observed without coaching as if it were under coaching",
         "",
+        "Uses an outcome observed without coaching as if it were under coaching",
         "Imputes an effect the plain IPW estimator never imputes",
         "Forgets that disagreeing decisions are dropped"
       ],
@@ -535,7 +535,7 @@
       "prompt": "You value three rules with inverse propensity weighting and with the augmented estimator. The augmented intervals are all narrower. Why?",
       "options": [
         "The augmented estimator uses more data",
-        "The outcome model explains part of the outcome, so the weighted residuals vary less than the weighted outcomes",
+        "The weighted residuals vary less than the weighted outcomes",
         "The augmented estimator clips the weights",
         "The augmented estimator assumes no confounding and IPW does not"
       ],
@@ -567,7 +567,7 @@
       "options": [
         "The forest: a model that uses more information must be better",
         "Either, chosen by coin toss, since they are equal",
-        "The rule caseworkers can read, unless a paired interval shows the other is clearly better",
+        "The readable rule, unless a paired interval favours the other",
         "Neither, until a larger dataset separates them"
       ],
       "correct": [
@@ -596,20 +596,20 @@
       "type": "single",
       "prompt": "A rule would coach 3,000 seekers. The logs coached 130 of them, and their weights have an effective sample size of 60. What does this mean for the value estimate?",
       "options": [
-        "It rests on the equivalent of about 60 decisions, so it can move a lot with a few of them",
+        "It is fine if the logs hold 40,000 decisions in total",
         "It is fine, because 130 coached seekers is above the usual minimum of 30",
         "It is biased downwards by a factor of 60 over 3,000",
-        "It is fine if the logs hold 40,000 decisions in total"
+        "It rests on the equivalent of about 60 decisions, so it can move a lot with a few of them"
       ],
       "correct": [
-        0
+        3
       ],
       "explanation": "Kish's effective sample size tells how many equally weighted decisions carry the estimate; 60 cannot speak reliably for 3,000.",
       "misconceptions": [
-        "",
+        "Looks at the whole file, not at the seekers the rule changes",
         "Counts decisions without regard to how unequal their weights are",
         "Treats the effective sample size as a bias correction",
-        "Looks at the whole file, not at the seekers the rule changes"
+        ""
       ],
       "lo": [
         "LO3"
@@ -627,20 +627,20 @@
       "type": "single",
       "prompt": "Clipping the weights at 20 moves a rule's value from 55.9% to 54.8%; the next best rule differs by 0.8 points. What do you report?",
       "options": [
-        "The clipped value, since clipping reduces variance",
+        "That the logs cannot rank it, with both values and the ESS",
         "The unclipped value, since clipping adds bias",
         "The average of the two",
-        "That the logs cannot rank this rule, with both values and the effective sample size"
+        "The clipped value, since clipping reduces variance"
       ],
       "correct": [
-        3
+        0
       ],
       "explanation": "When the sensitivity to a few weights exceeds the gap between rules, the honest report is that the data cannot decide.",
       "misconceptions": [
-        "Treats a biased fix as the estimate",
+        "",
         "Hides a sensitivity that is larger than the decision margin",
         "Invents an estimator with no justification",
-        ""
+        "Treats a biased fix as the estimate"
       ],
       "lo": [
         "LO3"
@@ -659,7 +659,7 @@
       "prompt": "An analyst reports that seekers who attended four or more coaching sessions gained 27 points. Which flaw matters most?",
       "options": [
         "The subgroup is too small",
-        "The subgroup is defined by something that happened after the lottery, so it is selected, not randomised",
+        "It is defined after the lottery, so it is selected",
         "The p-value should be corrected for multiple tests",
         "The analyst should have used a causal forest"
       ],
@@ -690,18 +690,18 @@
       "prompt": "A memo picks the largest of 60 subgroup effects, 49.5 points in 36 seekers, estimated on the same data used to search. What is your best estimate of its true effect without new data?",
       "options": [
         "49.5 points, since the p-value is 0.001",
-        "Much smaller: the winner of a search is inflated by the noise that made it win",
         "Zero, because dredged findings are always false",
+        "Much smaller: noise helped it win the search",
         "Exactly the average effect, since all cells are equal"
       ],
       "correct": [
-        1
+        2
       ],
       "explanation": "Selection inflates the largest estimate; honest searches show winners shrinking by about half on fresh seekers.",
       "misconceptions": [
         "Ignores that the cell was chosen for being large",
-        "",
         "Overcorrects: the cell may still benefit",
+        "",
         "Assumes no real heterogeneity"
       ],
       "lo": [
@@ -721,19 +721,19 @@
       "prompt": "Of 60 cells, 52 have p above 0.05. The memo says coaching \"showed no effect\" in them. What is wrong?",
       "options": [
         "Nothing: p above 0.05 means no effect",
-        "Cells of 30 to 60 seekers have too little power to show a real effect of about 10 points",
+        "Those cells should be merged into one and tested again",
         "The threshold should have been 0.10",
-        "Those cells should be merged into one and tested again"
+        "Cells this small cannot show a real 10-point effect"
       ],
       "correct": [
-        1
+        3
       ],
       "explanation": "A non-significant small cell is uninformative; its interval includes both no effect and the average effect.",
       "misconceptions": [
         "Reads absence of significance as evidence of absence",
-        "",
+        "A remedy, not a diagnosis of what the memo got wrong",
         "Moves the threshold instead of reading the uncertainty",
-        "A remedy, not a diagnosis of what the memo got wrong"
+        ""
       ],
       "lo": [
         "LO5"
@@ -751,18 +751,18 @@
       "type": "single",
       "prompt": "Without a cost per place, an exhaustive depth-two tree offers coaching to 55% of seekers; the budget allows 20%. What do you change?",
       "options": [
+        "Raise the cost per place until it offers at most 20%",
         "Prune the tree to depth one",
-        "Raise the cost per place until the tree offers at most 20%, then keep that tree",
         "Keep the tree and offer places to the first 20% who register",
         "Lower the threshold of every split by 20%"
       ],
       "correct": [
-        1
+        0
       ],
       "explanation": "A cost per place is the budget in Lagrangian form: only leaves whose summed gain beats it are offered.",
       "misconceptions": [
-        "Changes the shape of the rule, not how many it offers",
         "",
+        "Changes the shape of the rule, not how many it offers",
         "Replaces the learned rule with arrival order",
         "Treats thresholds as a budget dial, with no link to gains"
       ],
@@ -783,7 +783,7 @@
       "prompt": "Treat-all has the highest value on the logs, 65.0% employed against the rule's 58.9%. A board member asks why not recommend it. What is the best answer?",
       "options": [
         "Treat-all is biased on the logs",
-        "Treat-all needs five times the places; per place the rule finds about twice as many jobs",
+        "It needs five times the places; per place it does worse",
         "Treat-all harms some seekers",
         "Treat-all cannot be audited by region"
       ],
@@ -814,18 +814,18 @@
       "prompt": "An agency stores each seeker's number of dependants, collected to calculate family benefits. A colleague wants the coaching rule to use it. Which role fits best, and why?",
       "options": [
         "Drive: it predicts who benefits",
-        "Exclude: it was collected for another purpose, and using it to decide needs a basis the agency has not established",
         "Audit: every result should be checked by number of dependants",
+        "Exclude: collected for another purpose",
         "Drive, as long as it is transformed into a score"
       ],
       "correct": [
-        1
+        2
       ],
       "explanation": "Purpose limitation applies to the use of data, whatever the model gains from it; the register records the decision and its reason.",
       "misconceptions": [
         "Puts predictive value above the purpose the data were collected for",
-        "",
         "Possible, but does not answer whether it may decide",
+        "",
         "Thinks a transformation changes what the data are used for"
       ],
       "lo": [
@@ -845,19 +845,19 @@
       "prompt": "A benefit ranking never uses region, yet offers one remote region 7% of its seekers against 23% in another. What explains this?",
       "options": [
         "A coding error, since region was not in the model",
-        "Attributes that differ by region, such as months unemployed and distance, carry region into the ranking",
+        "The region was over-represented in the pilot",
         "Random noise in the forest",
-        "The region was over-represented in the pilot"
+        "Attributes that differ by region act as proxies"
       ],
       "correct": [
-        1
+        3
       ],
       "explanation": "Leaving an attribute out does not remove its influence: correlated attributes act as proxies, which only an audit reveals.",
       "misconceptions": [
         "Assumes an attribute left out cannot be reached",
-        "",
+        "Representation affects precision, not this systematic gap",
         "A gap of this size across thousands of seekers is not noise",
-        "Representation affects precision, not this systematic gap"
+        ""
       ],
       "lo": [
         "LO4"
@@ -875,19 +875,19 @@
       "type": "single",
       "prompt": "A regional floor changes the rule's value by -0.2 points, with a paired 95% interval from -0.5 to 0.1. How do you report it?",
       "options": [
-        "The floor is free",
+        "Its cost is not distinguishable from zero",
         "The floor costs 0.2 points",
-        "The floor's cost is not distinguishable from zero: between a small loss and a small gain",
+        "The floor is free",
         "The floor improves the rule"
       ],
       "correct": [
-        2
+        0
       ],
       "explanation": "The interval is the finding: the decision owner sees the range of what the constraint may cost.",
       "misconceptions": [
-        "Reads an interval that includes zero as proof of zero",
-        "Reports the point estimate as if it were certain",
         "",
+        "Reports the point estimate as if it were certain",
+        "Reads an interval that includes zero as proof of zero",
         "Reads a negative price as a gain without its uncertainty"
       ],
       "lo": [
@@ -938,18 +938,18 @@
       "prompt": "An agency has 11 offices and wants to randomise whole offices so caseworkers never mix the two policies. Employment rates differ between offices (ICC about 0.04). What do you advise?",
       "options": [
         "Randomise offices: mixing is the bigger risk",
-        "Randomise seekers within offices, and check that caseworkers follow the assigned policy",
         "Randomise offices, and add more seekers to compensate",
+        "Randomise seekers within offices and check compliance",
         "Skip randomisation and compare offices before and after"
       ],
       "correct": [
-        1
+        2
       ],
       "explanation": "With a design effect above 100, office randomisation cannot detect the difference; seeker randomisation with a compliance check can.",
       "misconceptions": [
         "Ignores that 11 clusters cannot power a 1.4-point difference",
-        "",
         "More seekers per office barely helps when there are only 11 clusters",
+        "",
         "Gives up the comparison the trial exists for"
       ],
       "lo": [
@@ -968,20 +968,20 @@
       "type": "single",
       "prompt": "Why does a trial with one interim look use O'Brien–Fleming boundaries instead of testing at 1.96 both times?",
       "options": [
-        "Testing twice at 1.96 raises the chance of a false positive above 5%",
+        "Regulators require exactly two looks",
         "O'Brien–Fleming boundaries make the trial smaller",
         "The interim data are less accurate",
-        "Regulators require exactly two looks"
+        "Two tests at 1.96 push false positives above 5%"
       ],
       "correct": [
-        0
+        3
       ],
       "explanation": "Two looks give two chances to cross by luck; strict early boundaries keep the overall false-positive rate at 5%.",
       "misconceptions": [
-        "",
+        "Confuses a design choice with a rule",
         "The boundaries slightly increase, not decrease, the sample",
         "The data are the same kind; the issue is repeated testing",
-        "Confuses a design choice with a rule"
+        ""
       ],
       "lo": [
         "LO6"
@@ -999,18 +999,18 @@
       "type": "single",
       "prompt": "A seeker-level trial finds the rule raises employment by 1.5 points. A labour economist says the true gain to the region could be smaller. Why?",
       "options": [
+        "Coached seekers may take jobs others would have found",
         "Seekers in the rule arm may have been more motivated",
-        "Coached seekers may take jobs other seekers would have found, which a seeker-level comparison cannot see",
         "The trial used intention to treat",
         "The interim look biased the estimate"
       ],
       "correct": [
-        1
+        0
       ],
       "explanation": "Displacement moves jobs between seekers in the same market; measuring it needs randomisation at the level of labour markets.",
       "misconceptions": [
-        "Randomisation balances motivation between arms",
         "",
+        "Randomisation balances motivation between arms",
         "Intention to treat makes the estimate conservative for compliance, not for displacement",
         "A pre-planned boundary keeps the test valid"
       ],
@@ -1031,7 +1031,7 @@
       "prompt": "A rule offers places to seekers unemployed 11 to 15 months. Which group should go to caseworker review first?",
       "options": [
         "Seekers unemployed 13 months",
-        "Seekers unemployed exactly 10 or 16 months, and seekers whose records may be wrong",
+        "Seekers at 10 or 16 months, and doubtful records",
         "All seekers the rule offers",
         "Seekers with the highest risk scores"
       ],

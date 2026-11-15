@@ -114,7 +114,7 @@ tau_s = m.predict_proba(one)[:, 1] - m.predict_proba(zero)[:, 1]</code></pre>
       <div class="opt" data-why="Takes a model's output as a fact about the world">Coaching truly has the same effect for everyone</div>
       <div class="opt" data-why="Blames confounding in a randomised pilot, where there is none">Confounding in the pilot has flattened the effects</div>
       <div class="opt" data-why="Thinks the sample is the problem; the S-learner shrinks effects at any size">The pilot is too small for any learner to find differences</div>
-      <div class="opt" data-ok>The trees rarely split on the coaching column, so its interactions are shrunk away</div>
+      <div class="opt" data-ok>Trees seldom split on coaching, so its interactions shrink</div>
     </div>
     <div class="callout tip why"><b>Why.</b> The S-learner's regularisation treats coaching like any other feature; differences in effect need interactions with it, which shallow, regularised trees often leave out.</div>
   </div>
@@ -206,7 +206,7 @@ tau = cf.effect(X)</code></pre>
   <div class="quiz" data-type="single" data-lo="LO2">
     <p class="lead">An analyst grows a causal tree on all 3,600 training seekers and estimates each leaf's effect on the same seekers that chose the splits. What goes wrong?</p>
     <div class="opts">
-      <div class="opt" data-ok>Leaf effects are exaggerated, because the splits were chosen where the noise made effects look large</div>
+      <div class="opt" data-ok>Leaf effects are inflated by the noise that chose the splits</div>
       <div class="opt" data-why="Confuses honesty with residualising, which handles the outcome level">The splits follow employment levels rather than effects</div>
       <div class="opt" data-why="Thinks honesty is about confounding; the pilot was randomised">The estimates are confounded by who was coached</div>
       <div class="opt" data-why="Believes reusing data only costs computing time">The fit takes twice as long as it needs to</div>
@@ -294,7 +294,7 @@ tau = cf.effect(X)</code></pre>
     <p class="lead">On held-out randomised seekers, an estimator's predicted effects range from 5 to 14 points and its best-linear-predictor slope is 3.1 (standard error 0.6). What do you conclude?</p>
     <div class="opts">
       <div class="opt" data-why="Reads any slope far from 1 as failure; a steep slope still means strong signal">The estimator has no useful signal</div>
-      <div class="opt" data-ok>It ranks seekers well, but real differences are about three times larger than it predicts</div>
+      <div class="opt" data-ok>It ranks well, but real differences are about three times larger</div>
       <div class="opt" data-why="Inverts the slope: below 1 would mean overconfident">It exaggerates differences between seekers</div>
       <div class="opt" data-why="Treats calibration of scale as a property of the average, not of differences">Its average effect is three times too small</div>
     </div>
@@ -368,7 +368,7 @@ tau = cf.effect(X)</code></pre>
     <div class="opts">
       <div class="opt" data-why="Confuses ranking with calibration in scale">Its predicted effects are correct in size</div>
       <div class="opt" data-why="Treats a curve on one sample as proof for every population">It will rank next year's seekers just as well</div>
-      <div class="opt" data-ok>Coaching its top seekers first yields more extra jobs than random allocation</div>
+      <div class="opt" data-ok>Its top seekers gain more than a random pick would</div>
       <div class="opt" data-why="Takes a curve that dominates random for one that dominates every alternative">No other ranking could do better at any budget</div>
     </div>
     <div class="callout tip why"><b>Why.</b> A Qini curve measures how the ranking concentrates the effect; it says nothing about the scale of the predictions or about other rankings.</div>
