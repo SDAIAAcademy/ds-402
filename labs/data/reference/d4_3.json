@@ -1,0 +1,24 @@
+{
+ "first": {
+  "unit": "a newly registered job seeker, randomised at registration, stratified by office",
+  "arms": "A: the depth-two rule decides \u00b7 B: current practice (the caseworker, with the allocation tool) decides",
+  "primary_outcome": "employed within six months of registration, from the social insurance register",
+  "estimand": "difference in the employment rate between arm A and arm B, among all randomised seekers (intention to treat)"
+ },
+ "disagree": [
+  0.2718443907988568,
+  0.5748772163489553,
+  0.5893436437487775,
+  0.053215839242848985
+ ],
+ "sizes": [
+  18246,
+  1.8349675667521497,
+  0.03550553925339038,
+  118.75250704572132
+ ],
+ "obf": [
+  2.7911279732795933,
+  1.9736255170654653
+ ]
+}

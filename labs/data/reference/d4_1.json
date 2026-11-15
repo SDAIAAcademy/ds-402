@@ -1,0 +1,63 @@
+{
+ "table": {
+  "__frame__": {
+   "columns": [
+    "share",
+    "value",
+    "lo",
+    "hi",
+    "jobs_per_100_places"
+   ],
+   "index": [
+    "treat-all",
+    "depth-two rule",
+    "current practice",
+    "risk, top fifth",
+    "no one"
+   ],
+   "data": [
+    [
+     1.0,
+     0.65035,
+     0.63345,
+     0.66724,
+     9.47997
+    ],
+    [
+     0.16293,
+     0.58934,
+     0.58128,
+     0.59741,
+     20.74279
+    ],
+    [
+     0.16907,
+     0.57488,
+     0.56977,
+     0.57998,
+     11.4338
+    ],
+    [
+     0.20001,
+     0.57031,
+     0.56141,
+     0.57921,
+     7.38255
+    ],
+    [
+     0.0,
+     0.55555,
+     0.54987,
+     0.56122,
+     null
+    ]
+   ]
+  }
+ },
+ "describe": [
+  "Offer a coaching place to job seekers who have been unemployed for more than 10 and at most 15 months.",
+  [
+   "months_unemployed"
+  ]
+ ]
+}

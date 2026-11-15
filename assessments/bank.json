@@ -745,6 +745,316 @@
       "pool": "practice",
       "weight": 1,
       "timer": 90
+    },
+    {
+      "id": "q-tree-01",
+      "type": "single",
+      "prompt": "Without a cost per place, an exhaustive depth-two tree offers coaching to 55% of seekers; the budget allows 20%. What do you change?",
+      "options": [
+        "Prune the tree to depth one",
+        "Raise the cost per place until the tree offers at most 20%, then keep that tree",
+        "Keep the tree and offer places to the first 20% who register",
+        "Lower the threshold of every split by 20%"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "A cost per place is the budget in Lagrangian form: only leaves whose summed gain beats it are offered.",
+      "misconceptions": [
+        "Changes the shape of the rule, not how many it offers",
+        "",
+        "Replaces the learned rule with arrival order",
+        "Treats thresholds as a budget dial, with no link to gains"
+      ],
+      "lo": [
+        "LO4"
+      ],
+      "day": "day4",
+      "session": 1,
+      "slide": "budget-as-a-cost",
+      "level": "apply",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-tree-02",
+      "type": "single",
+      "prompt": "Treat-all has the highest value on the logs, 65.0% employed against the rule's 58.9%. A board member asks why not recommend it. What is the best answer?",
+      "options": [
+        "Treat-all is biased on the logs",
+        "Treat-all needs five times the places; per place the rule finds about twice as many jobs",
+        "Treat-all harms some seekers",
+        "Treat-all cannot be audited by region"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "With one place per five seekers, the comparison that matters is jobs per place within the budget.",
+      "misconceptions": [
+        "Its estimate is fine; the issue is cost",
+        "",
+        "A real concern in general, but not why it loses here",
+        "Every rule can be audited; treat-all offers every region the same"
+      ],
+      "lo": [
+        "LO4"
+      ],
+      "day": "day4",
+      "session": 1,
+      "slide": "rule-against-alternatives",
+      "level": "evaluate",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-fair-01",
+      "type": "single",
+      "prompt": "An agency stores each seeker's number of dependants, collected to calculate family benefits. A colleague wants the coaching rule to use it. Which role fits best, and why?",
+      "options": [
+        "Drive: it predicts who benefits",
+        "Exclude: it was collected for another purpose, and using it to decide needs a basis the agency has not established",
+        "Audit: every result should be checked by number of dependants",
+        "Drive, as long as it is transformed into a score"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Purpose limitation applies to the use of data, whatever the model gains from it; the register records the decision and its reason.",
+      "misconceptions": [
+        "Puts predictive value above the purpose the data were collected for",
+        "",
+        "Possible, but does not answer whether it may decide",
+        "Thinks a transformation changes what the data are used for"
+      ],
+      "lo": [
+        "LO4"
+      ],
+      "day": "day4",
+      "session": 2,
+      "slide": "attribute-register",
+      "level": "apply",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-fair-02",
+      "type": "single",
+      "prompt": "A benefit ranking never uses region, yet offers one remote region 7% of its seekers against 23% in another. What explains this?",
+      "options": [
+        "A coding error, since region was not in the model",
+        "Attributes that differ by region, such as months unemployed and distance, carry region into the ranking",
+        "Random noise in the forest",
+        "The region was over-represented in the pilot"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Leaving an attribute out does not remove its influence: correlated attributes act as proxies, which only an audit reveals.",
+      "misconceptions": [
+        "Assumes an attribute left out cannot be reached",
+        "",
+        "A gap of this size across thousands of seekers is not noise",
+        "Representation affects precision, not this systematic gap"
+      ],
+      "lo": [
+        "LO4"
+      ],
+      "day": "day4",
+      "session": 2,
+      "slide": "proxies",
+      "level": "analyze",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-fair-03",
+      "type": "single",
+      "prompt": "A regional floor changes the rule's value by -0.2 points, with a paired 95% interval from -0.5 to 0.1. How do you report it?",
+      "options": [
+        "The floor is free",
+        "The floor costs 0.2 points",
+        "The floor's cost is not distinguishable from zero: between a small loss and a small gain",
+        "The floor improves the rule"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "The interval is the finding: the decision owner sees the range of what the constraint may cost.",
+      "misconceptions": [
+        "Reads an interval that includes zero as proof of zero",
+        "Reports the point estimate as if it were certain",
+        "",
+        "Reads a negative price as a gain without its uncertainty"
+      ],
+      "lo": [
+        "LO4"
+      ],
+      "day": "day4",
+      "session": 2,
+      "slide": "regional-floor",
+      "level": "evaluate",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-trial-01",
+      "type": "single",
+      "prompt": "A rule and current practice disagree on 25% of seekers, and among them the rule is expected to raise employment by 6 points. What difference must a trial randomising all seekers detect?",
+      "options": [
+        "6 points",
+        "About 1.5 points",
+        "24 points",
+        "It cannot be computed without the trial"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Seekers on whom the policies agree contribute no difference, so the difference across everyone is 0.25 times 6.",
+      "misconceptions": [
+        "Ignores the seekers on whom the two policies agree",
+        "",
+        "Divides instead of multiplying by the share",
+        "The expected difference is what sizing needs, and it can be computed"
+      ],
+      "lo": [
+        "LO6"
+      ],
+      "day": "day4",
+      "session": 3,
+      "slide": "where-policies-disagree",
+      "level": "apply",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-trial-02",
+      "type": "single",
+      "prompt": "An agency has 11 offices and wants to randomise whole offices so caseworkers never mix the two policies. Employment rates differ between offices (ICC about 0.04). What do you advise?",
+      "options": [
+        "Randomise offices: mixing is the bigger risk",
+        "Randomise seekers within offices, and check that caseworkers follow the assigned policy",
+        "Randomise offices, and add more seekers to compensate",
+        "Skip randomisation and compare offices before and after"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "With a design effect above 100, office randomisation cannot detect the difference; seeker randomisation with a compliance check can.",
+      "misconceptions": [
+        "Ignores that 11 clusters cannot power a 1.4-point difference",
+        "",
+        "More seekers per office barely helps when there are only 11 clusters",
+        "Gives up the comparison the trial exists for"
+      ],
+      "lo": [
+        "LO6"
+      ],
+      "day": "day4",
+      "session": 3,
+      "slide": "randomisation-unit",
+      "level": "evaluate",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-trial-03",
+      "type": "single",
+      "prompt": "Why does a trial with one interim look use O'Brien–Fleming boundaries instead of testing at 1.96 both times?",
+      "options": [
+        "Testing twice at 1.96 raises the chance of a false positive above 5%",
+        "O'Brien–Fleming boundaries make the trial smaller",
+        "The interim data are less accurate",
+        "Regulators require exactly two looks"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Two looks give two chances to cross by luck; strict early boundaries keep the overall false-positive rate at 5%.",
+      "misconceptions": [
+        "",
+        "The boundaries slightly increase, not decrease, the sample",
+        "The data are the same kind; the issue is repeated testing",
+        "Confuses a design choice with a rule"
+      ],
+      "lo": [
+        "LO6"
+      ],
+      "day": "day4",
+      "session": 3,
+      "slide": "stopping-rule",
+      "level": "understand",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-trial-04",
+      "type": "single",
+      "prompt": "A seeker-level trial finds the rule raises employment by 1.5 points. A labour economist says the true gain to the region could be smaller. Why?",
+      "options": [
+        "Seekers in the rule arm may have been more motivated",
+        "Coached seekers may take jobs other seekers would have found, which a seeker-level comparison cannot see",
+        "The trial used intention to treat",
+        "The interim look biased the estimate"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Displacement moves jobs between seekers in the same market; measuring it needs randomisation at the level of labour markets.",
+      "misconceptions": [
+        "Randomisation balances motivation between arms",
+        "",
+        "Intention to treat makes the estimate conservative for compliance, not for displacement",
+        "A pre-planned boundary keeps the test valid"
+      ],
+      "lo": [
+        "LO6"
+      ],
+      "day": "day4",
+      "session": 3,
+      "slide": "randomisation-unit",
+      "level": "analyze",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
+    },
+    {
+      "id": "q-summary-01",
+      "type": "single",
+      "prompt": "A rule offers places to seekers unemployed 11 to 15 months. Which group should go to caseworker review first?",
+      "options": [
+        "Seekers unemployed 13 months",
+        "Seekers unemployed exactly 10 or 16 months, and seekers whose records may be wrong",
+        "All seekers the rule offers",
+        "Seekers with the highest risk scores"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Review belongs where the rule is arbitrary (at thresholds) or blind (data it cannot see or trust).",
+      "misconceptions": [
+        "In the middle of the band, where the rule is most clearly right",
+        "",
+        "Reviewing everything removes the point of a rule",
+        "Brings back risk targeting through review"
+      ],
+      "lo": [
+        "LO4"
+      ],
+      "day": "day4",
+      "session": 4,
+      "slide": "edge-cases",
+      "level": "apply",
+      "pool": "practice",
+      "weight": 1,
+      "timer": 90
     }
   ]
 }

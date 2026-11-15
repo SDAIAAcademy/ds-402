@@ -9,8 +9,7 @@ These are the starting points that let a lab begin without an earlier one:
     cate_logged.csv.gz      for every logged decision: the causal forest's CATE fitted on the whole pilot,
                             and cross-fitted outcome predictions mu0, mu1 on the logs (Labs 3.2, 3.3, 4.1, 4.2)
     dr_pilot.csv            doubly robust effect scores for the pilot's training split (Labs 4.1, 4.2)
-    rule_tree.json          the reference depth-two rule on the attributes allowed to drive it (Labs 4.3, 4.4)
-    results.json            the numbers of the reference rule that Lab 4.4 summarises
+    rule_tree.json          the reference depth-two rule on the attributes allowed to drive it (Labs 4.1 to 4.4)
 """
 
 from __future__ import annotations

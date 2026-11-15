@@ -1,0 +1,65 @@
+{
+ "facts": {
+  "share": 0.16293459862926274,
+  "value": 0.5893436437487775,
+  "lo": 0.5812813008181921,
+  "hi": 0.5974059866793628,
+  "current": 0.5748772163489553,
+  "gain": 0.01446642739982218,
+  "jobs_per_1000": 14.46642739982218,
+  "region_ratio": 0.9095646180119751,
+  "left_out": 0.28582924054496517
+ },
+ "page": "# Coaching places in 2027: a proposed rule\n\n## What the rule does\nOffer a coaching place to job seekers who have been unemployed for more than 10 and at most 15 months. This would offer 16% of seekers a place, within the budget of one place per five seekers; the remaining places can go to the seekers with the highest estimated gain in each region.\n\n## What it is worth\nOn the 2025 and 2026 records, seekers decided this way would be employed within six months at a rate of 58.9% (95% interval 58.1% to 59.7%), against 57.5% under current practice: about 14 more seekers in work for every 1,000 registered. Giving places to the highest risk scores would do no better than current practice.\n\n## Who it leaves out\nEach region, women and men, and seekers with and without a disability are offered places at similar rates (the lowest region's rate is 91% of the highest). Seekers unemployed for more than 15 months (29% of all seekers, and half of Nijad's) are not offered a place by the rule: the pilot found coaching helps them less, and other services should serve them.\n\n## Who reviews\nCaseworkers review by hand the seekers at the edges of the band, seekers whose registration dates are uncertain, and seekers with a disability or living far from an office whom the rule leaves out (see the list attached).\n\n## What would confirm it\nA trial in which each new seeker is randomised to the rule or to current practice: about 18,000 seekers in each, roughly two years of registrations, with one look at the halfway point.\n",
+ "edges": {
+  "__frame__": {
+   "columns": [
+    "case",
+    "seekers",
+    "why"
+   ],
+   "index": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "data": [
+    [
+     "unemployed exactly 10 or 16 months",
+     2341,
+     "one month either side of the band: the effect barely differs"
+    ],
+    [
+     "disability, unemployed more than 15 months",
+     721,
+     "disabled seekers gain more on average; the rule does not see disability"
+    ],
+    [
+     "in the band but more than 60 km from an office",
+     419,
+     "offered a place they may not be able to attend; consider remote coaching"
+    ],
+    [
+     "unemployed more than 36 months",
+     1505,
+     "the logs hold almost no evidence for them (Lab 3.3): a pilot, not the rule, should decide"
+    ],
+    [
+     "months unemployed recorded as 0",
+     624,
+     "often a re-registration with the earlier spell lost: check the history"
+    ]
+   ]
+  }
+ },
+ "choice": [
+  "siraj-energy-visits",
+  [
+   "state the estimand and check overlap in the logs, district by district",
+   "fit and validate effect estimates on the pilot's held-out split",
+   "learn a rule under the 15% budget and value it on the logs with diagnostics"
+  ]
+ ]
+}
