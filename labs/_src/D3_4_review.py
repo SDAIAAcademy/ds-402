@@ -16,7 +16,7 @@
 # **Tasks**
 # - [ ] 1 · Read the claim and list what it rests on (4')
 # - [ ] 2 · The post-treatment subgroup (5')
-# - [ ] 3 · The dredged cell on held-out data (6')
+# - [ ] 3 · The dredged cell: search, then hold out (6')
 # - [ ] 4 · Multiplicity and the cells with no effect (5')
 # - [ ] 5 · In-sample against held-out agreement (5')
 # - [ ] ✱ Stretch · Tag each fault with its name in the national bias guide
@@ -101,7 +101,7 @@ print(f"motivation: {mot_hi:.2f} (4+ sessions) against {mot_lo:.2f} (fewer) · c
 U.check(mot_hi > mot_lo + 0.2, "attenders were more motivated before the lottery: the subgroup is selected, not randomised")
 
 # %% [markdown]
-# ## 3 · The dredged cell on held-out data (6')
+# ## 3 · The dredged cell: search, then hold out (6')
 #
 # The analyst searched 60 cells on all 6,000 seekers and reported the largest. Repeat the search honestly: search only the training split, take its five largest cells, and estimate the same five cells on the held-out split. (The analyst's own cell cannot be re-tested on held-out seekers: his search used them. The generator's truth judges it below.)
 #
