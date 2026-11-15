@@ -45,7 +45,7 @@ print("mode:", U.MODE)
 
 P = U.pilot()
 TP = U.truth_pilot()
-L = U.logged_sample(drop_override=True)
+L = U.logged(drop_override=True)   # all decisions in both modes: the stored answers are per decision
 TL = U.truth_for(L["decision_id"])
 print(f"pilot {len(P):,} seekers · logs {len(L):,} decisions")
 

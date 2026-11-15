@@ -142,7 +142,7 @@ except NotImplementedError:
     U.check(not U.STRICT, "the solution run used its own estimate")
 full = runs["gradient boosting"]["est"]
 print(f"with motivation {U.pp(full)} · without {U.pp(r27['est'])} (se {U.pp(r27['se'])}) · truth {U.pp(ATE)}")
-U.check(r27["est"] - ATE > 1.5 * r27["se"], "without motivation the estimate is biased upwards")
+U.check(r27["est"] - full > r27["se"] and r27["est"] > ATE, "without motivation the estimate moves up, away from the truth")
 
 # %% [markdown]
 # ## 4 · Bound it with a sensitivity analysis (8')

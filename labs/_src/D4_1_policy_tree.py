@@ -94,7 +94,7 @@ U.check(0.05 < g.mean() < 0.13, "the scores average to a plausible effect")
 
 # %%
 X_tr = Ptr[ALLOWED]
-NT = U.pick(12, 8)
+NT = 12  # thresholds per attribute; the search takes about a minute on a laptop
 
 
 def tree_under_budget(X, g, budget=U.BUDGET, steps=12):
