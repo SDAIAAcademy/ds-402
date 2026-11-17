@@ -1,0 +1,27 @@
+{
+ "value": 32.95620379673206,
+ "feature": "months_unemployed",
+ "threshold": 10.0,
+ "left": {
+  "leaf": 0
+ },
+ "right": {
+  "feature": "months_unemployed",
+  "threshold": 15.0,
+  "left": {
+   "leaf": 1
+  },
+  "right": {
+   "leaf": 0
+  }
+ },
+ "cost": 0.16988231593972689,
+ "features": [
+  "months_unemployed",
+  "digital_skills",
+  "education",
+  "prior_jobs",
+  "has_licence",
+  "distance_km"
+ ]
+}

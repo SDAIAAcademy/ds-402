@@ -1,0 +1,59 @@
+{
+ "blp": {
+  "__frame__": {
+   "columns": [
+    "slope",
+    "se"
+   ],
+   "index": [
+    "s_learner",
+    "t_learner",
+    "x_learner",
+    "causal_forest"
+   ],
+   "data": [
+    [
+     1.3538,
+     0.3101
+    ],
+    [
+     0.8564,
+     0.1806
+    ],
+    [
+     1.1991,
+     0.2259
+    ],
+    [
+     3.1436,
+     0.6161
+    ]
+   ]
+  }
+ },
+ "top": {
+  "__series__": {
+   "index": [
+    "s_learner",
+    "t_learner",
+    "x_learner",
+    "causal_forest",
+    "risk_score"
+   ],
+   "data": {
+    "__array__": [
+     0.2811,
+     0.2674,
+     0.2843,
+     0.251,
+     0.1149
+    ]
+   },
+   "name": null
+  }
+ },
+ "choice": [
+  "x_learner",
+  "The X-learner's top fifth gains 28.4 points on held-out seekers against 11.5 for the risk score, its best-linear-predictor slope is 1.20 (near 1: right in scale as well as rank), and its quintiles rise in order. The causal forest ranks almost as well but its slope near 3 says it understates differences, which matters when places are priced against a cost."
+ ]
+}

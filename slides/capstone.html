@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-ax="deck" data-track="data-science">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capstone · Capstone: a policy evaluation and its defence · Causal Machine Learning and Policy Evaluation</title>
+<meta name="generator" content="SDAIA Academy engine 1.0.0">
+<link rel="icon" href="../_engine/icon.svg">
+<link rel="alternate" type="text/markdown" href="capstone.md">
+<link rel="describedby" href="../llms.txt">
+<link rel="stylesheet" href="../_engine/academy.css">
+</head>
+<body>
+<div class="deck" data-course="Causal Machine Learning and Policy Evaluation" data-track="data-science" data-day="Capstone">
+<section class="slide title" id="title" data-auto="title" data-label="Welcome" data-n="1">
+  <div class="kicker">SDAIA Academy · Causal Machine Learning and Policy Evaluation</div>
+  <h1>Capstone: a policy evaluation and its defence</h1>
+  <p class="lead mt">Capstone: One brief, one constrained rule, its offline value, a subgroup audit and a trial plan, defended in 15 minutes</p>
+  <div class="meta"><span class="track">Data Science Track</span><span>4 teaching days + capstone day</span><span>15 min talk and demo</span><span>DS-402</span></div>
+  <aside class="notes"><p>Today is theirs: keep your own talking to the opening and the closing. Each participant defends one policy evaluation, on one of the three briefs. Confirm the running order and that every repository opens and reruns on this screen.</p></aside>
+</section>
+
+<section class="slide" id="agenda" data-label="Agenda" data-n="2">
+  <div class="kicker">Capstone</div>
+  <h2>How the defences run</h2>
+  <div class="agenda">
+    <div class="item now"><div><b>The briefs and final prep</b><small>the rubric, the live change, a last rerun of each analysis</small></div></div>
+    <div class="item"><div><b>Defences</b><small>fifteen minutes each, including the live change, one participant at a time</small></div></div>
+    <div class="item"><div><b>Review and closing</b><small>peer feedback, the trainer's review, the follow-up task</small></div></div>
+  </div>
+  <aside class="notes"><p>The catalog gives fifteen minutes per defence and no separate question time, so the live change happens inside the fifteen minutes. With eight participants the defences take about two and a half hours including changeovers. Breaks are not slides: press B when the room needs one.</p></aside>
+</section>
+
+<section class="slide" id="the-briefs" data-label="The briefs" data-n="3">
+  <div class="kicker">The briefs</div>
+  <h2>One brief, the whole chain of the week</h2>
+  <table class="t small">
+    <tr><th>Brief</th><th>Budget</th><th>Fairness constraint</th><th>Audit groups</th></tr>
+    <tr><td>Siraj Power Distribution: energy-saving visits</td><td>15% of households</td><td>low-income households get at least their share of visits</td><td>district, income band, elderly member</td></tr>
+    <tr><td>Al-Nakheel food safety: unannounced inspections</td><td>25% of restaurants</td><td>every district between half and twice the average rate</td><td>district, size band, chain</td></tr>
+    <tr><td>Fursa 2027: coaching places</td><td>20% of seekers</td><td>every region at least 20% of its seekers</td><td>region, gender, disability</td></tr>
+  </table>
+  <p class="small mt">Each brief: a randomised pilot, logs with recorded probabilities, a <code>BRIEF.md</code>. Submission rules: <code>labs/capstone/README.md</code>.</p>
+  <aside class="notes"><p>The true values are in each brief's truth folder; the capstone is assessed on the chain and the defence, not on recovering them. Each brief has one district or office with poor overlap in the logs: a README that values a rule there without diagnostics loses marks under offline evaluation. In the Siraj brief the effect is largest in old homes and high-use homes, so need targeting by consumption is a reasonable but not the best rule; in Nakheel, restaurants with the worst records are not the ones inspections change most.</p></aside>
+</section>
+
+<section class="slide" id="readme-reports" data-label="What the README reports" data-n="4">
+  <div class="kicker">The submission</div>
+  <h2>The README reports measured results, in this order</h2>
+  <div class="cols cols-2">
+    <ol class="bullets small">
+      <li>The estimand, and the average effect with its overlap</li>
+      <li>Effect estimates validated on the held-out randomised split</li>
+      <li>A rule under the budget and the constraint, with the attribute register</li>
+      <li>Its offline value with intervals and diagnostics, against treat-all, risk or need targeting and current practice</li>
+      <li>The audit by the brief's groups, and the constraint's price</li>
+      <li>The confirmatory trial: arms, difference, seekers or units per arm, stopping rule</li>
+    </ol>
+    <div class="card c-navy tint"><h4>And with it</h4><p class="small mb0">Notebooks that rerun from the raw data with a fixed seed, the commit history, the run log, and a verification note on every assisted step.</p></div>
+  </div>
+  <aside class="notes"><p>AI-full in the capstone: participants may use assistants for anything, and the verification note says what was assisted and how each result was checked. The live change is how the panel checks that the participant understands what the code does.</p></aside>
+</section>
+
+<section class="slide" id="rubric" data-label="The rubric" data-n="5">
+  <div class="kicker">How evaluations are scored</div>
+  <h2>The rubric</h2>
+  <div class="bars">
+    <div class="row"><span>Identification</span><div class="bar c-teal" style="--w:60%"></div><span class="val">15%</span></div>
+    <div class="row"><span>Effects and validation</span><div class="bar c-cyan" style="--w:100%"></div><span class="val">25%</span></div>
+    <div class="row"><span>Offline evaluation</span><div class="bar c-coral" style="--w:100%"></div><span class="val">25%</span></div>
+    <div class="row"><span>Rule and fairness audit</span><div class="bar c-purple" style="--w:80%"></div><span class="val">20%</span></div>
+    <div class="row"><span>Trial plan and reproducibility</span><div class="bar c-amber" style="--w:60%"></div><span class="val">15%</span></div>
+  </div>
+  <div class="callout tip mt"><b>Every number reruns.</b> A number the panel cannot regenerate from the repository scores as a claim, not a result.</div>
+  <aside class="notes"><p>Full marks, briefly. Identification: estimand in five parts, overlap shown and acted on. Effects and validation: at least two estimators, calibration and a best-linear-predictor slope on the held-out split. Offline evaluation: augmented values with intervals, effective sample sizes, the recorded probabilities checked. Rule and fairness audit: a register with reasons, selection rates and gains by group, the constraint priced with a paired interval. Trial plan and reproducibility: dilution, unit, stopping rule, limits; a clean clone reruns.</p></aside>
+</section>
+
+<section class="slide" id="format" data-label="Format" data-n="6">
+  <div class="kicker">Format</div>
+  <h2>Fifteen minutes: the evaluation, then one live change</h2>
+  <div class="cols cols-3">
+    <div class="card c-teal"><h4>1 · The question</h4><p class="small mb0">Who decides, the budget, the estimand. One slide.</p></div>
+    <div class="card c-cyan"><h4>2 · The evidence</h4><p class="small mb0">Effects validated, the rule, its value against the alternatives, the audit.</p></div>
+    <div class="card c-coral"><h4>3 · The live change</h4><p class="small mb0">The panel changes the budget or the constraint; predict, then rerun.</p></div>
+  </div>
+  <div class="callout note mt"><b>Peer feedback.</b> After each defence, everyone writes one strength, one question and one suggestion.</div>
+  <aside class="notes"><p>Call the live change at about minute ten, whatever has been covered; what was not said is not scored.</p></aside>
+</section>
+
+<section class="slide" id="live-change" data-label="The live change" data-n="7">
+  <div class="kicker">What the panel changes</div>
+  <h2>One change to the budget or the constraint, predicted before it is rerun</h2>
+  <div class="cols cols-2">
+    <div class="card c-navy"><h4>The change</h4><p class="small mb0">Halve the budget, double it, or remove the fairness constraint. The participant first predicts the direction and rough size of the change in the rule's value and in the audit, then reruns and shows it.</p></div>
+    <ul class="bullets small">
+      <li>"With half the places, does the value per place rise or fall? Why?"</li>
+      <li>"Without the constraint, which group loses places, and how many outcomes do you gain?"</li>
+      <li>"What is the effective sample size of your rule's weights now?"</li>
+      <li>"How many units per arm would the trial need at the new budget?"</li>
+    </ul>
+  </div>
+  <aside class="notes"><p>Use the same change for everyone on the same brief so defences are comparable. A good prediction: halving the budget raises the gain per place (the best places are kept) and lowers the total; removing the constraint raises the value by about the constraint's price, which may be zero within its interval. A participant who cannot rerun within two minutes has a reproducibility problem.</p></aside>
+</section>
+
+<section class="slide order" id="running-order" data-label="Running order" data-n="8">
+  <div class="kicker">Running order</div>
+  <h2>Who defends when</h2>
+  <table class="t small">
+    <tr><th>#</th><th>Participant</th><th>Brief</th></tr>
+    <tr><td>1</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>2</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>3</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>4</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>5</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>6</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>7</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+    <tr><td>8</td><td><input placeholder="name"></td><td><input placeholder="Siraj, Nakheel or Fursa 2027"></td></tr>
+  </table>
+  <aside class="notes"><p>Type the names in at the start; the fields can be edited live and are not saved, so keep the list in your notes too. Group participants by brief so the panel compares like with like.</p></aside>
+</section>
+
+<section class="slide dark" id="final-prep" data-label="Before the first defence" data-n="9">
+  <div class="kicker">Before the first defence</div>
+  <h1>Final prep · 20 minutes</h1>
+  <div class="timer" data-minutes="20"></div>
+  <p class="lead">Rerun your analysis from a clean clone, rehearse once, open your repository on this screen.</p>
+  <aside class="notes"><p>Press T to start the timer. Walk the room and ask each participant to change the budget in their code and rerun: anyone who cannot has twenty minutes to fix it.</p></aside>
+</section>
+
+<section class="slide dark presenting" id="now-presenting" data-label="Now presenting" data-n="10">
+  <div class="kicker center">Now defending</div>
+  <div class="center"><input placeholder="Participant · brief"></div>
+  <div class="timers mt">
+    <div><h3>Evaluation and live change</h3><div class="timer" data-minutes="15"></div></div>
+  </div>
+  <aside class="notes"><p>Type the participant's name and press T to start the timer. Reuse this slide for every defence. Score the rubric during the talk and the live change at the end; check the commit history, run log and verification note before the next participant.</p></aside>
+</section>
+
+<section class="slide" id="review" data-label="Trainer review" data-n="11">
+  <div class="kicker">Trainer review</div>
+  <h2>What the defences showed</h2>
+  <div class="cols cols-3">
+    <div class="card c-teal"><h4>Strongest patterns</h4><p class="small mb0">What several evaluations got right.</p></div>
+    <div class="card c-coral"><h4>Common gaps</h4><p class="small mb0">What most evaluations would fix next.</p></div>
+    <div class="card c-purple"><h4>One surprise</h4><p class="small mb0">Something nobody expected.</p></div>
+  </div>
+  <aside class="notes"><p>Fill these in from your scoring notes during the last break. Name evaluations for strengths; keep gaps anonymous. Gaps worth looking for: effect estimates checked on training data, a value with no effective sample size, a rule that uses an audit attribute, a constraint reported as free, a trial sized for the per-unit gain instead of the diluted difference.</p></aside>
+</section>
+
+<section class="slide" id="what-next" data-label="After the course" data-n="12">
+  <div class="kicker">After the course</div>
+  <h2>Keep going</h2>
+  <ul class="bullets">
+    <li><b>Follow-up task:</b> within three weeks, review one eligibility rule from your workplace or a public service (<code>labs/followup/README.md</code>).</li>
+    <li><b>Your evaluation stays yours:</b> keep it rerunnable and add the check you named as the next one.</li>
+    <li><b>Measuring programmes at scale:</b> DS-406 Measuring the Impact of Data and AI Programmes.</li>
+  </ul>
+  <aside class="notes"><p>The follow-up task is tracked; tell participants when it is due and where to submit it.</p></aside>
+</section>
+
+<section class="slide dark" id="thanks" data-label="Thank you" data-n="13">
+  <div class="kicker">SDAIA Academy</div>
+  <h1>Thank you</h1>
+  <p class="lead">Causal Machine Learning and Policy Evaluation</p>
+</section>
+</div>
+<script type="application/json" id="academy-data">{"v":1,"engine":"1.0.0","build":{"at":"2026-11-15T22:53:29Z","version":"2027.1.0","commit":"0067d77"},"course":{"id":"ds-402","code":"DS-402","title":"Causal Machine Learning and Policy Evaluation","track":"data-science","lang":"en","dir":"ltr","url":"https://sdaiaacademy.github.io/ds-402/","repo":"SDAIAAcademy/ds-402","home":"../index.html"},"deck":{"id":"capstone","kind":"capstone","day":5,"label":"Capstone","title":"Capstone: a policy evaluation and its defence","prev":"day4.html","next":null,"md":"capstone.md","alt":{}},"sessions":[],"slides":[{"id":"title","n":1,"title":"Capstone: a policy evaluation and its defence","kind":"title","session":0,"hash":"3af84d3b","md":"#### [capstone#title] Capstone: a policy evaluation and its defence\n\n*SDAIA Academy · Causal Machine Learning and Policy Evaluation*\n\nCapstone: One brief, one constrained rule, its offline value, a subgroup audit and a trial plan, defended in 15 minutes\n\nData Science Track · 4 teaching days + capstone day · 15 min talk and demo · DS-402","notes":"Today is theirs: keep your own talking to the opening and the closing. Each participant defends one policy evaluation, on one of the three briefs. Confirm the running order and that every repository opens and reruns on this screen.","minutes":null,"lo":[]},{"id":"agenda","n":2,"title":"How the defences run","kind":"content","session":0,"hash":"6809caf9","md":"#### [capstone#agenda] How the defences run\n\n*Capstone*\n\n- **The briefs and final prep**: the rubric, the live change, a last rerun of each analysis\n- **Defences**: fifteen minutes each, including the live change, one participant at a time\n- **Review and closing**: peer feedback, the trainer's review, the follow-up task","notes":"The catalog gives fifteen minutes per defence and no separate question time, so the live change happens inside the fifteen minutes. With eight participants the defences take about two and a half hours including changeovers. Breaks are not slides: press B when the room needs one.","minutes":null,"lo":[]},{"id":"the-briefs","n":3,"title":"One brief, the whole chain of the week","kind":"content","session":0,"hash":"862b9aef","md":"#### [capstone#the-briefs] One brief, the whole chain of the week\n\n*The briefs*\n\n| Brief | Budget | Fairness constraint | Audit groups |\n| --- | --- | --- | --- |\n| Siraj Power Distribution: energy-saving visits | 15% of households | low-income households get at least their share of visits | district, income band, elderly member |\n| Al-Nakheel food safety: unannounced inspections | 25% of restaurants | every district between half and twice the average rate | district, size band, chain |\n| Fursa 2027: coaching places | 20% of seekers | every region at least 20% of its seekers | region, gender, disability |\n\nEach brief: a randomised pilot, logs with recorded probabilities, a `BRIEF.md`. Submission rules: `labs/capstone/README.md`.","notes":"The true values are in each brief's truth folder; the capstone is assessed on the chain and the defence, not on recovering them. Each brief has one district or office with poor overlap in the logs: a README that values a rule there without diagnostics loses marks under offline evaluation. In the Siraj brief the effect is largest in old homes and high-use homes, so need targeting by consumption is a reasonable but not the best rule; in Nakheel, restaurants with the worst records are not the ones inspections change most.","minutes":null,"lo":[]},{"id":"readme-reports","n":4,"title":"The README reports measured results, in this order","kind":"content","session":0,"hash":"c1519f04","md":"#### [capstone#readme-reports] The README reports measured results, in this order\n\n*The submission*\n\n1. The estimand, and the average effect with its overlap\n2. Effect estimates validated on the held-out randomised split\n3. A rule under the budget and the constraint, with the attribute register\n4. Its offline value with intervals and diagnostics, against treat-all, risk or need targeting and current practice\n5. The audit by the brief's groups, and the constraint's price\n6. The confirmatory trial: arms, difference, seekers or units per arm, stopping rule\n\n- **And with it.** Notebooks that rerun from the raw data with a fixed seed, the commit history, the run log, and a verification note on every assisted step.","notes":"AI-full in the capstone: participants may use assistants for anything, and the verification note says what was assisted and how each result was checked. The live change is how the panel checks that the participant understands what the code does.","minutes":null,"lo":[]},{"id":"rubric","n":5,"title":"The rubric","kind":"content","session":0,"hash":"b1e48992","md":"#### [capstone#rubric] The rubric\n\n*How evaluations are scored*\n\n| Item | Value |\n| --- | --- |\n| Identification | 15% |\n| Effects and validation | 25% |\n| Offline evaluation | 25% |\n| Rule and fairness audit | 20% |\n| Trial plan and reproducibility | 15% |\n\n> **Every number reruns.** A number the panel cannot regenerate from the repository scores as a claim, not a result.","notes":"Full marks, briefly. Identification: estimand in five parts, overlap shown and acted on. Effects and validation: at least two estimators, calibration and a best-linear-predictor slope on the held-out split. Offline evaluation: augmented values with intervals, effective sample sizes, the recorded probabilities checked. Rule and fairness audit: a register with reasons, selection rates and gains by group, the constraint priced with a paired interval. Trial plan and reproducibility: dilution, unit, stopping rule, limits; a clean clone reruns.","minutes":null,"lo":[]},{"id":"format","n":6,"title":"Fifteen minutes: the evaluation, then one live change","kind":"content","session":0,"hash":"b90078f8","md":"#### [capstone#format] Fifteen minutes: the evaluation, then one live change\n\n*Format*\n\n- **1 · The question.** Who decides, the budget, the estimand. One slide.\n- **2 · The evidence.** Effects validated, the rule, its value against the alternatives, the audit.\n- **3 · The live change.** The panel changes the budget or the constraint; predict, then rerun.\n\n> **Peer feedback.** After each defence, everyone writes one strength, one question and one suggestion.","notes":"Call the live change at about minute ten, whatever has been covered; what was not said is not scored.","minutes":null,"lo":[]},{"id":"live-change","n":7,"title":"One change to the budget or the constraint, predicted before it is rerun","kind":"content","session":0,"hash":"3cb13ea5","md":"#### [capstone#live-change] One change to the budget or the constraint, predicted before it is rerun\n\n*What the panel changes*\n\n- **The change.** Halve the budget, double it, or remove the fairness constraint. The participant first predicts the direction and rough size of the change in the rule's value and in the audit, then reruns and shows it.\n\n- \"With half the places, does the value per place rise or fall? Why?\"\n- \"Without the constraint, which group loses places, and how many outcomes do you gain?\"\n- \"What is the effective sample size of your rule's weights now?\"\n- \"How many units per arm would the trial need at the new budget?\"","notes":"Use the same change for everyone on the same brief so defences are comparable. A good prediction: halving the budget raises the gain per place (the best places are kept) and lowers the total; removing the constraint raises the value by about the constraint's price, which may be zero within its interval. A participant who cannot rerun within two minutes has a reproducibility problem.","minutes":null,"lo":[]},{"id":"running-order","n":8,"title":"Who defends when","kind":"order","session":0,"hash":"c9b72f0b","md":"#### [capstone#running-order] Who defends when\n\n*Running order*\n\n| # | Participant | Brief |\n| --- | --- | --- |\n| 1 |  |  |\n| 2 |  |  |\n| 3 |  |  |\n| 4 |  |  |\n| 5 |  |  |\n| 6 |  |  |\n| 7 |  |  |\n| 8 |  |  |","notes":"Type the names in at the start; the fields can be edited live and are not saved, so keep the list in your notes too. Group participants by brief so the panel compares like with like.","minutes":null,"lo":[]},{"id":"final-prep","n":9,"title":"Final prep · 20 minutes","kind":"content","session":0,"hash":"0ae359e4","md":"#### [capstone#final-prep] Final prep · 20 minutes\n\n*Before the first defence*\n\nRerun your analysis from a clean clone, rehearse once, open your repository on this screen.","notes":"Press T to start the timer. Walk the room and ask each participant to change the budget in their code and rerun: anyone who cannot has twenty minutes to fix it.","minutes":null,"lo":[]},{"id":"now-presenting","n":10,"title":"Evaluation and live change","kind":"presenting","session":0,"hash":"c3e5a910","md":"#### [capstone#now-presenting] Evaluation and live change\n\n*Now defending*","notes":"Type the participant's name and press T to start the timer. Reuse this slide for every defence. Score the rubric during the talk and the live change at the end; check the commit history, run log and verification note before the next participant.","minutes":null,"lo":[]},{"id":"review","n":11,"title":"What the defences showed","kind":"content","session":0,"hash":"2008365e","md":"#### [capstone#review] What the defences showed\n\n*Trainer review*\n\n- **Strongest patterns.** What several evaluations got right.\n- **Common gaps.** What most evaluations would fix next.\n- **One surprise.** Something nobody expected.","notes":"Fill these in from your scoring notes during the last break. Name evaluations for strengths; keep gaps anonymous. Gaps worth looking for: effect estimates checked on training data, a value with no effective sample size, a rule that uses an audit attribute, a constraint reported as free, a trial sized for the per-unit gain instead of the diluted difference.","minutes":null,"lo":[]},{"id":"what-next","n":12,"title":"Keep going","kind":"content","session":0,"hash":"415e2792","md":"#### [capstone#what-next] Keep going\n\n*After the course*\n\n- **Follow-up task:** within three weeks, review one eligibility rule from your workplace or a public service (`labs/followup/README.md`).\n- **Your evaluation stays yours:** keep it rerunnable and add the check you named as the next one.\n- **Measuring programmes at scale:** DS-406 Measuring the Impact of Data and AI Programmes.","notes":"The follow-up task is tracked; tell participants when it is due and where to submit it.","minutes":null,"lo":[]},{"id":"thanks","n":13,"title":"Thank you","kind":"content","session":0,"hash":"a8df196d","md":"#### [capstone#thanks] Thank you\n\n*SDAIA Academy*\n\nCausal Machine Learning and Policy Evaluation","notes":"","minutes":null,"lo":[]}],"activities":[],"ai":{"context":{"course":"../context/course.md","courseJs":"../context/course.js","day":"capstone.md","llms":"../llms.txt"},"tasks":[],"tools":[]},"bridge":{"allowedOrigins":[]},"features":{},"strings":{}}</script>
+<script src="../_engine/academy.js"></script>
+</body>
+</html>

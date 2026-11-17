@@ -1,0 +1,112 @@
+{
+ "importances": {
+  "__series__": {
+   "index": [
+    "months_unemployed",
+    "distance_km",
+    "age",
+    "risk_score",
+    "prior_wage_k",
+    "digital_skills",
+    "dependants",
+    "motivation",
+    "prior_jobs",
+    "education",
+    "female",
+    "has_licence",
+    "region_Nijad",
+    "region_Mazari",
+    "region_Jaww",
+    "region_Rumh",
+    "disability",
+    "region_Qaraa"
+   ],
+   "data": {
+    "__array__": [
+     0.2268,
+     0.1948,
+     0.136,
+     0.0963,
+     0.0907,
+     0.0498,
+     0.0398,
+     0.0327,
+     0.0237,
+     0.0218,
+     0.0178,
+     0.0174,
+     0.0116,
+     0.0104,
+     0.008,
+     0.008,
+     0.0073,
+     0.0072
+    ]
+   },
+   "name": null
+  }
+ },
+ "profiles": [
+  {
+   "__series__": {
+    "index": [
+     "0-2",
+     "3-6",
+     "7-10",
+     "11-14",
+     "15-18",
+     "19-24",
+     "25-36",
+     "over 36"
+    ],
+    "data": {
+     "__array__": [
+      0.0673,
+      0.0801,
+      0.12,
+      0.1202,
+      0.1,
+      0.0784,
+      0.067,
+      0.0662
+     ]
+    },
+    "name": "tau"
+   }
+  },
+  {
+   "__series__": {
+    "index": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10
+    ],
+    "data": {
+     "__array__": [
+      0.0955,
+      0.0993,
+      0.0962,
+      0.0901,
+      0.095,
+      0.0909,
+      0.0882,
+      0.0872,
+      0.0859,
+      0.0849,
+      0.0795
+     ]
+    },
+    "name": "tau"
+   }
+  }
+ ],
+ "text": "Coaching helps most for seekers unemployed for about a year (12 points in the best band) and for those with low digital skills; it helps least, or not at all, for the newly unemployed (7 points for 0 to 2 months) and the very long-term unemployed. These are the forest's estimates on the training seekers' model; Lab 2.3 checks on held-out seekers whether its ranking holds before any place follows it."
+}

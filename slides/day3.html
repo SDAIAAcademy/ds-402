@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-ax="deck" data-track="data-science">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 3 · Evaluating rules before using them · Causal Machine Learning and Policy Evaluation</title>
+<meta name="generator" content="SDAIA Academy engine 1.0.0">
+<link rel="icon" href="../_engine/icon.svg">
+<link rel="alternate" type="text/markdown" href="day3.md">
+<link rel="describedby" href="../llms.txt">
+<link rel="stylesheet" href="../_engine/academy.css">
+</head>
+<body>
+<div class="deck" data-course="Causal Machine Learning and Policy Evaluation" data-track="data-science" data-day="Day 3">
+<!-- ======================= OPENING ======================= -->
+<section class="slide title" id="title" data-auto="title" data-label="Welcome" data-n="1">
+  <div class="kicker">SDAIA Academy · Causal Machine Learning and Policy Evaluation</div>
+  <h1>Evaluating rules before using them</h1>
+  <p class="lead mt">Day 3: The value of current practice and of candidate rules from logged decisions, with the diagnostics that say when not to believe it</p>
+  <div class="meta"><span class="track">Data Science Track</span><span>4 teaching days + capstone day</span><span>4 sessions · 4 labs</span><span>DS-402</span></div>
+  <aside class="notes"><p>Day 3 is about evaluating a rule before anyone is coached by it. Open with a question: how would you know what a rule is worth without trying it? Most rooms answer "a pilot". Today shows what the logs can tell you first, and when they cannot.</p></aside>
+</section>
+
+<section class="slide" id="review-day-2" data-lo="LO2" data-n="2">
+  <div class="kicker">Review checkpoint · Day 2</div>
+  <h2>Which check would you insist on before targeting with an effect model?</h2>
+  <div class="quiz" data-type="single" data-lo="LO2" data-id="review-day-2-q1">
+    <p class="lead">An effect model will decide next year's coaching places. Its builder shows a high correlation between predicted effects and observed outcomes on the training seekers. What do you ask for?</p>
+    <div class="opts">
+      <div class="opt" data-why="Accepts outcome prediction on seen data as evidence about effects" data-k="A">Nothing more: a high correlation on 3,600 seekers is enough</div>
+      <div class="opt" data-why="Checks the model's agreement with another model, not with effects" data-k="B">The correlation of its predictions with the risk score</div>
+      <div class="opt" data-why="Asks for precision on the same seekers, which repeats the flaw" data-k="C">Bootstrap intervals for the same training correlation</div>
+      <div class="opt" data-ok data-k="D">Observed effects by prediction group on held-out randomised seekers</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> Effects are only observable for groups of randomised seekers, and only seekers the model never saw give an honest check.</div>
+  </div>
+  <aside class="notes"><p>Answer: D. Link to Lab 3.4: the analyst made exactly this mistake.</p></aside>
+</section>
+
+<section class="slide" id="agenda" data-auto="agenda" data-label="Agenda" data-n="3">
+  <div class="kicker">Today</div>
+  <h2>Evaluating rules before using them</h2>
+  <div class="agenda"><div class="item"><div><b>Session 1 · Logged decisions</b><small>Logged decisions with recorded probabilities can value rules never used, if the recorded probabilities are right</small></div></div><div class="item"><div><b>Session 2 · Weighted and augmented estimators</b><small>Inverse propensity, self-normalised and augmented estimators value a rule from logs, each with an interval</small></div></div><div class="item"><div><b>Session 3 · Untrustworthy estimates</b><small>A rule that treats people the logs almost never treated is valued by a few heavy weights: measure it and say so</small></div></div><div class="item"><div><b>Session 4 · Reviewing an effects claim</b><small>A subgroup claim is reviewed for post-treatment groups, dredged cells, multiplicity and data used twice</small></div></div></div>
+  <aside class="notes"><p>Day 3 works on the logs again: 40,000 caseworker decisions with the probability the allocation tool recorded for each. The supplied file data/reference/cate_logged.csv.gz holds the course's effect estimates and outcome predictions for every decision, so no lab needs an earlier one.</p></aside>
+</section>
+
+<!-- ======================= SESSION 1 ======================= -->
+<section class="slide section" id="s1" data-auto="section" data-session="1" data-n="4">
+  <div class="kicker">Session 1</div>
+  <h1>Logged decisions</h1>
+  <ul class="bullets outcomes"><li>Compute the value of current practice from the logs</li><li>Check recorded probabilities against the decisions they describe</li><li>Decide what to do with an office whose records are wrong</li></ul>
+  <div class="sess-no">01</div>
+  <aside class="notes"><p>Session 1: what logged decisions are, what a recorded probability buys, and how to check it. The lab is AI-off.</p></aside>
+</section>
+
+<section class="slide" data-label="Logs" id="what-the-logs-hold" data-lo="LO3" data-n="5" data-session="1">
+  <div class="kicker">Logged decisions</div>
+  <h2>Each logged decision carries what was known, what was done, how likely it was, and what happened</h2>
+  <div class="flow">
+    <div class="step c-teal"><b>x</b>60 confounders at registration</div>
+    <div class="arrow">→</div>
+    <div class="step c-cyan"><b>p</b>offer probability the tool recorded</div>
+    <div class="arrow">→</div>
+    <div class="step c-coral"><b>a</b>offered or not</div>
+    <div class="arrow">→</div>
+    <div class="step c-purple"><b>y</b>employed within six months</div>
+  </div>
+  <div class="callout tip mt"><b>The recorded <code>p</code> is the key.</b> When it is right, no propensity model is needed, and rules never used can be valued.</div>
+  <aside class="notes"><p>Fursa's allocation tool scored each seeker and offered coaching with a probability rather than by a hard cut-off; that randomness is what makes off-policy evaluation possible. Many real allocation systems log no probability at all; then you are back to Day 1's estimated propensities.</p></aside>
+</section>
+
+<section class="slide" data-label="Current practice" id="value-of-current-practice" data-lo="LO3" data-n="6" data-session="1">
+  <div class="kicker">The baseline every rule must beat</div>
+  <h2>Current practice needs no weights: its value is the employment rate in the logs</h2>
+  <div class="cols cols-2">
+    <div class="stat center"><div class="big">57.6%</div><div class="lbl">employed within six months, 40,000 decisions (Lab 3.1)</div></div>
+    <ul class="bullets">
+      <li>The logs were produced by current practice.</li>
+      <li>Their mean outcome is its value, with a standard error of 0.2 points.</li>
+      <li>Every candidate rule is compared with this number.</li>
+    </ul>
+  </div>
+  <aside class="notes"><p>Without RUM-2 the value is 57.5%; the difference comes from that office's higher offer rate. Ask: is current practice a rule? Yes: a stochastic one, partly written in the tool and partly in caseworkers' heads.</p></aside>
+</section>
+
+<section class="slide" data-label="Weight check" id="weights-average-to-one" data-lo="LO3" data-n="7" data-session="1">
+  <div class="kicker">A check that costs one line</div>
+  <h2>If the recorded probabilities are right, the weights a/p and (1-a)/(1-p) average to 1</h2>
+  <div class="cols cols-2">
+    <pre class="code s" data-file="D3_1_logged.py"><code class="language-python">w1 = a / p
+w0 = (<span class="hljs-number">1</span> - a) / (<span class="hljs-number">1</span> - p)
+<span class="hljs-built_in">print</span>(w1.mean(), w0.mean())</code></pre>
+    <div class="stack">
+      <div class="card c-coral flat"><h4>Fursa's logs</h4><p class="small mb0">Mean of <code>a/p</code>: 1.148, standard error 0.019. Eight standard errors from 1.</p></div>
+      <div class="card c-teal flat"><h4>The other weight</h4><p class="small mb0">Mean of <code>(1-a)/(1-p)</code>: 0.976, standard error 0.003.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><p>From the course's run of Lab 3.1. Both are off: more offers happened than the records predict. This is the simplest test of a logging system, and it is rarely run. Ask: where would you look next? By office, by period, by group.</p></aside>
+</section>
+
+<section class="slide" data-label="By office" id="one-office-overrode" data-lo="LO3" data-n="8" data-session="1">
+  <div class="kicker">Lab 3.1, recorded against actual offers</div>
+  <h2>One office offered coaching two and a half times as often as its records say</h2>
+  <table class="t small">
+    <tr><th>Office</th><th class="num">Decisions</th><th class="num">Recorded</th><th class="num">Offered</th><th class="num">Mean a/p</th><th class="num">z</th></tr>
+    <tr class="hl"><td>RUM-2</td><td class="num">3,961</td><td class="num">13.6%</td><td class="num">33.6%</td><td class="num">2.61</td><td class="num">38.9</td></tr>
+    <tr><td>SAH-2</td><td class="num">6,028</td><td class="num">19.6%</td><td class="num">20.0%</td><td class="num">1.01</td><td class="num">0.8</td></tr>
+    <tr><td>RUM-1</td><td class="num">4,028</td><td class="num">13.5%</td><td class="num">13.2%</td><td class="num">1.03</td><td class="num">-0.6</td></tr>
+    <tr><td>NIJ-2</td><td class="num">1,588</td><td class="num">8.7%</td><td class="num">7.3%</td><td class="num">0.75</td><td class="num">-2.0</td></tr>
+  </table>
+  <p class="caption">Four of twelve offices. The other eight have z between -0.9 and 0.5.</p>
+  <aside class="notes"><p>Duhaim Al-Thumairi, head of caseworkers, confirms: after a staffing change RUM-2's caseworkers overrode the tool, and the tool still recorded its own number. NIJ-2 at z = -2.0 is what twelve offices produce by chance once in a while; watch it, do not act on it alone.</p></aside>
+</section>
+
+<section class="slide" data-label="Decide" id="exclude-or-re-estimate" data-lo="LO3" data-n="9" data-session="1">
+  <div class="kicker">What to do with a broken record</div>
+  <h2>Exclude the office or re-estimate its propensities, and say which</h2>
+  <div class="cols cols-3 gap-s">
+    <div class="card c-teal"><h4>Exclude</h4><p class="small mb0">Lose 10% of the data; every other office's records pass. The course's choice.</p></div>
+    <div class="card c-cyan"><h4>Re-estimate</h4><p class="small mb0">Fit a propensity model for RUM-2 alone, as on Day 1. Needed if a rule targets Rumh.</p></div>
+    <div class="card c-coral"><h4>Keep</h4><p class="small mb0">Offer-to-no-one's IPW value: 54.0% with it, 55.5% without; truth 55.6%.</p></div>
+  </div>
+  <aside class="notes"><p>From the course's run. Keeping the office biases every value by more than a point, which is the size of the differences between rules. From here on the labs use U.logged(drop_override=True).</p></aside>
+</section>
+
+<section class="slide" id="check-logged" data-lo="LO3" data-n="10" data-session="1">
+  <div class="kicker">Checkpoint</div>
+  <h2>What does a mean of a/p equal to 1.15 tell you?</h2>
+  <div class="quiz" data-type="single" data-lo="LO3" data-id="check-logged-q1">
+    <p class="lead">In an agency's logs, the mean of offered divided by the recorded probability is 1.15, with a standard error of 0.02. What follows?</p>
+    <div class="opts">
+      <div class="opt" data-why="Thinks the check measures coaching's effect rather than the records" data-k="A">Coaching raised employment by 15%</div>
+      <div class="opt" data-ok data-k="B">More offers happened than recorded: some probabilities are too low</div>
+      <div class="opt" data-why="Reads a 15% gap as sampling noise despite eight standard errors" data-k="C">Nothing: weights are noisy and a mean of 1.15 is normal</div>
+      <div class="opt" data-why="Inverts the direction: a/p above 1 means p is too small" data-k="D">The tool records probabilities that are too high</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> With correct probabilities, a/p averages to 1. Above 1 means offers were more frequent than recorded, so recorded p is too small somewhere.</div>
+  </div>
+  <aside class="notes"><p>Answer: B. If many pick D, write E[a] = p on the board: a/p averages to (true rate)/(recorded p).</p></aside>
+</section>
+
+<section class="slide lab top" id="lab-3-1" data-auto="lab" data-lab="3.1" data-label="Lab 3.1" data-n="11" data-session="1">
+  <div class="cols cols-2 mid"><div><div class="lab-tag">Lab 3.1 · 25 min</div><h2>Current practice from the logs</h2><p class="lead small">Recover the value of current practice from the logs, check that inverse weighting with the recorded probabilities gives it back, and find the office whose recorded probabilities do not match its offers.</p><a class="nb" href="../labs/D3_1_logged.ipynb">D3_1_logged.ipynb</a></div><ul class="checklist"><li>The value of current practice <span class="min">4 min</span></li><li>Weight the logging rule by its own records <span class="min">6 min</span></li><li>Recorded against actual offers, per office <span class="min">9 min</span></li><li>Flag the office and decide <span class="min">6 min</span></li><li class="stretch">✱ Stretch: A calibration plot of the recorded probabilities</li></ul></div>
+  <aside class="notes"><p>AI off. All 40,000 decisions; everything runs in seconds. Common problems: averaging p and a over the whole file instead of per office; a z-score without the binomial variance; deciding to keep the office "because the data are what they are".</p></aside>
+</section>
+
+<!-- ======================= SESSION 2 ======================= -->
+<section class="slide section" id="s2" data-auto="section" data-session="2" data-n="12">
+  <div class="kicker">Session 2</div>
+  <h1>Weighted and augmented estimators</h1>
+  <ul class="bullets outcomes"><li>Write allocation rules as decisions per seeker</li><li>Estimate a rule's value by inverse propensity and self-normalised weighting</li><li>Estimate it by the augmented estimator and compare the intervals</li></ul>
+  <div class="sess-no">02</div>
+  <aside class="notes"><p>Session 2: three estimators of a rule's value, and the first value table of the week.</p></aside>
+</section>
+
+<section class="slide" data-label="IPW" id="ipw-value" data-lo="LO3" data-n="13" data-session="2">
+  <div class="kicker">Inverse propensity value</div>
+  <h2>Keep the decisions the rule agrees with, and weight each by one over its probability</h2>
+  <pre class="code s" data-file="D3_2_offline.py"><code class="language-python">p_a = np.where(a == <span class="hljs-number">1</span>, p, <span class="hljs-number">1</span> - p)     <span class="hljs-comment"># probability of what the logs did</span>
+w   = (a == rule) / p_a               <span class="hljs-comment"># zero where the rule disagrees</span>
+value = np.mean(w * y)</code></pre>
+  <div class="callout note mt"><b>Recap from DS-303.</b> The same weights estimated an average effect there; a rule's value is the weighted mean outcome under one decision per seeker.</div>
+  <aside class="notes"><p>Walk through one decision: a seeker the logs offered with p = 0.25, whom the rule would also offer, counts with weight 4. A seeker the logs did not offer and the rule would offer counts zero: we do not see what coaching would have done for her. Sources: Dudík, Langford and Li, Doubly robust policy evaluation and learning.</p></aside>
+</section>
+
+<section class="slide" data-label="Two refinements" id="snipw-and-augmented" data-lo="LO3" data-n="14" data-session="2">
+  <div class="kicker">Two refinements</div>
+  <h2>Self-normalising tames the weights; augmenting adds an outcome model and keeps the estimate honest</h2>
+  <div class="cols cols-2">
+    <div class="card c-cyan"><h4>Self-normalised</h4><p class="small mb0">Divide by the sum of the weights, not by n. A little bias, much less variance.</p></div>
+    <div class="card c-teal"><h4>Augmented</h4><p class="small mb0">Start from <code>μ</code> under the rule; add the weighted residual where logs and rule agree. Consistent if either part is right.</p></div>
+  </div>
+  <pre class="code s mt" data-file="D3_2_offline.py"><code class="language-python">psi = np.where(rule == <span class="hljs-number">1</span>, mu1, mu0) + w * (y - np.where(a == <span class="hljs-number">1</span>, mu1, mu0))</code></pre>
+  <aside class="notes"><p>The augmented score is Day 1's DML score turned towards a rule: an outcome-model guess, corrected by weighted residuals. The supplied mu0 and mu1 were cross-fitted on the logs, so no decision's own outcome predicts itself.</p></aside>
+</section>
+
+<section class="slide" data-label="Rules" id="three-candidate-rules" data-lo="LO3 LO4" data-n="15" data-session="2">
+  <div class="kicker">The candidates</div>
+  <h2>Three rules that each offer about one place in five</h2>
+  <div class="cols cols-3 gap-s">
+    <div class="card c-coral"><h4>Risk</h4><p class="small mb0">Top fifth by the agency's risk score.</p></div>
+    <div class="card c-teal"><h4>Benefit</h4><p class="small mb0">Top fifth by the causal forest's estimated effect (fitted on the pilot).</p></div>
+    <div class="card c-cyan"><h4>Duration</h4><p class="small mb0">Months unemployed between 10 and 15. A caseworker can apply it by hand.</p></div>
+  </div>
+  <aside class="notes"><p>Ask the room to predict the ranking before the next slide. Most put benefit first. Keep the votes.</p></aside>
+</section>
+
+<section class="slide" data-label="Value table" id="value-table" data-lo="LO3 LO4" data-n="16" data-session="2">
+  <div class="kicker">Lab 3.2, 36,039 decisions without RUM-2</div>
+  <h2>Benefit and duration both beat current practice by over two points; risk targeting does not</h2>
+  <table class="t">
+    <tr><th>Rule</th><th class="num">IPW</th><th class="num">Self-normalised</th><th class="num">Augmented</th><th class="num">95% interval</th><th class="num">Truth</th></tr>
+    <tr class="hl"><td>Duration 10 to 15 months</td><td class="num">59.7</td><td class="num">59.7</td><td class="num">59.9</td><td class="num">59.0 to 60.7</td><td class="num">59.9</td></tr>
+    <tr class="hl"><td>Benefit, top fifth</td><td class="num">59.8</td><td class="num">59.6</td><td class="num">59.8</td><td class="num">59.0 to 60.7</td><td class="num">59.7</td></tr>
+    <tr><td>Current practice</td><td class="num">57.5</td><td class="num">57.5</td><td class="num">57.5</td><td class="num">57.0 to 58.0</td><td class="num">57.5</td></tr>
+    <tr><td>Risk, top fifth</td><td class="num">56.8</td><td class="num">57.7</td><td class="num">57.0</td><td class="num">56.1 to 57.9</td><td class="num">57.4</td></tr>
+  </table>
+  <p class="caption">% employed within six months. The truth column is the generator's; the other columns are what real logs give you.</p>
+  <aside class="notes"><p>From the course's run of Lab 3.2. The augmented standard error for the benefit rule is 0.43 points against 0.73 for IPW. The duration rule ties with the forest's ranking: the forest is too timid (Day 2) and months unemployed is the main driver. The stretch computes the paired difference: benefit minus duration, -0.1 points, interval -0.7 to 0.6.</p></aside>
+</section>
+
+<section class="slide" data-label="Lesson" id="simple-rules-compete" data-lo="LO4" data-n="17" data-session="2">
+  <div class="kicker">What the table teaches</div>
+  <h2>A rule a caseworker can read did as well as the black-box ranking</h2>
+  <ul class="bullets">
+    <li>Risk targeting formalises what caseworkers already do: no gain.</li>
+    <li>The duration rule captures the main driver of the effect in one line.</li>
+    <li>Ties are decided by what you can explain, audit and defend: Day 4 learns such a rule on purpose.</li>
+  </ul>
+  <aside class="notes"><p>Ask: if the two rules are worth the same, which would you put in front of Wijdan and the caseworkers? The readable one, unless the other is clearly better. This motivates the depth-two policy tree of Lab 4.1.</p></aside>
+</section>
+
+<section class="slide" id="check-augmented" data-lo="LO3" data-n="18" data-session="2">
+  <div class="kicker">Checkpoint</div>
+  <h2>When is the augmented value still right?</h2>
+  <div class="quiz" data-type="single" data-lo="LO3" data-id="check-augmented-q1">
+    <p class="lead">You value a rule with the augmented estimator. The recorded probabilities have been checked and are right; the outcome model is poor. What happens?</p>
+    <div class="opts">
+      <div class="opt" data-why="Thinks both parts must be right; one is enough" data-k="A">The estimate is biased, because the outcome model is wrong</div>
+      <div class="opt" data-why="Confuses consistency with precision: a poor model costs variance, not validity" data-k="B">The estimate is right and as precise as with a good model</div>
+      <div class="opt" data-ok data-k="C">It stays consistent, with a wider interval</div>
+      <div class="opt" data-why="Assumes the augmented estimator reduces to plain IPW whatever the model" data-k="D">The estimate equals the IPW value exactly</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> With correct weights the residual term corrects any outcome model on average; a poor model leaves larger residuals, so more variance.</div>
+  </div>
+  <aside class="notes"><p>Answer: C. This is double robustness: correct if either part is right, most precise when both are close.</p></aside>
+</section>
+
+<section class="slide lab top" id="lab-3-2" data-auto="lab" data-lab="3.2" data-label="Lab 3.2" data-n="19" data-session="2">
+  <div class="cols cols-2 mid"><div><div class="lab-tag">Lab 3.2 · 25 min</div><h2>Three rules offline</h2><p class="lead small">Evaluate risk targeting, benefit targeting and a simple duration rule on the logs with inverse propensity, self-normalised and augmented estimators, with intervals, against current practice.</p><a class="nb" href="../labs/D3_2_offline.ipynb">D3_2_offline.ipynb</a></div><ul class="checklist"><li>Write the three rules <span class="min">5 min</span></li><li>Inverse propensity values with intervals <span class="min">6 min</span></li><li>Self-normalised and augmented values <span class="min">8 min</span></li><li>One value table and a ranking <span class="min">6 min</span></li><li class="stretch">✱ Stretch: A bootstrap interval for the difference between two rules</li></ul></div>
+  <aside class="notes"><p>Common problems: weighting by p for every decision instead of the probability of what was done; forgetting to exclude RUM-2; comparing rules with different budgets (the duration rule must be close to 20%). Early finishers: the paired difference stretch.</p></aside>
+</section>
+
+<!-- ======================= SESSION 3 ======================= -->
+<section class="slide section" id="s3" data-auto="section" data-session="3" data-n="20">
+  <div class="kicker">Session 3</div>
+  <h1>Untrustworthy estimates</h1>
+  <ul class="bullets outcomes"><li>Compute the effective sample size of a rule's weights</li><li>Find the decisions that carry a rule's value</li><li>Show what clipping weights does to the estimate and its bias</li></ul>
+  <div class="sess-no">03</div>
+  <aside class="notes"><p>Session 3: the same estimators produce a number for any rule. When should you refuse to report it?</p></aside>
+</section>
+
+<section class="slide" data-label="Unreached" id="reach-the-unreached" data-lo="LO3" data-n="21" data-session="3">
+  <div class="kicker">A rule from outside</div>
+  <h2>"Reach the unreached": coach the groups the logs almost never coached</h2>
+  <div class="cols cols-2">
+    <ul class="bullets">
+      <li>Disabled seekers in Rumh and Nijad.</li>
+      <li>Seekers unemployed more than 36 months.</li>
+      <li>Seekers over 55.</li>
+      <li>8.1% of seekers; the logs offered them coaching in 2% to 5% of decisions.</li>
+    </ul>
+    <div class="card c-navy tint"><h4>A fair question</h4><p class="small mb0">The rule comes from an advocacy group. Its aim is legitimate; the question is whether the logs can value it.</p></div>
+  </div>
+  <aside class="notes"><p>Be careful with tone: the rule is not foolish, and Day 4's fairness session takes its concern seriously. The point here is narrower: the logs hold almost no evidence about coaching these groups.</p></aside>
+</section>
+
+<section class="slide" data-label="ESS" id="effective-sample-size" data-lo="LO3" data-n="22" data-session="3">
+  <div class="kicker">Lab 3.3, the rule's weights</div>
+  <h2>2,922 seekers to coach, 126 coached in the logs, worth 58 decisions</h2>
+  <div class="cols cols-3 gap-s">
+    <div class="stat center"><div class="big">126</div><div class="lbl">of the 2,922 the logs actually coached</div></div>
+    <div class="stat center"><div class="big">58</div><div class="lbl">effective sample size of their weights</div></div>
+    <div class="stat center"><div class="big">33%</div><div class="lbl">of their weight in the ten heaviest decisions</div></div>
+  </div>
+  <div class="callout warn mt"><b>Kish's effective sample size</b> <code>(Σw)² / Σw²</code>: how many equally weighted decisions the estimate is worth.</div>
+  <aside class="notes"><p>From the course's run of Lab 3.3. The heaviest single weight is 100: a decision with a recorded probability of 0.01. Ask: would you report an average of 58 people as the value of a programme for 2,922?</p></aside>
+</section>
+
+<section class="slide" data-label="Clipping" id="clipping-moves-the-answer" data-lo="LO3" data-n="23" data-session="3">
+  <div class="kicker">Lab 3.3, sensitivity to the heaviest weights</div>
+  <h2>Clipping the weights moves the value by a point, which is the size of the differences between rules</h2>
+  <div class="bars">
+    <div class="row"><span>IPW</span><div class="bar c-teal" style="--w:80%"></div><span class="val">55.9%</span></div>
+    <div class="row"><span>Clipped at 50</span><div class="bar c-cyan" style="--w:76%"></div><span class="val">55.5%</span></div>
+    <div class="row"><span>Clipped at 20</span><div class="bar c-coral" style="--w:68%"></div><span class="val">54.8%</span></div>
+    <div class="row"><span>Augmented</span><div class="bar c-purple" style="--w:72%"></div><span class="val">55.2%</span></div>
+  </div>
+  <p class="caption">Employed within six months, all seekers, under the rule. The generator's truth: 56.0%.</p>
+  <aside class="notes"><p>Here plain IPW lands near the truth; that is luck you cannot see in real data. The diagnosis is about trust, not about this one number: the estimate depends on a few decisions, and clipping, which adds unknown bias, moves it. The augmented value leans on an outcome model that saw few coached seekers like these.</p></aside>
+</section>
+
+<section class="slide" data-label="Diagnose" id="diagnose-untrustworthy" data-lo="LO3" data-n="24" data-session="3">
+  <div class="kicker">A checklist for every value you report</div>
+  <h2>Report the effective sample size, the heaviest weights and the clipped values with every rule's value</h2>
+  <table class="t small">
+    <tr><th>Diagnostic</th><th>Warning sign</th></tr>
+    <tr><td>Share of rule-treated seekers the logs treated</td><td>Under one in ten</td></tr>
+    <tr><td>Effective sample size among them</td><td>Under a few hundred</td></tr>
+    <tr><td>Weight in the ten heaviest decisions</td><td>Over 10%</td></tr>
+    <tr><td>Change when clipping at 20</td><td>Larger than the gap to the next rule</td></tr>
+    <tr><td>Recorded probabilities under 0.02</td><td>Any decision the rule relies on</td></tr>
+  </table>
+  <aside class="notes"><p>The thresholds are rules of thumb, not standards: say so. The remedy for an unevaluable rule is data: a small randomised pilot with the groups in question. That is the answer to the advocacy group.</p></aside>
+</section>
+
+<section class="slide" id="check-heavy-weights" data-lo="LO3" data-n="25" data-session="3">
+  <div class="kicker">Checkpoint</div>
+  <h2>What do you tell the advocacy group?</h2>
+  <div class="quiz" data-type="single" data-lo="LO3" data-id="check-heavy-weights-q1">
+    <p class="lead">The "reach the unreached" rule has an IPW value 1.6 points below current practice, an effective sample size of 58 among the seekers it would coach, and moves by a point when weights are clipped. What do you recommend?</p>
+    <div class="opts">
+      <div class="opt" data-why="Reads an unreliable estimate as evidence of no effect" data-k="A">Reject the rule: the logs show it adds nothing</div>
+      <div class="opt" data-why="Treats clipping as a fix rather than a sensitivity check" data-k="B">Report the value clipped at 20 as the estimate</div>
+      <div class="opt" data-ok data-k="C">Say the logs cannot value it; propose a small pilot</div>
+      <div class="opt" data-why="Assumes an outcome model can stand in for missing data" data-k="D">Report the augmented value, which does not depend on the weights</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> The estimate rests on a few heavy weights and an extrapolating outcome model; only new data on these seekers can answer the question.</div>
+  </div>
+  <aside class="notes"><p>Answer: C. Option D is the subtle trap: the augmented estimator does depend on the weights, and where weights are huge it leans on mu1 for seekers the outcome model barely saw.</p></aside>
+</section>
+
+<section class="slide lab top" id="lab-3-3" data-auto="lab" data-lab="3.3" data-label="Lab 3.3" data-n="26" data-session="3">
+  <div class="cols cols-2 mid"><div><div class="lab-tag">Lab 3.3 · 25 min</div><h2>A rule resting on heavy weights</h2><p class="lead small">Value a rule that offers coaching to the groups the logs almost never offered it to, then show with effective sample sizes, the heaviest weights and clipping why its value cannot be trusted.</p><a class="nb" href="../labs/D3_3_weights.ipynb">D3_3_weights.ipynb</a></div><ul class="checklist"><li>The rule and its inverse propensity value <span class="min">5 min</span></li><li>Effective sample size and the heaviest weights <span class="min">7 min</span></li><li>Where the rule leaves the logs <span class="min">6 min</span></li><li>Clip, compare and write the diagnosis <span class="min">7 min</span></li><li class="stretch">✱ Stretch: The augmented value, and why it disagrees</li></ul></div>
+  <aside class="notes"><p>Common problems: computing the effective sample size over all decisions (where most weights are near 1) instead of among the rule-coached seekers; sorting weights ascending; clipping the weights and forgetting that clipped IPW is biased. Early finishers: the augmented value and why it disagrees.</p></aside>
+</section>
+
+<!-- ======================= SESSION 4 ======================= -->
+<section class="slide section" id="s4" data-auto="section" data-session="4" data-n="27">
+  <div class="kicker">Session 4</div>
+  <h1>Reviewing an effects claim</h1>
+  <ul class="bullets outcomes"><li>Recognise a subgroup defined after treatment</li><li>Re-test a discovered subgroup on data not used to find it</li><li>Name the effect of each fault on the claim</li></ul>
+  <div class="sess-no">04</div>
+  <aside class="notes"><p>Session 4 is a review exercise: reading someone else's heterogeneous-effect claim the way a reviewer, a regulator or an auditor would.</p></aside>
+</section>
+
+<section class="slide" data-label="The claim" id="the-analysts-claim" data-lo="LO5" data-n="28" data-session="4">
+  <div class="kicker">A draft on the director's desk</div>
+  <h2>An analyst found who benefits most, and recommends whom to coach first</h2>
+  <div class="stack">
+    <div class="card c-coral flat"><p class="small mb0"><b>1.</b> Seekers who attended four or more sessions gain 27.0 points.</p></div>
+    <div class="card c-coral flat"><p class="small mb0"><b>2.</b> Men aged 40 to 44 in Sahil with secondary education gain 49.5 points (n = 36, p = 0.001).</p></div>
+    <div class="card c-coral flat"><p class="small mb0"><b>3.</b> 8 of 60 cells had p &lt; 0.05: the targets. In the others coaching showed no effect.</p></div>
+    <div class="card c-coral flat"><p class="small mb0"><b>4.</b> Predicted and observed effects agree across deciles: correlation above 0.9.</p></div>
+  </div>
+  <aside class="notes"><p>The draft is labs/data/review/anwar_analysis.md, by Anwar Al-Mohaimeed. Read it aloud. Ask the room to vote: which finding would you trust most? Then spend the session showing that none survives.</p></aside>
+</section>
+
+<section class="slide" data-label="Post-treatment" id="post-treatment-subgroup" data-lo="LO5" data-n="29" data-session="4">
+  <div class="kicker">Fault 1</div>
+  <h2>A subgroup defined after the lottery is selected, not randomised</h2>
+  <div class="cols cols-2">
+    <div class="stat center"><div class="big">3.42 vs 2.50</div><div class="lbl">motivation before the lottery: four or more sessions against fewer</div></div>
+    <ul class="bullets">
+      <li>Only coached seekers have sessions; no comparable uncoached group exists.</li>
+      <li>Attenders were more motivated before anything happened.</li>
+      <li>The randomised effect for everyone offered is 10.6 points, not 27.0.</li>
+    </ul>
+  </div>
+  <aside class="notes"><p>From the course's run of Lab 3.4. Sessions attended is a post-treatment variable: it may be affected by coaching itself and by the same traits that drive employment. The honest question about attendance needs another design: principal stratification, or encouraging attendance at random.</p></aside>
+</section>
+
+<section class="slide" data-label="Dredging" id="dredged-cell" data-lo="LO5" data-n="30" data-session="4">
+  <div class="kicker">Fault 2</div>
+  <h2>The largest of 60 cells is mostly the noise that made it the largest</h2>
+  <div class="bars">
+    <div class="row"><span>The analyst's cell, claimed</span><div class="bar c-coral" style="--w:90%"></div><span class="val">49.5</span></div>
+    <div class="row"><span>The same cell, true effect</span><div class="bar c-teal" style="--w:18%"></div><span class="val">9.7</span></div>
+    <div class="row"><span>Honest search: top five, training</span><div class="bar c-purple" style="--w:42%"></div><span class="val">23.3</span></div>
+    <div class="row"><span>The same five, held out</span><div class="bar c-cyan" style="--w:23%"></div><span class="val">12.4</span></div>
+  </div>
+  <p class="caption">Points of employment. Discover on one split, evaluate on another.</p>
+  <aside class="notes"><p>The analyst searched all 6,000 seekers, so his cell cannot be re-tested on held-out seekers: they were part of the search. The truth (9.7 points) is the generator's. Searching on the training split and testing on the held-out split shows the general pattern: winners shrink by about half. The national bias guide calls this data-dredging bias.</p></aside>
+</section>
+
+<section class="slide" data-label="Multiplicity" id="many-cells" data-lo="LO5" data-n="31" data-session="4">
+  <div class="kicker">Fault 3</div>
+  <h2>Eight significant cells out of sixty do not pick out the targets, and silence is not absence</h2>
+  <div class="cols cols-2">
+    <div class="card c-coral"><h4>The targets</h4><p class="small mb0">8 cells at p &lt; 0.05; after a Bonferroni correction, 2. Sixty tests at 0.05 give three by chance alone, even if coaching did nothing.</p></div>
+    <div class="card c-teal"><h4>The "no effect" cells</h4><p class="small mb0">Their true effect averages 11.3 points: cells of 30 to 60 seekers cannot show it.</p></div>
+  </div>
+  <aside class="notes"><p>Recap from DS-302 Session 4.2 on many segments. Both halves of the finding are wrong: the significant cells are partly noise, and the insignificant ones are underpowered, not empty. Reporting all 60 with corrected intervals would have shown this.</p></aside>
+</section>
+
+<section class="slide" data-label="In-sample" id="in-sample-agreement" data-lo="LO5" data-n="32" data-session="4">
+  <div class="kicker">Fault 4</div>
+  <h2>A model checked on the seekers it was fitted to agrees with itself</h2>
+  <div class="cols cols-2">
+    <div class="stat center"><div class="big">0.99</div><div class="lbl">decile correlation, fitted and checked on all seekers</div></div>
+    <div class="stat center"><div class="big">0.81</div><div class="lbl">fitted on training, checked on held-out seekers</div></div>
+  </div>
+  <div class="callout tip mt"><b>The held-out number is still good.</b> The fault is not that the model is useless; it is that the evidence offered for it proves nothing.</div>
+  <aside class="notes"><p>From the course's run of Lab 3.4, with the course's lightly regularised boosting as the analyst's model. The national bias guide's name for judging a model on data unlike its use is evaluation bias.</p></aside>
+</section>
+
+<section class="slide" data-label="The memo" id="review-memo" data-lo="LO5" data-n="33" data-session="4">
+  <div class="kicker">The review memo</div>
+  <h2>Name each fault, show its evidence, state its effect on the claim</h2>
+  <table class="t small">
+    <tr><th>Fault</th><th>Evidence</th><th>Effect on the claim</th></tr>
+    <tr><td>Post-treatment subgroup</td><td>Motivation 3.42 against 2.50</td><td>27 points mixes coaching with motivation; randomised effect 11</td></tr>
+    <tr><td>Same data for discovery and evaluation</td><td>Winners shrink from 23 to 12 points</td><td>The 50-point cell is mostly noise</td></tr>
+    <tr><td>Multiplicity; silence as absence</td><td>2 survive correction; others gain 11</td><td>Target list largely chance</td></tr>
+    <tr><td>In-sample validation</td><td>0.99 against 0.81</td><td>No evidence for the ranking offered</td></tr>
+  </table>
+  <aside class="notes"><p>The memo is the evidence of LO5. Tone: the analyst is a colleague, and every fault here is common. A good memo also says what would make the claim credible: pre-registered subgroups, a split for discovery and one for evaluation, all cells reported with corrected intervals.</p></aside>
+</section>
+
+<section class="slide" id="check-review" data-lo="LO5" data-n="34" data-session="4">
+  <div class="kicker">Checkpoint</div>
+  <h2>Which fix answers the dredged cell?</h2>
+  <div class="quiz" data-type="single" data-lo="LO5" data-id="check-review-q1">
+    <p class="lead">A colleague wants to keep the analyst's best cell but make it credible. Which step does that?</p>
+    <div class="opts">
+      <div class="opt" data-why="Thinks a smaller p-value repairs selection; it was selected for being small" data-k="A">Report the p-value to three decimals so readers see it is 0.001</div>
+      <div class="opt" data-why="Adds more searching, which makes selection worse" data-k="B">Search more cells to show the finding is robust</div>
+      <div class="opt" data-why="Uses the same seekers twice in a different way" data-k="C">Bootstrap the cell's 36 seekers and report the interval</div>
+      <div class="opt" data-ok data-k="D">Test the cell on seekers outside the search</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> Only data not used in the search can estimate the effect of a cell without the inflation that selection added.</div>
+  </div>
+  <aside class="notes"><p>Answer: D. In practice: Fursa's 2027 cohort, or a randomised pilot. The capstone brief for coaching has exactly such a cohort.</p></aside>
+</section>
+
+<section class="slide lab top" id="lab-3-4" data-auto="lab" data-lab="3.4" data-label="Lab 3.4" data-n="35" data-session="4">
+  <div class="cols cols-2 mid"><div><div class="lab-tag">Lab 3.4 · 25 min</div><h2>Four seeded faults</h2><p class="lead small">Review an analyst's subgroup claim on the pilot: find its four seeded faults, re-test each on held-out data or the truth, and write a review memo naming each fault and its effect.</p><a class="nb" href="../labs/D3_4_review.ipynb">D3_4_review.ipynb</a></div><ul class="checklist"><li>Read the claim and list what it rests on <span class="min">4 min</span></li><li>The post-treatment subgroup <span class="min">5 min</span></li><li>The dredged cell: search, then hold out <span class="min">6 min</span></li><li>Multiplicity and the cells with no effect <span class="min">5 min</span></li><li>In-sample against held-out agreement <span class="min">5 min</span></li><li class="stretch">✱ Stretch: Tag each fault with its name in the national bias guide</li></ul></div>
+  <aside class="notes"><p>Common problems: re-testing the analyst's own cell on the held-out split and calling it a fresh test (his search used those seekers); reading "no significance" as "no effect"; forgetting that sessions exist only for the coached. Early finishers: tag each fault with the bias guide's names.</p></aside>
+</section>
+
+<!-- ======================= CLOSING ======================= -->
+<section class="slide" data-label="Recap" id="day-3-recap" data-n="36" data-session="4">
+  <div class="kicker">Day 3 recap</div>
+  <h2>Check the records, value with intervals, refuse what rests on a few weights, review claims for reuse</h2>
+  <div class="cols cols-4 gap-s">
+    <div class="card c-teal"><h4>Records</h4><p class="small mb0">Weights average to 1, by office.</p></div>
+    <div class="card c-cyan"><h4>Values</h4><p class="small mb0">IPW, self-normalised, augmented; intervals.</p></div>
+    <div class="card c-coral"><h4>Trust</h4><p class="small mb0">Effective sample size, heaviest weights, clipping.</p></div>
+    <div class="card c-purple"><h4>Review</h4><p class="small mb0">Post-treatment, dredging, multiplicity, in-sample.</p></div>
+  </div>
+  <aside class="notes"><p>Ask each table for the one diagnostic they will add to their own reports from Monday. The effective sample size is the most common answer, and a good one.</p></aside>
+</section>
+
+<section class="slide dark" data-label="Tomorrow" id="tomorrow-choose-a-policy" data-n="37" data-session="4">
+  <div class="kicker">Tomorrow · Day 4</div>
+  <h2>Choosing and testing a policy</h2>
+  <p class="lead">Tomorrow you learn a depth-two rule under one place per five seekers, decide which attributes may drive it, audit it by region, gender and disability status, size the trial that would confirm it, and choose your capstone brief.</p>
+  <aside class="notes"><p>Ask participants to glance at labs/capstone/ tonight: three briefs, coaching places, energy-saving visits and food-safety inspections. They choose one in Lab 4.4.</p></aside>
+</section>
+</div>
+<script type="application/json" id="academy-data">{"v":1,"engine":"1.0.0","build":{"at":"2026-11-15T22:53:29Z","version":"2027.1.0","commit":"0067d77"},"course":{"id":"ds-402","code":"DS-402","title":"Causal Machine Learning and Policy Evaluation","track":"data-science","lang":"en","dir":"ltr","url":"https://sdaiaacademy.github.io/ds-402/","repo":"SDAIAAcademy/ds-402","home":"../index.html"},"deck":{"id":"day3","kind":"day","day":3,"label":"Day 3","title":"Evaluating rules before using them","prev":"day2.html","next":"day4.html","md":"day3.md","alt":{}},"sessions":[{"n":1,"label":"Session 1","title":"Logged decisions","slide":"s1","outcomes":["Compute the value of current practice from the logs","Check recorded probabilities against the decisions they describe","Decide what to do with an office whose records are wrong"],"minutes":50,"lab":{"id":"3.1","title":"Current practice from the logs","minutes":25,"href":"../labs/D3_1_logged.ipynb"}},{"n":2,"label":"Session 2","title":"Weighted and augmented estimators","slide":"s2","outcomes":["Write allocation rules as decisions per seeker","Estimate a rule's value by inverse propensity and self-normalised weighting","Estimate it by the augmented estimator and compare the intervals"],"minutes":50,"lab":{"id":"3.2","title":"Three rules offline","minutes":25,"href":"../labs/D3_2_offline.ipynb"}},{"n":3,"label":"Session 3","title":"Untrustworthy estimates","slide":"s3","outcomes":["Compute the effective sample size of a rule's weights","Find the decisions that carry a rule's value","Show what clipping weights does to the estimate and its bias"],"minutes":50,"lab":{"id":"3.3","title":"A rule resting on heavy weights","minutes":25,"href":"../labs/D3_3_weights.ipynb"}},{"n":4,"label":"Session 4","title":"Reviewing an effects claim","slide":"s4","outcomes":["Recognise a subgroup defined after treatment","Re-test a discovered subgroup on data not used to find it","Name the effect of each fault on the claim"],"minutes":50,"lab":{"id":"3.4","title":"Four seeded faults","minutes":25,"href":"../labs/D3_4_review.ipynb"}}],"slides":[{"id":"title","n":1,"title":"Evaluating rules before using them","kind":"title","session":0,"hash":"427546ad","md":"#### [day3#title] Evaluating rules before using them\n\n*SDAIA Academy · Causal Machine Learning and Policy Evaluation*\n\nDay 3: The value of current practice and of candidate rules from logged decisions, with the diagnostics that say when not to believe it\n\nData Science Track · 4 teaching days + capstone day · 4 sessions · 4 labs · DS-402","notes":"Day 3 is about evaluating a rule before anyone is coached by it. Open with a question: how would you know what a rule is worth without trying it? Most rooms answer \"a pilot\". Today shows what the logs can tell you first, and when they cannot.","minutes":null,"lo":[]},{"id":"review-day-2","n":2,"title":"Which check would you insist on before targeting with an effect model?","kind":"quiz","session":0,"hash":"5061d063","md":"#### [day3#review-day-2] Which check would you insist on before targeting with an effect model?\n\n*Review checkpoint · Day 2*\n\n**Question:** An effect model will decide next year's coaching places. Its builder shows a high correlation between predicted effects and observed outcomes on the training seekers. What do you ask for?\n\n- A. Nothing more: a high correlation on 3,600 seekers is enough\n- B. The correlation of its predictions with the risk score\n- C. Bootstrap intervals for the same training correlation\n- D. Observed effects by prediction group on held-out randomised seekers","notes":"Answer: D. Link to Lab 3.4: the analyst made exactly this mistake.","minutes":null,"lo":["LO2"]},{"id":"agenda","n":3,"title":"Evaluating rules before using them","kind":"content","session":0,"hash":"f88549c5","md":"#### [day3#agenda] Evaluating rules before using them\n\n*Today*\n\n- **Session 1 · Logged decisions**: Logged decisions with recorded probabilities can value rules never used, if the recorded probabilities are right\n- **Session 2 · Weighted and augmented estimators**: Inverse propensity, self-normalised and augmented estimators value a rule from logs, each with an interval\n- **Session 3 · Untrustworthy estimates**: A rule that treats people the logs almost never treated is valued by a few heavy weights: measure it and say so\n- **Session 4 · Reviewing an effects claim**: A subgroup claim is reviewed for post-treatment groups, dredged cells, multiplicity and data used twice","notes":"Day 3 works on the logs again: 40,000 caseworker decisions with the probability the allocation tool recorded for each. The supplied file data/reference/cate_logged.csv.gz holds the course's effect estimates and outcome predictions for every decision, so no lab needs an earlier one.","minutes":null,"lo":[]},{"id":"s1","n":4,"title":"Logged decisions","kind":"section","session":1,"hash":"19a3e00b","md":"#### [day3#s1] Logged decisions\n\n*Session 1*\n\n- Compute the value of current practice from the logs\n- Check recorded probabilities against the decisions they describe\n- Decide what to do with an office whose records are wrong","notes":"Session 1: what logged decisions are, what a recorded probability buys, and how to check it. The lab is AI-off.","minutes":null,"lo":["LO3"]},{"id":"what-the-logs-hold","n":5,"title":"Each logged decision carries what was known, what was done, how likely it was, and what happened","kind":"content","session":1,"hash":"1aee8e50","md":"#### [day3#what-the-logs-hold] Each logged decision carries what was known, what was done, how likely it was, and what happened\n\n*Logged decisions*\n\n1. **x** 60 confounders at registration\n2. **p** offer probability the tool recorded\n3. **a** offered or not\n4. **y** employed within six months\n\n> **The recorded `p` is the key.** When it is right, no propensity model is needed, and rules never used can be valued.","notes":"Fursa's allocation tool scored each seeker and offered coaching with a probability rather than by a hard cut-off; that randomness is what makes off-policy evaluation possible. Many real allocation systems log no probability at all; then you are back to Day 1's estimated propensities.","minutes":null,"lo":["LO3"]},{"id":"value-of-current-practice","n":6,"title":"Current practice needs no weights: its value is the employment rate in the logs","kind":"content","session":1,"hash":"f907ddc8","md":"#### [day3#value-of-current-practice] Current practice needs no weights: its value is the employment rate in the logs\n\n*The baseline every rule must beat*\n\n**57.6%** employed within six months, 40,000 decisions (Lab 3.1)\n\n- The logs were produced by current practice.\n- Their mean outcome is its value, with a standard error of 0.2 points.\n- Every candidate rule is compared with this number.","notes":"Without RUM-2 the value is 57.5%; the difference comes from that office's higher offer rate. Ask: is current practice a rule? Yes: a stochastic one, partly written in the tool and partly in caseworkers' heads.","minutes":null,"lo":["LO3"]},{"id":"weights-average-to-one","n":7,"title":"If the recorded probabilities are right, the weights a/p and (1-a)/(1-p) average to 1","kind":"content","session":1,"hash":"c5af2b7e","md":"#### [day3#weights-average-to-one] If the recorded probabilities are right, the weights a/p and (1-a)/(1-p) average to 1\n\n*A check that costs one line*\n\n```python\n# file: D3_1_logged.py\nw1 = a / p\nw0 = (1 - a) / (1 - p)\nprint(w1.mean(), w0.mean())\n```\n\n- **Fursa's logs.** Mean of `a/p`: 1.148, standard error 0.019. Eight standard errors from 1.\n- **The other weight.** Mean of `(1-a)/(1-p)`: 0.976, standard error 0.003.","notes":"From the course's run of Lab 3.1. Both are off: more offers happened than the records predict. This is the simplest test of a logging system, and it is rarely run. Ask: where would you look next? By office, by period, by group.","minutes":null,"lo":["LO3"]},{"id":"one-office-overrode","n":8,"title":"One office offered coaching two and a half times as often as its records say","kind":"content","session":1,"hash":"88ba5b4f","md":"#### [day3#one-office-overrode] One office offered coaching two and a half times as often as its records say\n\n*Lab 3.1, recorded against actual offers*\n\n| Office | Decisions | Recorded | Offered | Mean a/p | z |\n| --- | --- | --- | --- | --- | --- |\n| RUM-2 | 3,961 | 13.6% | 33.6% | 2.61 | 38.9 |\n| SAH-2 | 6,028 | 19.6% | 20.0% | 1.01 | 0.8 |\n| RUM-1 | 4,028 | 13.5% | 13.2% | 1.03 | -0.6 |\n| NIJ-2 | 1,588 | 8.7% | 7.3% | 0.75 | -2.0 |\n\nFour of twelve offices. The other eight have z between -0.9 and 0.5.","notes":"Duhaim Al-Thumairi, head of caseworkers, confirms: after a staffing change RUM-2's caseworkers overrode the tool, and the tool still recorded its own number. NIJ-2 at z = -2.0 is what twelve offices produce by chance once in a while; watch it, do not act on it alone.","minutes":null,"lo":["LO3"]},{"id":"exclude-or-re-estimate","n":9,"title":"Exclude the office or re-estimate its propensities, and say which","kind":"content","session":1,"hash":"a4b61682","md":"#### [day3#exclude-or-re-estimate] Exclude the office or re-estimate its propensities, and say which\n\n*What to do with a broken record*\n\n- **Exclude.** Lose 10% of the data; every other office's records pass. The course's choice.\n- **Re-estimate.** Fit a propensity model for RUM-2 alone, as on Day 1. Needed if a rule targets Rumh.\n- **Keep.** Offer-to-no-one's IPW value: 54.0% with it, 55.5% without; truth 55.6%.","notes":"From the course's run. Keeping the office biases every value by more than a point, which is the size of the differences between rules. From here on the labs use U.logged(drop_override=True).","minutes":null,"lo":["LO3"]},{"id":"check-logged","n":10,"title":"What does a mean of a/p equal to 1.15 tell you?","kind":"quiz","session":1,"hash":"bb9a21e8","md":"#### [day3#check-logged] What does a mean of a/p equal to 1.15 tell you?\n\n*Checkpoint*\n\n**Question:** In an agency's logs, the mean of offered divided by the recorded probability is 1.15, with a standard error of 0.02. What follows?\n\n- A. Coaching raised employment by 15%\n- B. More offers happened than recorded: some probabilities are too low\n- C. Nothing: weights are noisy and a mean of 1.15 is normal\n- D. The tool records probabilities that are too high","notes":"Answer: B. If many pick D, write E[a] = p on the board: a/p averages to (true rate)/(recorded p).","minutes":null,"lo":["LO3"]},{"id":"lab-3-1","n":11,"title":"Current practice from the logs","kind":"lab","session":1,"hash":"701b932d","md":"#### [day3#lab-3-1] Current practice from the logs\n\nLab 3.1 · 25 min\n\nRecover the value of current practice from the logs, check that inverse weighting with the recorded probabilities gives it back, and find the office whose recorded probabilities do not match its offers.\n\n[D3_1_logged.ipynb](https://sdaiaacademy.github.io/ds-402/labs/D3_1_logged.ipynb)\n\n- [ ] The value of current practice (4 min)\n- [ ] Weight the logging rule by its own records (6 min)\n- [ ] Recorded against actual offers, per office (9 min)\n- [ ] Flag the office and decide (6 min)\n- [ ] ✱ Stretch: A calibration plot of the recorded probabilities","notes":"AI off. All 40,000 decisions; everything runs in seconds. Common problems: averaging p and a over the whole file instead of per office; a z-score without the binomial variance; deciding to keep the office \"because the data are what they are\".","minutes":null,"lo":[]},{"id":"s2","n":12,"title":"Weighted and augmented estimators","kind":"section","session":2,"hash":"f693c227","md":"#### [day3#s2] Weighted and augmented estimators\n\n*Session 2*\n\n- Write allocation rules as decisions per seeker\n- Estimate a rule's value by inverse propensity and self-normalised weighting\n- Estimate it by the augmented estimator and compare the intervals","notes":"Session 2: three estimators of a rule's value, and the first value table of the week.","minutes":null,"lo":["LO3","LO4"]},{"id":"ipw-value","n":13,"title":"Keep the decisions the rule agrees with, and weight each by one over its probability","kind":"content","session":2,"hash":"3052d55e","md":"#### [day3#ipw-value] Keep the decisions the rule agrees with, and weight each by one over its probability\n\n*Inverse propensity value*\n\n```python\n# file: D3_2_offline.py\np_a = np.where(a == 1, p, 1 - p)     # probability of what the logs did\nw   = (a == rule) / p_a               # zero where the rule disagrees\nvalue = np.mean(w * y)\n```\n\n> **Recap from DS-303.** The same weights estimated an average effect there; a rule's value is the weighted mean outcome under one decision per seeker.","notes":"Walk through one decision: a seeker the logs offered with p = 0.25, whom the rule would also offer, counts with weight 4. A seeker the logs did not offer and the rule would offer counts zero: we do not see what coaching would have done for her. Sources: Dudík, Langford and Li, Doubly robust policy evaluation and learning.","minutes":null,"lo":["LO3"]},{"id":"snipw-and-augmented","n":14,"title":"Self-normalising tames the weights; augmenting adds an outcome model and keeps the estimate honest","kind":"content","session":2,"hash":"30b824d2","md":"#### [day3#snipw-and-augmented] Self-normalising tames the weights; augmenting adds an outcome model and keeps the estimate honest\n\n*Two refinements*\n\n- **Self-normalised.** Divide by the sum of the weights, not by n. A little bias, much less variance.\n- **Augmented.** Start from `μ` under the rule; add the weighted residual where logs and rule agree. Consistent if either part is right.\n\n```python\n# file: D3_2_offline.py\npsi = np.where(rule == 1, mu1, mu0) + w * (y - np.where(a == 1, mu1, mu0))\n```","notes":"The augmented score is Day 1's DML score turned towards a rule: an outcome-model guess, corrected by weighted residuals. The supplied mu0 and mu1 were cross-fitted on the logs, so no decision's own outcome predicts itself.","minutes":null,"lo":["LO3"]},{"id":"three-candidate-rules","n":15,"title":"Three rules that each offer about one place in five","kind":"content","session":2,"hash":"3d172443","md":"#### [day3#three-candidate-rules] Three rules that each offer about one place in five\n\n*The candidates*\n\n- **Risk.** Top fifth by the agency's risk score.\n- **Benefit.** Top fifth by the causal forest's estimated effect (fitted on the pilot).\n- **Duration.** Months unemployed between 10 and 15. A caseworker can apply it by hand.","notes":"Ask the room to predict the ranking before the next slide. Most put benefit first. Keep the votes.","minutes":null,"lo":["LO3","LO4"]},{"id":"value-table","n":16,"title":"Benefit and duration both beat current practice by over two points; risk targeting does not","kind":"content","session":2,"hash":"4862d414","md":"#### [day3#value-table] Benefit and duration both beat current practice by over two points; risk targeting does not\n\n*Lab 3.2, 36,039 decisions without RUM-2*\n\n| Rule | IPW | Self-normalised | Augmented | 95% interval | Truth |\n| --- | --- | --- | --- | --- | --- |\n| Duration 10 to 15 months | 59.7 | 59.7 | 59.9 | 59.0 to 60.7 | 59.9 |\n| Benefit, top fifth | 59.8 | 59.6 | 59.8 | 59.0 to 60.7 | 59.7 |\n| Current practice | 57.5 | 57.5 | 57.5 | 57.0 to 58.0 | 57.5 |\n| Risk, top fifth | 56.8 | 57.7 | 57.0 | 56.1 to 57.9 | 57.4 |\n\n% employed within six months. The truth column is the generator's; the other columns are what real logs give you.","notes":"From the course's run of Lab 3.2. The augmented standard error for the benefit rule is 0.43 points against 0.73 for IPW. The duration rule ties with the forest's ranking: the forest is too timid (Day 2) and months unemployed is the main driver. The stretch computes the paired difference: benefit minus duration, -0.1 points, interval -0.7 to 0.6.","minutes":null,"lo":["LO3","LO4"]},{"id":"simple-rules-compete","n":17,"title":"A rule a caseworker can read did as well as the black-box ranking","kind":"content","session":2,"hash":"23d9ea8b","md":"#### [day3#simple-rules-compete] A rule a caseworker can read did as well as the black-box ranking\n\n*What the table teaches*\n\n- Risk targeting formalises what caseworkers already do: no gain.\n- The duration rule captures the main driver of the effect in one line.\n- Ties are decided by what you can explain, audit and defend: Day 4 learns such a rule on purpose.","notes":"Ask: if the two rules are worth the same, which would you put in front of Wijdan and the caseworkers? The readable one, unless the other is clearly better. This motivates the depth-two policy tree of Lab 4.1.","minutes":null,"lo":["LO4"]},{"id":"check-augmented","n":18,"title":"When is the augmented value still right?","kind":"quiz","session":2,"hash":"42228d90","md":"#### [day3#check-augmented] When is the augmented value still right?\n\n*Checkpoint*\n\n**Question:** You value a rule with the augmented estimator. The recorded probabilities have been checked and are right; the outcome model is poor. What happens?\n\n- A. The estimate is biased, because the outcome model is wrong\n- B. The estimate is right and as precise as with a good model\n- C. It stays consistent, with a wider interval\n- D. The estimate equals the IPW value exactly","notes":"Answer: C. This is double robustness: correct if either part is right, most precise when both are close.","minutes":null,"lo":["LO3"]},{"id":"lab-3-2","n":19,"title":"Three rules offline","kind":"lab","session":2,"hash":"6f2780b0","md":"#### [day3#lab-3-2] Three rules offline\n\nLab 3.2 · 25 min\n\nEvaluate risk targeting, benefit targeting and a simple duration rule on the logs with inverse propensity, self-normalised and augmented estimators, with intervals, against current practice.\n\n[D3_2_offline.ipynb](https://sdaiaacademy.github.io/ds-402/labs/D3_2_offline.ipynb)\n\n- [ ] Write the three rules (5 min)\n- [ ] Inverse propensity values with intervals (6 min)\n- [ ] Self-normalised and augmented values (8 min)\n- [ ] One value table and a ranking (6 min)\n- [ ] ✱ Stretch: A bootstrap interval for the difference between two rules","notes":"Common problems: weighting by p for every decision instead of the probability of what was done; forgetting to exclude RUM-2; comparing rules with different budgets (the duration rule must be close to 20%). Early finishers: the paired difference stretch.","minutes":null,"lo":[]},{"id":"s3","n":20,"title":"Untrustworthy estimates","kind":"section","session":3,"hash":"b0385e6f","md":"#### [day3#s3] Untrustworthy estimates\n\n*Session 3*\n\n- Compute the effective sample size of a rule's weights\n- Find the decisions that carry a rule's value\n- Show what clipping weights does to the estimate and its bias","notes":"Session 3: the same estimators produce a number for any rule. When should you refuse to report it?","minutes":null,"lo":["LO3"]},{"id":"reach-the-unreached","n":21,"title":"\"Reach the unreached\": coach the groups the logs almost never coached","kind":"content","session":3,"hash":"ced9d830","md":"#### [day3#reach-the-unreached] \"Reach the unreached\": coach the groups the logs almost never coached\n\n*A rule from outside*\n\n- Disabled seekers in Rumh and Nijad.\n- Seekers unemployed more than 36 months.\n- Seekers over 55.\n- 8.1% of seekers; the logs offered them coaching in 2% to 5% of decisions.\n\n- **A fair question.** The rule comes from an advocacy group. Its aim is legitimate; the question is whether the logs can value it.","notes":"Be careful with tone: the rule is not foolish, and Day 4's fairness session takes its concern seriously. The point here is narrower: the logs hold almost no evidence about coaching these groups.","minutes":null,"lo":["LO3"]},{"id":"effective-sample-size","n":22,"title":"2,922 seekers to coach, 126 coached in the logs, worth 58 decisions","kind":"content","session":3,"hash":"0d14aae5","md":"#### [day3#effective-sample-size] 2,922 seekers to coach, 126 coached in the logs, worth 58 decisions\n\n*Lab 3.3, the rule's weights*\n\n- **126** of the 2,922 the logs actually coached\n- **58** effective sample size of their weights\n- **33%** of their weight in the ten heaviest decisions\n\n> **Kish's effective sample size** `(Σw)² / Σw²`: how many equally weighted decisions the estimate is worth.","notes":"From the course's run of Lab 3.3. The heaviest single weight is 100: a decision with a recorded probability of 0.01. Ask: would you report an average of 58 people as the value of a programme for 2,922?","minutes":null,"lo":["LO3"]},{"id":"clipping-moves-the-answer","n":23,"title":"Clipping the weights moves the value by a point, which is the size of the differences between rules","kind":"content","session":3,"hash":"d8c1b62b","md":"#### [day3#clipping-moves-the-answer] Clipping the weights moves the value by a point, which is the size of the differences between rules\n\n*Lab 3.3, sensitivity to the heaviest weights*\n\n| Item | Value |\n| --- | --- |\n| IPW | 55.9% |\n| Clipped at 50 | 55.5% |\n| Clipped at 20 | 54.8% |\n| Augmented | 55.2% |\n\nEmployed within six months, all seekers, under the rule. The generator's truth: 56.0%.","notes":"Here plain IPW lands near the truth; that is luck you cannot see in real data. The diagnosis is about trust, not about this one number: the estimate depends on a few decisions, and clipping, which adds unknown bias, moves it. The augmented value leans on an outcome model that saw few coached seekers like these.","minutes":null,"lo":["LO3"]},{"id":"diagnose-untrustworthy","n":24,"title":"Report the effective sample size, the heaviest weights and the clipped values with every rule's value","kind":"content","session":3,"hash":"81b1a23c","md":"#### [day3#diagnose-untrustworthy] Report the effective sample size, the heaviest weights and the clipped values with every rule's value\n\n*A checklist for every value you report*\n\n| Diagnostic | Warning sign |\n| --- | --- |\n| Share of rule-treated seekers the logs treated | Under one in ten |\n| Effective sample size among them | Under a few hundred |\n| Weight in the ten heaviest decisions | Over 10% |\n| Change when clipping at 20 | Larger than the gap to the next rule |\n| Recorded probabilities under 0.02 | Any decision the rule relies on |","notes":"The thresholds are rules of thumb, not standards: say so. The remedy for an unevaluable rule is data: a small randomised pilot with the groups in question. That is the answer to the advocacy group.","minutes":null,"lo":["LO3"]},{"id":"check-heavy-weights","n":25,"title":"What do you tell the advocacy group?","kind":"quiz","session":3,"hash":"7ea71358","md":"#### [day3#check-heavy-weights] What do you tell the advocacy group?\n\n*Checkpoint*\n\n**Question:** The \"reach the unreached\" rule has an IPW value 1.6 points below current practice, an effective sample size of 58 among the seekers it would coach, and moves by a point when weights are clipped. What do you recommend?\n\n- A. Reject the rule: the logs show it adds nothing\n- B. Report the value clipped at 20 as the estimate\n- C. Say the logs cannot value it; propose a small pilot\n- D. Report the augmented value, which does not depend on the weights","notes":"Answer: C. Option D is the subtle trap: the augmented estimator does depend on the weights, and where weights are huge it leans on mu1 for seekers the outcome model barely saw.","minutes":null,"lo":["LO3"]},{"id":"lab-3-3","n":26,"title":"A rule resting on heavy weights","kind":"lab","session":3,"hash":"93303046","md":"#### [day3#lab-3-3] A rule resting on heavy weights\n\nLab 3.3 · 25 min\n\nValue a rule that offers coaching to the groups the logs almost never offered it to, then show with effective sample sizes, the heaviest weights and clipping why its value cannot be trusted.\n\n[D3_3_weights.ipynb](https://sdaiaacademy.github.io/ds-402/labs/D3_3_weights.ipynb)\n\n- [ ] The rule and its inverse propensity value (5 min)\n- [ ] Effective sample size and the heaviest weights (7 min)\n- [ ] Where the rule leaves the logs (6 min)\n- [ ] Clip, compare and write the diagnosis (7 min)\n- [ ] ✱ Stretch: The augmented value, and why it disagrees","notes":"Common problems: computing the effective sample size over all decisions (where most weights are near 1) instead of among the rule-coached seekers; sorting weights ascending; clipping the weights and forgetting that clipped IPW is biased. Early finishers: the augmented value and why it disagrees.","minutes":null,"lo":[]},{"id":"s4","n":27,"title":"Reviewing an effects claim","kind":"section","session":4,"hash":"1f3ea61d","md":"#### [day3#s4] Reviewing an effects claim\n\n*Session 4*\n\n- Recognise a subgroup defined after treatment\n- Re-test a discovered subgroup on data not used to find it\n- Name the effect of each fault on the claim","notes":"Session 4 is a review exercise: reading someone else's heterogeneous-effect claim the way a reviewer, a regulator or an auditor would.","minutes":null,"lo":["LO5"]},{"id":"the-analysts-claim","n":28,"title":"An analyst found who benefits most, and recommends whom to coach first","kind":"content","session":4,"hash":"ed5bdc51","md":"#### [day3#the-analysts-claim] An analyst found who benefits most, and recommends whom to coach first\n\n*A draft on the director's desk*\n\n- **1.** Seekers who attended four or more sessions gain 27.0 points.\n- **2.** Men aged 40 to 44 in Sahil with secondary education gain 49.5 points (n = 36, p = 0.001).\n- **3.** 8 of 60 cells had p \u003c 0.05: the targets. In the others coaching showed no effect.\n- **4.** Predicted and observed effects agree across deciles: correlation above 0.9.","notes":"The draft is labs/data/review/anwar_analysis.md, by Anwar Al-Mohaimeed. Read it aloud. Ask the room to vote: which finding would you trust most? Then spend the session showing that none survives.","minutes":null,"lo":["LO5"]},{"id":"post-treatment-subgroup","n":29,"title":"A subgroup defined after the lottery is selected, not randomised","kind":"content","session":4,"hash":"d2b005fd","md":"#### [day3#post-treatment-subgroup] A subgroup defined after the lottery is selected, not randomised\n\n*Fault 1*\n\n**3.42 vs 2.50** motivation before the lottery: four or more sessions against fewer\n\n- Only coached seekers have sessions; no comparable uncoached group exists.\n- Attenders were more motivated before anything happened.\n- The randomised effect for everyone offered is 10.6 points, not 27.0.","notes":"From the course's run of Lab 3.4. Sessions attended is a post-treatment variable: it may be affected by coaching itself and by the same traits that drive employment. The honest question about attendance needs another design: principal stratification, or encouraging attendance at random.","minutes":null,"lo":["LO5"]},{"id":"dredged-cell","n":30,"title":"The largest of 60 cells is mostly the noise that made it the largest","kind":"content","session":4,"hash":"1f323d67","md":"#### [day3#dredged-cell] The largest of 60 cells is mostly the noise that made it the largest\n\n*Fault 2*\n\n| Item | Value |\n| --- | --- |\n| The analyst's cell, claimed | 49.5 |\n| The same cell, true effect | 9.7 |\n| Honest search: top five, training | 23.3 |\n| The same five, held out | 12.4 |\n\nPoints of employment. Discover on one split, evaluate on another.","notes":"The analyst searched all 6,000 seekers, so his cell cannot be re-tested on held-out seekers: they were part of the search. The truth (9.7 points) is the generator's. Searching on the training split and testing on the held-out split shows the general pattern: winners shrink by about half. The national bias guide calls this data-dredging bias.","minutes":null,"lo":["LO5"]},{"id":"many-cells","n":31,"title":"Eight significant cells out of sixty do not pick out the targets, and silence is not absence","kind":"content","session":4,"hash":"2367cedd","md":"#### [day3#many-cells] Eight significant cells out of sixty do not pick out the targets, and silence is not absence\n\n*Fault 3*\n\n- **The targets.** 8 cells at p \u003c 0.05; after a Bonferroni correction, 2. Sixty tests at 0.05 give three by chance alone, even if coaching did nothing.\n- **The \"no effect\" cells.** Their true effect averages 11.3 points: cells of 30 to 60 seekers cannot show it.","notes":"Recap from DS-302 Session 4.2 on many segments. Both halves of the finding are wrong: the significant cells are partly noise, and the insignificant ones are underpowered, not empty. Reporting all 60 with corrected intervals would have shown this.","minutes":null,"lo":["LO5"]},{"id":"in-sample-agreement","n":32,"title":"A model checked on the seekers it was fitted to agrees with itself","kind":"content","session":4,"hash":"bed6ea8f","md":"#### [day3#in-sample-agreement] A model checked on the seekers it was fitted to agrees with itself\n\n*Fault 4*\n\n- **0.99** decile correlation, fitted and checked on all seekers\n- **0.81** fitted on training, checked on held-out seekers\n\n> **The held-out number is still good.** The fault is not that the model is useless; it is that the evidence offered for it proves nothing.","notes":"From the course's run of Lab 3.4, with the course's lightly regularised boosting as the analyst's model. The national bias guide's name for judging a model on data unlike its use is evaluation bias.","minutes":null,"lo":["LO5"]},{"id":"review-memo","n":33,"title":"Name each fault, show its evidence, state its effect on the claim","kind":"content","session":4,"hash":"87ce4b2d","md":"#### [day3#review-memo] Name each fault, show its evidence, state its effect on the claim\n\n*The review memo*\n\n| Fault | Evidence | Effect on the claim |\n| --- | --- | --- |\n| Post-treatment subgroup | Motivation 3.42 against 2.50 | 27 points mixes coaching with motivation; randomised effect 11 |\n| Same data for discovery and evaluation | Winners shrink from 23 to 12 points | The 50-point cell is mostly noise |\n| Multiplicity; silence as absence | 2 survive correction; others gain 11 | Target list largely chance |\n| In-sample validation | 0.99 against 0.81 | No evidence for the ranking offered |","notes":"The memo is the evidence of LO5. Tone: the analyst is a colleague, and every fault here is common. A good memo also says what would make the claim credible: pre-registered subgroups, a split for discovery and one for evaluation, all cells reported with corrected intervals.","minutes":null,"lo":["LO5"]},{"id":"check-review","n":34,"title":"Which fix answers the dredged cell?","kind":"quiz","session":4,"hash":"879b0f8e","md":"#### [day3#check-review] Which fix answers the dredged cell?\n\n*Checkpoint*\n\n**Question:** A colleague wants to keep the analyst's best cell but make it credible. Which step does that?\n\n- A. Report the p-value to three decimals so readers see it is 0.001\n- B. Search more cells to show the finding is robust\n- C. Bootstrap the cell's 36 seekers and report the interval\n- D. Test the cell on seekers outside the search","notes":"Answer: D. In practice: Fursa's 2027 cohort, or a randomised pilot. The capstone brief for coaching has exactly such a cohort.","minutes":null,"lo":["LO5"]},{"id":"lab-3-4","n":35,"title":"Four seeded faults","kind":"lab","session":4,"hash":"e3621245","md":"#### [day3#lab-3-4] Four seeded faults\n\nLab 3.4 · 25 min\n\nReview an analyst's subgroup claim on the pilot: find its four seeded faults, re-test each on held-out data or the truth, and write a review memo naming each fault and its effect.\n\n[D3_4_review.ipynb](https://sdaiaacademy.github.io/ds-402/labs/D3_4_review.ipynb)\n\n- [ ] Read the claim and list what it rests on (4 min)\n- [ ] The post-treatment subgroup (5 min)\n- [ ] The dredged cell: search, then hold out (6 min)\n- [ ] Multiplicity and the cells with no effect (5 min)\n- [ ] In-sample against held-out agreement (5 min)\n- [ ] ✱ Stretch: Tag each fault with its name in the national bias guide","notes":"Common problems: re-testing the analyst's own cell on the held-out split and calling it a fresh test (his search used those seekers); reading \"no significance\" as \"no effect\"; forgetting that sessions exist only for the coached. Early finishers: tag each fault with the bias guide's names.","minutes":null,"lo":[]},{"id":"day-3-recap","n":36,"title":"Check the records, value with intervals, refuse what rests on a few weights, review claims for reuse","kind":"content","session":4,"hash":"8f777d8c","md":"#### [day3#day-3-recap] Check the records, value with intervals, refuse what rests on a few weights, review claims for reuse\n\n*Day 3 recap*\n\n- **Records.** Weights average to 1, by office.\n- **Values.** IPW, self-normalised, augmented; intervals.\n- **Trust.** Effective sample size, heaviest weights, clipping.\n- **Review.** Post-treatment, dredging, multiplicity, in-sample.","notes":"Ask each table for the one diagnostic they will add to their own reports from Monday. The effective sample size is the most common answer, and a good one.","minutes":null,"lo":[]},{"id":"tomorrow-choose-a-policy","n":37,"title":"Choosing and testing a policy","kind":"content","session":4,"hash":"800d1942","md":"#### [day3#tomorrow-choose-a-policy] Choosing and testing a policy\n\n*Tomorrow · Day 4*\n\nTomorrow you learn a depth-two rule under one place per five seekers, decide which attributes may drive it, audit it by region, gender and disability status, size the trial that would confirm it, and choose your capstone brief.","notes":"Ask participants to glance at labs/capstone/ tonight: three briefs, coaching places, energy-saving visits and food-safety inspections. They choose one in Lab 4.4.","minutes":null,"lo":[]}],"activities":[{"id":"review-day-2-q1","slide":"review-day-2","type":"single","prompt":"An effect model will decide next year's coaching places. Its builder shows a high correlation between predicted effects and observed outcomes on the training seekers. What do you ask for?","options":[{"key":"A","text":"Nothing more: a high correlation on 3,600 seekers is enough"},{"key":"B","text":"The correlation of its predictions with the risk score"},{"key":"C","text":"Bootstrap intervals for the same training correlation"},{"key":"D","text":"Observed effects by prediction group on held-out randomised seekers"}],"correct":[3],"explanation":"Effects are only observable for groups of randomised seekers, and only seekers the model never saw give an honest check.","misconceptions":["Accepts outcome prediction on seen data as evidence about effects","Checks the model's agreement with another model, not with effects","Asks for precision on the same seekers, which repeats the flaw",""],"lo":["LO2"]},{"id":"check-logged-q1","slide":"check-logged","type":"single","prompt":"In an agency's logs, the mean of offered divided by the recorded probability is 1.15, with a standard error of 0.02. What follows?","options":[{"key":"A","text":"Coaching raised employment by 15%"},{"key":"B","text":"More offers happened than recorded: some probabilities are too low"},{"key":"C","text":"Nothing: weights are noisy and a mean of 1.15 is normal"},{"key":"D","text":"The tool records probabilities that are too high"}],"correct":[1],"explanation":"With correct probabilities, a/p averages to 1. Above 1 means offers were more frequent than recorded, so recorded p is too small somewhere.","misconceptions":["Thinks the check measures coaching's effect rather than the records","","Reads a 15% gap as sampling noise despite eight standard errors","Inverts the direction: a/p above 1 means p is too small"],"lo":["LO3"]},{"id":"check-augmented-q1","slide":"check-augmented","type":"single","prompt":"You value a rule with the augmented estimator. The recorded probabilities have been checked and are right; the outcome model is poor. What happens?","options":[{"key":"A","text":"The estimate is biased, because the outcome model is wrong"},{"key":"B","text":"The estimate is right and as precise as with a good model"},{"key":"C","text":"It stays consistent, with a wider interval"},{"key":"D","text":"The estimate equals the IPW value exactly"}],"correct":[2],"explanation":"With correct weights the residual term corrects any outcome model on average; a poor model leaves larger residuals, so more variance.","misconceptions":["Thinks both parts must be right; one is enough","Confuses consistency with precision: a poor model costs variance, not validity","","Assumes the augmented estimator reduces to plain IPW whatever the model"],"lo":["LO3"]},{"id":"check-heavy-weights-q1","slide":"check-heavy-weights","type":"single","prompt":"The \"reach the unreached\" rule has an IPW value 1.6 points below current practice, an effective sample size of 58 among the seekers it would coach, and moves by a point when weights are clipped. What do you recommend?","options":[{"key":"A","text":"Reject the rule: the logs show it adds nothing"},{"key":"B","text":"Report the value clipped at 20 as the estimate"},{"key":"C","text":"Say the logs cannot value it; propose a small pilot"},{"key":"D","text":"Report the augmented value, which does not depend on the weights"}],"correct":[2],"explanation":"The estimate rests on a few heavy weights and an extrapolating outcome model; only new data on these seekers can answer the question.","misconceptions":["Reads an unreliable estimate as evidence of no effect","Treats clipping as a fix rather than a sensitivity check","","Assumes an outcome model can stand in for missing data"],"lo":["LO3"]},{"id":"check-review-q1","slide":"check-review","type":"single","prompt":"A colleague wants to keep the analyst's best cell but make it credible. Which step does that?","options":[{"key":"A","text":"Report the p-value to three decimals so readers see it is 0.001"},{"key":"B","text":"Search more cells to show the finding is robust"},{"key":"C","text":"Bootstrap the cell's 36 seekers and report the interval"},{"key":"D","text":"Test the cell on seekers outside the search"}],"correct":[3],"explanation":"Only data not used in the search can estimate the effect of a cell without the inflation that selection added.","misconceptions":["Thinks a smaller p-value repairs selection; it was selected for being small","Adds more searching, which makes selection worse","Uses the same seekers twice in a different way",""],"lo":["LO5"]}],"ai":{"context":{"course":"../context/course.md","courseJs":"../context/course.js","day":"day3.md","llms":"../llms.txt"},"tasks":[],"tools":[]},"bridge":{"allowedOrigins":[]},"features":{},"strings":{}}</script>
+<script src="../_engine/academy.js"></script>
+</body>
+</html>

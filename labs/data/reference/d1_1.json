@@ -1,0 +1,126 @@
+{
+ "estimands": {
+  "Q1": {
+   "population": "job seekers offered coaching in 2025 and 2026",
+   "treatment": "coaching as offered",
+   "comparison": "no coaching for the same seekers",
+   "outcome": "employed within six months of registration",
+   "summary": "average effect on the offered (ATT), a difference in employment rates"
+  },
+  "Q2": {
+   "population": "next year's job seekers",
+   "treatment": "an allocation rule that offers one place per five seekers",
+   "comparison": "current caseworker practice, and other rules within the same budget",
+   "outcome": "employed within six months",
+   "summary": "policy value: the employment rate if the rule decided, and its gain over current practice"
+  },
+  "Q3": {
+   "population": "next year's job seekers",
+   "treatment": "places to the top fifth by conditional effect of coaching",
+   "comparison": "places to the top fifth by risk score",
+   "outcome": "employed within six months",
+   "summary": "difference in policy value between the two rankings, same budget"
+  }
+ },
+ "deciles": {
+  "__frame__": {
+   "columns": [
+    "decile",
+    "n",
+    "employed_uncoached",
+    "effect",
+    "se"
+   ],
+   "index": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "data": [
+    [
+     1,
+     600,
+     0.7694915254,
+     0.0436232287,
+     0.0332141481
+    ],
+    [
+     2,
+     600,
+     0.6941580756,
+     0.1084309212,
+     0.0353057124
+    ],
+    [
+     3,
+     600,
+     0.668989547,
+     0.1297324977,
+     0.0359102698
+    ],
+    [
+     4,
+     600,
+     0.6389776358,
+     0.0927296813,
+     0.0377595062
+    ],
+    [
+     5,
+     600,
+     0.58,
+     0.1566666667,
+     0.038255823
+    ],
+    [
+     6,
+     600,
+     0.5342019544,
+     0.1552178408,
+     0.0393250407
+    ],
+    [
+     7,
+     600,
+     0.6020761246,
+     0.0538724285,
+     0.0394952753
+    ],
+    [
+     8,
+     600,
+     0.4550724638,
+     0.137084399,
+     0.0408863291
+    ],
+    [
+     9,
+     600,
+     0.3896551724,
+     0.1426028921,
+     0.0403560948
+    ],
+    [
+     10,
+     600,
+     0.2421052632,
+     0.0436090226,
+     0.036000474
+    ]
+   ]
+  }
+ },
+ "fifths": {
+  "gain_risk": 0.09515485,
+  "gain_benefit": 0.23662710833333336,
+  "overlap": 0.24083333333333334
+ },
+ "answer": "The risk score finds the seekers least likely to find work without help, but in the pilot those seekers gain about 10 points from coaching, against 24 points for the fifth who gain most; only 24% of the two groups are the same people. Risk is the outcome without coaching, benefit is the difference coaching makes, so places should follow estimated benefit, which we estimate and check on Day 2."
+}

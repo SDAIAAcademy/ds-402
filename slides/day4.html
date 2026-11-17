@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-ax="deck" data-track="data-science">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 4 · Choosing and testing a policy · Causal Machine Learning and Policy Evaluation</title>
+<meta name="generator" content="SDAIA Academy engine 1.0.0">
+<link rel="icon" href="../_engine/icon.svg">
+<link rel="alternate" type="text/markdown" href="day4.md">
+<link rel="describedby" href="../llms.txt">
+<link rel="stylesheet" href="../_engine/academy.css">
+</head>
+<body>
+<div class="deck" data-course="Causal Machine Learning and Policy Evaluation" data-track="data-science" data-day="Day 4">
+<!-- ======================= OPENING ======================= -->
+<section class="slide title" id="title" data-auto="title" data-label="Welcome" data-n="1">
+  <div class="kicker">SDAIA Academy · Causal Machine Learning and Policy Evaluation</div>
+  <h1>Choosing and testing a policy</h1>
+  <p class="lead mt">Day 4: A rule learned under one place per five seekers, audited by region, gender and disability, and the trial that would confirm it</p>
+  <div class="meta"><span class="track">Data Science Track</span><span>4 teaching days + capstone day</span><span>4 sessions · 4 labs</span><span>DS-402</span></div>
+  <aside class="notes"><p>Day 4 answers Wijdan's second question: who should get next year's places. By the end of the day participants have a rule, its value, its audit, the trial that would confirm it, and a one-page summary. Then they choose their capstone brief.</p></aside>
+</section>
+
+<section class="slide" id="review-day-3" data-lo="LO3" data-n="2">
+  <div class="kicker">Review checkpoint · Day 3</div>
+  <h2>Which number do you put next to a rule's offline value?</h2>
+  <div class="quiz" data-type="single" data-lo="LO3" data-id="review-day-3-q1">
+    <p class="lead">A colleague reports a candidate rule's inverse propensity value as 61.2% employed, with a 95% interval. What else must the report show before anyone relies on it?</p>
+    <div class="opts">
+      <div class="opt" data-why="Thinks a narrow interval rules out instability from a few weights" data-k="A">Nothing: the interval already shows the uncertainty</div>
+      <div class="opt" data-ok data-k="B">Its effective sample size, and how it moves when weights are clipped</div>
+      <div class="opt" data-why="Checks the outcome model, which plain IPW does not use" data-k="C">The outcome model's accuracy on the logs</div>
+      <div class="opt" data-why="Uses the generator's truth, which real data never give" data-k="D">The rule's true value from the generator</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> An interval computed from a few heavy weights can look precise and still rest on a handful of decisions; the diagnostics show whether it does.</div>
+  </div>
+  <aside class="notes"><p>Answer: B. Link to Lab 3.3, where the interval was 54.5% to 57.2% yet rested on an effective sample of 58.</p></aside>
+</section>
+
+<section class="slide" id="agenda" data-auto="agenda" data-label="Agenda" data-n="3">
+  <div class="kicker">Today</div>
+  <h2>Choosing and testing a policy</h2>
+  <div class="agenda"><div class="item"><div><b>Session 1 · Policy learning under a budget</b><small>Doubly robust scores and an exhaustive shallow tree give a rule people can read, under a budget</small></div></div><div class="item"><div><b>Session 2 · Fair allocation</b><small>Some attributes may drive a rule, some may only audit it: purpose limitation, the bias guide, an audit and a constraint with its price</small></div></div><div class="item"><div><b>Session 3 · The confirmatory trial</b><small>An offline value is a hypothesis: the rule is confirmed by a trial against current practice, powered for the difference</small></div></div><div class="item"><div><b>Session 4 · Explaining a rule</b><small>A rule is recommended in one page: what it does, what it is worth, whom it leaves out, who reviews the edge cases</small></div></div></div>
+  <aside class="notes"><p>Every lab today starts from data/reference/rule_tree.json, the reference rule, or learns it again in Lab 4.1. Nobody is blocked by an unfinished lab.</p></aside>
+</section>
+
+<!-- ======================= SESSION 1 ======================= -->
+<section class="slide section" id="s1" data-auto="section" data-session="1" data-n="4">
+  <div class="kicker">Session 1</div>
+  <h1>Policy learning under a budget</h1>
+  <ul class="bullets outcomes"><li>Compute doubly robust scores from randomised data</li><li>Learn a depth-two policy tree under a budget</li><li>Compare the rule with treat-all, risk targeting and current practice</li></ul>
+  <div class="sess-no">01</div>
+  <aside class="notes"><p>Session 1: from effect estimates to a rule a caseworker can apply. The lab is AI-off.</p></aside>
+</section>
+
+<section class="slide" data-label="Ranking or rule" id="ranking-or-rule" data-lo="LO4" data-n="5" data-session="1">
+  <div class="kicker">Two ways to allocate</div>
+  <h2>A ranking by estimated benefit is hard to explain; a short rule can be read at the counter</h2>
+  <div class="cols cols-2">
+    <div class="card c-coral"><h4>Ranking</h4><p class="small mb0">Top fifth by a causal forest's estimate. Each seeker's place depends on 14 attributes and 400 trees.</p></div>
+    <div class="card c-teal"><h4>Rule</h4><p class="small mb0">At most two questions about a seeker, each one a threshold. A caseworker can apply it, and a seeker can be told why.</p></div>
+  </div>
+  <div class="callout tip mt"><b>Day 3 showed</b> a hand-written rule on months unemployed matched the ranking's value. Today the rule is learned, not guessed.</div>
+  <aside class="notes"><p>Ask: what would you need to tell a seeker who is refused a place? With a rule, one sentence. With a ranking, nothing you could defend.</p></aside>
+</section>
+
+<section class="slide" data-label="DR scores" id="dr-scores" data-lo="LO4" data-n="6" data-session="1">
+  <div class="kicker">The gain of each seeker</div>
+  <h2>Doubly robust scores are noisy for one seeker and unbiased for any group</h2>
+  <pre class="code s" data-file="D4_1_policy_tree.py"><code class="language-python">score = mu1 - mu0 + t * (y - mu1) / e - (<span class="hljs-number">1</span> - t) * (y - mu0) / (<span class="hljs-number">1</span> - e)   <span class="hljs-comment"># e = 0.5 in the pilot</span></code></pre>
+  <div class="cols cols-2 mt">
+    <div class="stat center"><div class="big">8.8 points</div><div class="lbl">mean score on the training split: the average effect</div></div>
+    <div class="stat center"><div class="big">92 points</div><div class="lbl">standard deviation of one seeker's score</div></div>
+  </div>
+  <aside class="notes"><p>From the course's run of Lab 4.1. The same score as Day 1's DML, kept per seeker instead of averaged. A tree sums scores over a leaf, so the noise averages out; a ranking of single scores would be useless. Source: Athey and Wager, Policy learning with observational data.</p></aside>
+</section>
+
+<section class="slide" data-label="Exhaustive tree" id="exhaustive-tree" data-lo="LO4" data-n="7" data-session="1">
+  <div class="kicker">Policy trees</div>
+  <h2>Search every pair of splits; keep the tree whose offered seekers have the largest summed gain</h2>
+  <div class="flow">
+    <div class="step c-teal"><b>Split 1</b>every allowed attribute, every threshold</div>
+    <div class="arrow">→</div>
+    <div class="step c-cyan"><b>Split 2</b>the best split inside each side</div>
+    <div class="arrow">→</div>
+    <div class="step c-coral"><b>Leaves</b>offer where the summed score beats the cost</div>
+  </div>
+  <div class="callout note mt"><b>Unlike a CART tree,</b> it is not greedy: the first split is chosen for what the second makes possible.</div>
+  <aside class="notes"><p>Depth two over six attributes and 12 thresholds gives 72 candidate splits: 72 first splits, each with the best of 72 splits on either side, so about 10,000 split evaluations cover all of the roughly 370,000 depth-two trees. Exhaustive search is cheap at this size and impossible much beyond depth three. The course's U.policy_tree mirrors the R package policytree.</p></aside>
+</section>
+
+<section class="slide" data-label="Budget" id="budget-as-a-cost" data-lo="LO4" data-n="8" data-session="1">
+  <div class="kicker">One place per five seekers</div>
+  <h2>A budget becomes a cost per place: raise it until the tree offers at most 20%</h2>
+  <div class="cols cols-2">
+    <pre class="code s" data-file="D4_1_policy_tree.py"><code class="language-python"><span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">12</span>):
+    cost = (lo + hi) / <span class="hljs-number">2</span>
+    t = U.policy_tree(X, g, cost=cost)
+    <span class="hljs-keyword">if</span> U.predict_tree(t, X).mean() &lt;= <span class="hljs-number">0.2</span>:
+        best, hi = (t, cost), cost
+    <span class="hljs-keyword">else</span>:
+        lo = cost</code></pre>
+    <div class="stack">
+      <div class="stat center"><div class="big">17 points</div><div class="lbl">the cost per place at which the tree fits the budget</div></div>
+      <p class="small">A seeker earns a place only where coaching is expected to raise her chance of work by more than 17 points.</p>
+    </div>
+  </div>
+  <aside class="notes"><p>The cost is the shadow price of a place: what the last place is worth. It is also a number a director can understand: "we coach where coaching adds at least 17 points".</p></aside>
+</section>
+
+<section class="slide" data-label="The rule" id="the-learned-rule" data-lo="LO4" data-n="9" data-session="1">
+  <div class="kicker">Lab 4.1, the learned rule</div>
+  <h2>The search chose one band: unemployed more than 10 and at most 15 months</h2>
+  <div class="flow">
+    <div class="step c-navy"><b>months ≤ 10</b>no offer</div>
+    <div class="step c-teal"><b>11 to 15 months</b>offer a place</div>
+    <div class="step c-navy"><b>more than 15</b>no offer</div>
+  </div>
+  <p class="caption">Offers 16.3% of logged seekers. Six attributes were allowed; it used only months unemployed.</p>
+  <aside class="notes"><p>Day 2 found the effect peaks near a year unemployed. The band cannot hit 20% exactly because months are whole numbers; Lab 4.2 spends the remaining places. Ask: is the band plausible to a caseworker? Usually yes: early on seekers find work anyway, and after a long spell coaching alone is not enough.</p></aside>
+</section>
+
+<section class="slide" data-label="Against alternatives" id="rule-against-alternatives" data-lo="LO4" data-n="10" data-session="1">
+  <div class="kicker">Lab 4.1, on the logs</div>
+  <h2>The rule finds about twice as many jobs per place as current practice</h2>
+  <table class="t">
+    <tr><th>Rule</th><th class="num">Offered</th><th class="num">Employed</th><th class="num">95% interval</th><th class="num">Jobs per 100 places</th></tr>
+    <tr><td>Treat-all (five times the budget)</td><td class="num">100%</td><td class="num">65.0</td><td class="num">63.3 to 66.7</td><td class="num">9.5</td></tr>
+    <tr class="hl"><td>Depth-two rule</td><td class="num">16.3%</td><td class="num">58.9</td><td class="num">58.1 to 59.7</td><td class="num">20.7</td></tr>
+    <tr><td>Current practice</td><td class="num">16.9%</td><td class="num">57.5</td><td class="num">57.0 to 58.0</td><td class="num">11.4</td></tr>
+    <tr><td>Risk, top fifth</td><td class="num">20.0%</td><td class="num">57.0</td><td class="num">56.1 to 57.9</td><td class="num">7.4</td></tr>
+    <tr><td>No one</td><td class="num">0%</td><td class="num">55.6</td><td class="num">55.0 to 56.1</td><td class="num">·</td></tr>
+  </table>
+  <p class="caption">% employed within six months, augmented estimator, 36,039 decisions without RUM-2. Jobs per 100 places compared with offering no one.</p>
+  <aside class="notes"><p>From the course's run. Generator truth: rule 59.0, current 57.5, risk 57.4, treat-all 66.0. Treat-all has the highest value only because it uses five times the places. This table answers Wijdan's Q2 and Q3 together: the risk score is the worst use of a place.</p></aside>
+</section>
+
+<section class="slide" id="check-policy-tree" data-lo="LO4" data-n="11" data-session="1">
+  <div class="kicker">Checkpoint</div>
+  <h2>Why learn the tree from scores, not from outcomes?</h2>
+  <div class="quiz" data-type="single" data-lo="LO4" data-id="check-policy-tree-q1">
+    <p class="lead">A colleague proposes to learn the allocation tree by predicting employment within six months and offering places to the leaves with the lowest predicted employment. What is wrong?</p>
+    <div class="opts">
+      <div class="opt" data-ok data-k="A">It targets need, not gain: it rebuilds the risk score</div>
+      <div class="opt" data-why="Thinks the problem is the model class, not the target" data-k="B">A depth-two tree is too simple to predict employment well</div>
+      <div class="opt" data-why="Thinks prediction on the pilot is biased; randomisation does not change that the target is wrong" data-k="C">The pilot is too small for prediction</div>
+      <div class="opt" data-why="Inverts the advice: lowest employment is exactly what risk targeting picks" data-k="D">Nothing, if the leaves are chosen on held-out data</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> Leaves with low employment are where seekers struggle, not where coaching helps; the tree must sum gains, which the scores estimate.</div>
+  </div>
+  <aside class="notes"><p>Answer: A. This is Day 1's risk-is-not-benefit lesson again, now inside a tree.</p></aside>
+</section>
+
+<section class="slide lab top" id="lab-4-1" data-auto="lab" data-lab="4.1" data-label="Lab 4.1" data-n="12" data-session="1">
+  <div class="cols cols-2 mid"><div><div class="lab-tag">Lab 4.1 · 25 min</div><h2>A depth-two rule against the alternatives</h2><p class="lead small">Learn a depth-two policy tree from doubly robust scores on the pilot under one place per five seekers, and compare its value on the logs with treat-all, risk targeting and current practice.</p><a class="nb" href="../labs/D4_1_policy_tree.ipynb">D4_1_policy_tree.ipynb</a></div><ul class="checklist"><li>Doubly robust scores on the training split <span class="min">6 min</span></li><li>An exhaustive depth-two tree under the budget <span class="min">8 min</span></li><li>Value against treat-all, risk and current practice <span class="min">7 min</span></li><li>Read the tree <span class="min">4 min</span></li><li class="stretch">✱ Stretch: Depth one against depth two</li></ul></div>
+  <aside class="notes"><p>AI off. The tree search takes about a minute on a laptop at full resolution. Common problems: a bisection that moves the wrong bound; valuing current practice with the augmented estimator instead of the logs' mean outcome; comparing rules that use different numbers of places without a per-place column. Early finishers: depth one against depth two.</p></aside>
+</section>
+
+<!-- ======================= SESSION 2 ======================= -->
+<section class="slide section" id="s2" data-auto="section" data-session="2" data-n="13">
+  <div class="kicker">Session 2</div>
+  <h1>Fair allocation</h1>
+  <ul class="bullets outcomes"><li>Decide which attributes may drive a rule and which may only audit it</li><li>Audit a rule by region, gender and disability status</li><li>Add a fairness constraint and measure its cost in value</li></ul>
+  <div class="sess-no">02</div>
+  <aside class="notes"><p>Session 2: which attributes may decide, how to audit, and what a fairness constraint costs. This is where the data protection officer joins the discussion.</p></aside>
+</section>
+
+<section class="slide" data-label="Register" id="attribute-register" data-lo="LO4" data-n="14" data-session="2">
+  <div class="kicker">Before learning any rule</div>
+  <h2>Every attribute gets a role: drive the rule, only audit it, or stay out</h2>
+  <div class="cols cols-3 gap-s">
+    <div class="card c-teal"><h4>Drive</h4><p class="small mb0">Months unemployed, digital skills, education, prior jobs, licence, distance: registered facts a caseworker can explain.</p></div>
+    <div class="card c-cyan"><h4>Audit</h4><p class="small mb0">Region, gender, disability, age: never used to decide; every result is checked across them.</p></div>
+    <div class="card c-coral"><h4>Exclude</h4><p class="small mb0">Prior wage, dependants, the motivation rating, the risk score.</p></div>
+  </div>
+  <aside class="notes"><p>Shuruq Al-Obaikan, the DPO, asks for this table before any model is fitted. The course's choices are defensible, not the only ones: prior wage carries past pay gaps; dependants were collected for benefits; motivation is a subjective rating seekers would learn to game; the risk score is built partly from age and disability.</p></aside>
+</section>
+
+<section class="slide" data-label="Sources" id="law-and-guidance" data-lo="LO4" data-n="15" data-session="2">
+  <div class="kicker">What the register rests on</div>
+  <h2>Purpose limitation, sensitive data and historical bias each remove an attribute</h2>
+  <table class="t small">
+    <tr><th>Source</th><th>What it says</th><th>Effect on the register</th></tr>
+    <tr><td>PDPL, Article 10</td><td>Process personal data only for the purposes they were collected for, with listed exceptions</td><td>Dependants out</td></tr>
+    <tr><td>PDPL, Article 1</td><td>Health data are sensitive data</td><td>Disability audits, never drives</td></tr>
+    <tr><td>AI Bias Reference Guide</td><td>Historical bias: data that encode past unequal treatment carry it forward</td><td>Prior wage out</td></tr>
+    <tr><td>AI Ethics Principles</td><td>Fairness and transparency of automated decisions</td><td>Only attributes a caseworker can explain drive</td></tr>
+  </table>
+  <aside class="notes"><p>PDPL is the Personal Data Protection Law. Not legal advice: the course shows how the documents shape a technical register; the DPO decides. The full references are in the README.</p></aside>
+</section>
+
+<section class="slide" data-label="Price of the register" id="price-of-the-register" data-lo="LO4" data-n="16" data-session="2">
+  <div class="kicker">Lab 4.2, a tree free to use everything</div>
+  <h2>A tree allowed every attribute chose the same band: here the register costs nothing</h2>
+  <div class="cols cols-2">
+    <div class="stat center"><div class="big">58.9% = 58.9%</div><div class="lbl">value with six allowed attributes, and with all thirteen</div></div>
+    <ul class="bullets">
+      <li>The free tree added one split on the risk score that offers almost no one new.</li>
+      <li>The two rules agree on practically every seeker.</li>
+      <li>In another programme the excluded attributes could carry value: then report the register's price.</li>
+    </ul>
+  </div>
+  <aside class="notes"><p>From the course's run. A finding, not a rule. Measure the price instead of assuming it is zero or large.</p></aside>
+</section>
+
+<section class="slide" data-label="Audit" id="audit-selection-rates" data-lo="LO4" data-n="17" data-session="2">
+  <div class="kicker">Lab 4.2, Fairlearn's MetricFrame</div>
+  <h2>The rule offers every group at similar rates; the benefit ranking leaves Nijad behind</h2>
+  <table class="t">
+    <tr><th>Rule</th><th>Attribute</th><th>Lowest group</th><th class="num">Lowest rate</th><th class="num">Highest</th><th class="num">Ratio</th></tr>
+    <tr><td>Depth-two rule</td><td>Region</td><td>Nijad</td><td class="num">15.5%</td><td class="num">17.0%</td><td class="num">0.91</td></tr>
+    <tr><td>Depth-two rule</td><td>Gender</td><td>Women</td><td class="num">16.2%</td><td class="num">16.4%</td><td class="num">0.99</td></tr>
+    <tr><td>Depth-two rule</td><td>Disability</td><td>Without</td><td class="num">16.3%</td><td class="num">16.4%</td><td class="num">0.99</td></tr>
+    <tr class="hl"><td>Benefit, top fifth</td><td>Region</td><td>Nijad</td><td class="num">7.0%</td><td class="num">23.2%</td><td class="num">0.30</td></tr>
+  </table>
+  <p class="caption">Selection rates: the share of each group offered a place.</p>
+  <aside class="notes"><p>The benefit ranking's gender and disability ratios are 0.92 and 0.96. Ask: the ranking never saw region; how did it leave Nijad out? Next slide.</p></aside>
+</section>
+
+<section class="slide" data-label="Proxies" id="proxies" data-lo="LO4" data-n="18" data-session="2">
+  <div class="kicker">Leaving an attribute out does not remove it</div>
+  <h2>The ranking reached Nijad through months unemployed and distance</h2>
+  <div class="bars">
+    <div class="row"><span>Nijad: unemployed over 15 months</span><div class="bar c-coral" style="--w:52%"></div><span class="val">52%</span></div>
+    <div class="row"><span>Other regions</span><div class="bar c-teal" style="--w:26%"></div><span class="val">26%</span></div>
+    <div class="row"><span>Nijad: over 60 km from an office</span><div class="bar c-coral" style="--w:78%"></div><span class="val">78%</span></div>
+    <div class="row"><span>Other regions</span><div class="bar c-teal" style="--w:1%"></div><span class="val">1%</span></div>
+  </div>
+  <aside class="notes"><p>Both lower coaching's effect in the generator, as in Day 2's forest. So the ranking is not wrong about gains; it is the audit that makes its consequence for one region visible. Whether Nijad should get places anyway is Wijdan's decision, made with the price in front of her.</p></aside>
+</section>
+
+<section class="slide" data-label="Floor" id="regional-floor" data-lo="LO4" data-n="19" data-session="2">
+  <div class="kicker">Lab 4.2, spending the last places</div>
+  <h2>A regional floor costs nothing measurable here: report it as an interval, not as free</h2>
+  <div class="cols cols-2">
+    <div class="stack">
+      <div class="card c-cyan flat"><h4>National</h4><p class="small mb0">Rule, then the top estimated gains anywhere, to 20%. Nijad 15.9%.</p></div>
+      <div class="card c-teal flat"><h4>Regional floor</h4><p class="small mb0">Rule, then the top gains in each region, to 20% of that region. Nijad 20.0%.</p></div>
+    </div>
+    <div class="stat center"><div class="big">−0.2 points</div><div class="lbl">price of the floor, paired 95% interval −0.5 to 0.1; true price 0.0</div></div>
+  </div>
+  <aside class="notes"><p>From the course's run. The paired interval cancels the noise the two rules share. Had the base been the benefit ranking, the floor would move many places into Nijad and its price would be real.</p></aside>
+</section>
+
+<section class="slide" id="check-fairness" data-lo="LO4" data-n="20" data-session="2">
+  <div class="kicker">Checkpoint</div>
+  <h2>What does an equal selection rate prove?</h2>
+  <div class="quiz" data-type="single" data-lo="LO4" data-id="check-fairness-q1">
+    <p class="lead">A rule offers places to disabled and non-disabled seekers at the same rate. A board member calls it fair to disabled seekers. What do you add?</p>
+    <div class="opts">
+      <div class="opt" data-why="Treats one metric as a full fairness assessment" data-k="A">Nothing: equal rates are the definition of fairness</div>
+      <div class="opt" data-why="Proposes using a sensitive attribute to decide without a policy decision" data-k="B">The rule should use disability to offer more places</div>
+      <div class="opt" data-ok data-k="C">Rates show who is offered, not who gains</div>
+      <div class="opt" data-why="Inverts the direction: unequal rates are what the audit looks for" data-k="D">Equal rates show the rule ignores disability, which is discrimination</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> Selection rates are one view; gains by group are another. Disabled seekers truly gain 26 points per place against 21; deciding whether that justifies priority is a policy choice.</div>
+  </div>
+  <aside class="notes"><p>Answer: C. The 26 against 21 points come from the stretch of Lab 4.2, with the generator's truth.</p></aside>
+</section>
+
+<section class="slide lab top" id="lab-4-2" data-auto="lab" data-lab="4.2" data-label="Lab 4.2" data-n="21" data-session="2">
+  <div class="cols cols-2 mid"><div><div class="lab-tag">Lab 4.2 · 25 min</div><h2>Attributes, audit and a constraint</h2><p class="lead small">Decide which attributes may drive the rule and which may only audit it, audit the rule by region, gender and disability status, then add a regional floor and price it in jobs.</p><a class="nb" href="../labs/D4_2_fairness.ipynb">D4_2_fairness.ipynb</a></div><ul class="checklist"><li>Drive or audit: sort the attributes <span class="min">6 min</span></li><li>Learn the rule on the allowed attributes <span class="min">5 min</span></li><li>Audit by region, gender and disability <span class="min">7 min</span></li><li>Add a regional floor and price it <span class="min">7 min</span></li><li class="stretch">✱ Stretch: The same audit of the true gains with Fairlearn</li></ul></div>
+  <aside class="notes"><p>Common problems: putting age in the drive list without a reason; reading a selection-rate ratio of 0.91 as unfair (it is a number to report, against a threshold the agency sets); comparing the national and floor values with separate intervals. The free-attribute tree takes about 30 seconds.</p></aside>
+</section>
+
+<!-- ======================= SESSION 3 ======================= -->
+<section class="slide section" id="s3" data-auto="section" data-session="3" data-n="22">
+  <div class="kicker">Session 3</div>
+  <h1>The confirmatory trial</h1>
+  <ul class="bullets outcomes"><li>State the estimand of a trial of a rule against current practice</li><li>Size the trial for the difference diluted by agreeing decisions</li><li>Choose a randomisation unit and a stopping rule</li></ul>
+  <div class="sess-no">03</div>
+  <aside class="notes"><p>Session 3: the offline value is a hypothesis. A trial confirms it, and sizing the trial is where most plans fail.</p></aside>
+</section>
+
+<section class="slide" data-label="Estimand" id="trial-estimand" data-lo="LO6" data-n="23" data-session="3">
+  <div class="kicker">What the trial compares</div>
+  <h2>Randomise seekers to policies, not to coaching</h2>
+  <div class="cols cols-2">
+    <div class="card c-teal"><h4>Arm A</h4><p class="small mb0">The depth-two rule decides whether the seeker is offered a place.</p></div>
+    <div class="card c-coral"><h4>Arm B</h4><p class="small mb0">Current practice decides: the caseworker, with the allocation tool.</p></div>
+  </div>
+  <div class="callout note mt"><b>Estimand.</b> The difference in employment within six months between the arms, among all randomised seekers (intention to treat).</div>
+  <aside class="notes"><p>The pilot already showed coaching works. The question now is whether deciding by the rule beats deciding as today. An offline value, however careful, is the hypothesis; this trial is the test.</p></aside>
+</section>
+
+<section class="slide" data-label="Disagreement" id="where-policies-disagree" data-lo="LO6" data-n="24" data-session="3">
+  <div class="kicker">Lab 4.3, rule against caseworker on the logs</div>
+  <h2>The two policies disagree on a quarter of seekers: only they can show a difference</h2>
+  <table class="t">
+    <tr><th></th><th class="num">Caseworker: no</th><th class="num">Caseworker: offer</th></tr>
+    <tr><th>Rule: no</th><td class="num">69.8%</td><td class="num hl">13.9%</td></tr>
+    <tr><th>Rule: offer</th><td class="num hl">13.3%</td><td class="num">3.0%</td></tr>
+  </table>
+  <p class="caption">5.3 points among the 27.2% who disagree is 1.4 points among everyone.</p>
+  <aside class="notes"><p>From the course's run of Lab 4.3. Each policy offers about one seeker in six, mostly different ones. The overlap (3.0%) is small because caseworkers favour the hardest cases and the rule favours the 11-to-15-month band.</p></aside>
+</section>
+
+<section class="slide" data-label="Sample size" id="seekers-per-arm" data-lo="LO6" data-n="25" data-session="3">
+  <div class="kicker">Lab 4.3, sizing</div>
+  <h2>A 1.4-point difference needs about 18,000 seekers per arm: nearly two years of registrations</h2>
+  <div class="cols cols-3 gap-s">
+    <div class="stat center"><div class="big">18,246</div><div class="lbl">seekers per arm, 5% two-sided, 80% power</div></div>
+    <div class="stat center"><div class="big">1.8 years</div><div class="lbl">of Fursa's registrations, about 19,900 a year</div></div>
+    <div class="stat center"><div class="big">1,328</div><div class="lbl">per arm if only disagreeing seekers could be enrolled</div></div>
+  </div>
+  <aside class="notes"><p>The disagreeing seekers cannot be identified in advance, because the caseworker's decision is not known until it is made; the last number shows what dilution costs. Ask: what could shorten the trial? A larger difference (a better rule), a more sensitive outcome, or pooling several agencies.</p></aside>
+</section>
+
+<section class="slide" data-label="Unit" id="randomisation-unit" data-lo="LO6" data-n="26" data-session="3">
+  <div class="kicker">Seekers or offices?</div>
+  <h2>Randomising Fursa's 12 offices would multiply the sample by 109</h2>
+  <div class="cols cols-2">
+    <div class="card c-coral"><h4>Offices</h4><p class="small mb0">No mixing of policies inside an office, but the design effect <code>1 + (m − 1) ICC</code> with ICC 0.036 and thousands of seekers per office is 109.</p></div>
+    <div class="card c-teal"><h4>Seekers, stratified by office</h4><p class="small mb0">Feasible. Contamination is checked by caseworker compliance with the assigned policy.</p></div>
+  </div>
+  <div class="callout warn mt"><b>What neither design sees:</b> displacement. Crépon and colleagues found job-search help for some seekers partly at the expense of others in the same labour markets.</div>
+  <aside class="notes"><p>Source: Crépon, Duflo, Gurgand, Rathelot and Zamora, Do labor market policies have displacement effects? (2013). Measuring displacement needs randomisation at the level of labour markets, with varying shares treated: far beyond one agency.</p></aside>
+</section>
+
+<section class="slide" data-label="Stopping" id="stopping-rule" data-lo="LO6" data-n="27" data-session="3">
+  <div class="kicker">Lab 4.3, one interim look</div>
+  <h2>O'Brien–Fleming boundaries spend almost nothing at the halfway look</h2>
+  <div class="cols cols-2">
+    <div class="stat center"><div class="big">|z| &gt; 2.79</div><div class="lbl">to stop at half the seekers</div></div>
+    <div class="stat center"><div class="big">|z| &gt; 1.97</div><div class="lbl">at the end, instead of 1.96</div></div>
+  </div>
+  <p class="small mt">Found by simulating pairs of correlated z-statistics until the chance of crossing either boundary under no difference is 5%. Simulated power with 1% more seekers: about 80%.</p>
+  <aside class="notes"><p>Looking twice at 1.96 would push the false-positive rate to about 8%. The boundary at the halfway look is strict enough that the trial stops early only for a large difference, or for harm.</p></aside>
+</section>
+
+<section class="slide" id="check-trial" data-lo="LO6" data-n="28" data-session="3">
+  <div class="kicker">Checkpoint</div>
+  <h2>Why is the trial so large when the rule finds twice the jobs per place?</h2>
+  <div class="quiz" data-type="single" data-lo="LO6" data-id="check-trial-q1">
+    <p class="lead">The rule finds 20.7 jobs per 100 places against 11.4 for current practice, yet the trial needs about 18,000 seekers per arm. Why?</p>
+    <div class="opts">
+      <div class="opt" data-why="Thinks the sample size is driven by the per-place gain, not by the population difference" data-k="A">The per-place gain is too small to detect</div>
+      <div class="opt" data-ok data-k="B">The arms mostly agree, so across everyone the difference is 1.4 points</div>
+      <div class="opt" data-why="Confuses the stopping rule's small cost with the main driver" data-k="C">The interim look doubles the sample size</div>
+      <div class="opt" data-why="Office clustering applies only if offices are randomised" data-k="D">Offices are clustered, so the design effect inflates the sample</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> The trial compares everyone in one arm with everyone in the other: a large gain for a few is a small difference for all.</div>
+  </div>
+  <aside class="notes"><p>Answer: B. Dilution is the most common reason trials of targeting rules are underpowered.</p></aside>
+</section>
+
+<section class="slide lab top" id="lab-4-3" data-auto="lab" data-lab="4.3" data-label="Lab 4.3" data-n="29" data-session="3">
+  <div class="cols cols-2 mid"><div><div class="lab-tag">Lab 4.3 · 25 min</div><h2>Size the trial</h2><p class="lead small">Size a trial of the learned rule against current practice: the arms and the primary metric, where the two policies disagree, seekers per arm, the design effect of office clusters and a stopping rule.</p><a class="nb" href="../labs/D4_3_trial.ipynb">D4_3_trial.ipynb</a></div><ul class="checklist"><li>The estimand and the arms <span class="min">4 min</span></li><li>Where the two policies disagree <span class="min">6 min</span></li><li>Seekers per arm, then the design effect <span class="min">8 min</span></li><li>A stopping rule and the protocol table <span class="min">7 min</span></li><li class="stretch">✱ Stretch: Simulate the trial to check its power</li></ul></div>
+  <aside class="notes"><p>Common problems: sizing for the per-place gain instead of the population difference; computing the ICC from seekers instead of office rates; treating the design effect as optional. Early finishers: simulate the trial.</p></aside>
+</section>
+
+<!-- ======================= SESSION 4 ======================= -->
+<section class="slide section" id="s4" data-auto="section" data-session="4" data-n="30">
+  <div class="kicker">Session 4</div>
+  <h1>Explaining a rule</h1>
+  <ul class="bullets outcomes"><li>Summarise a rule, its value and its audit on one page</li><li>Name the edge cases that go to human review</li><li>Choose a capstone brief and plan its analysis</li></ul>
+  <div class="sess-no">04</div>
+  <aside class="notes"><p>Session 4: the rule on one page, the cases for human review, and the capstone brief.</p></aside>
+</section>
+
+<section class="slide" data-label="One page" id="one-page" data-lo="LO4" data-n="31" data-session="4">
+  <div class="kicker">What the director reads</div>
+  <h2>Five headings, in the order she will ask them</h2>
+  <table class="t">
+    <tr><th>Heading</th><th>What it says</th></tr>
+    <tr><td>What the rule does</td><td>The rule in one sentence; 16% of seekers offered a place</td></tr>
+    <tr><td>What it is worth</td><td>58.9% employed against 57.5%: about 14 more in work per 1,000 seekers</td></tr>
+    <tr><td>Who it leaves out</td><td>The audit by group; the 29% unemployed over 15 months</td></tr>
+    <tr><td>Who reviews</td><td>The edge cases that go to caseworkers</td></tr>
+    <tr><td>What would confirm it</td><td>A trial of about two years against current practice</td></tr>
+  </table>
+  <aside class="notes"><p>The course's page is 275 words. No term she would need explained: places, seekers, employed within six months. Jobs per 1,000 seekers rather than points, because people repeat counts.</p></aside>
+</section>
+
+<section class="slide" data-label="Edge cases" id="edge-cases" data-lo="LO4" data-n="32" data-session="4">
+  <div class="kicker">Lab 4.4, where the rule is weakest</div>
+  <h2>A rule with thresholds needs human review where it is blind or arbitrary</h2>
+  <table class="t small">
+    <tr><th>Case</th><th class="num">Seekers in the logs</th><th>Why review</th></tr>
+    <tr><td>Exactly 10 or 16 months unemployed</td><td class="num">2,341</td><td>One month from the band</td></tr>
+    <tr><td>Unemployed over 36 months</td><td class="num">1,505</td><td>No evidence in the logs (Lab 3.3)</td></tr>
+    <tr><td>Disability, over 15 months</td><td class="num">721</td><td>Gain more on average; the rule cannot see it</td></tr>
+    <tr><td>Months recorded as 0</td><td class="num">624</td><td>Often a re-registration</td></tr>
+    <tr><td>In the band, over 60 km away</td><td class="num">419</td><td>May not be able to attend</td></tr>
+  </table>
+  <aside class="notes"><p>Review is not a loophole: it is where accountability lives. The national AI ethics principles ask for human oversight of automated decisions; this table is what that means in practice.</p></aside>
+</section>
+
+<section class="slide" data-label="Briefs" id="capstone-briefs" data-lo="LO6" data-n="33" data-session="4">
+  <div class="kicker">The capstone</div>
+  <h2>Choose one brief and run the whole week's chain on it</h2>
+  <div class="cols cols-3 gap-s">
+    <div class="card c-teal"><h4>Siraj Power Distribution</h4><p class="small mb0">Energy-saving visits; 15% of households; outcome: % of summer use saved.</p></div>
+    <div class="card c-cyan"><h4>Al-Nakheel food safety</h4><p class="small mb0">Unannounced inspections; 25% of restaurants; outcome: compliant at follow-up.</p></div>
+    <div class="card c-coral"><h4>Fursa 2027</h4><p class="small mb0">A new pilot and logs; 20% of seekers; an independent check of the course.</p></div>
+  </div>
+  <p class="caption">Each has a randomised pilot, logs with recorded probabilities and a BRIEF.md with its budget, constraint and audit groups.</p>
+  <aside class="notes"><p>All three are fictional and synthetic. Each brief has a planted overlap problem in one district or office. Encourage participants who know Fursa's data well to take a different brief: transfer is the point.</p></aside>
+</section>
+
+<section class="slide" id="check-summary" data-lo="LO4" data-n="34" data-session="4">
+  <div class="kicker">Checkpoint</div>
+  <h2>Which sentence belongs on the director's page?</h2>
+  <div class="quiz" data-type="single" data-lo="LO4" data-id="check-summary-q1">
+    <p class="lead">You are writing the "What it is worth" section. Which sentence is right for it?</p>
+    <div class="opts">
+      <div class="opt" data-why="Uses jargon and overclaims a proven effect" data-k="A">The policy's doubly robust value proves a CATE-driven uplift of 1.4 points</div>
+      <div class="opt" data-why="States a precise number without uncertainty or comparison" data-k="B">The rule will employ 58.9% of seekers</div>
+      <div class="opt" data-why="Turns an offline estimate into a promise" data-k="C">The rule guarantees more jobs than current practice</div>
+      <div class="opt" data-ok data-k="D">On past records, about 14 more per 1,000 in work than today (6 to 22)</div>
+    </div>
+    <div class="callout tip why"><b>Why.</b> It names the source, compares with current practice, counts people, and keeps the uncertainty.</div>
+  </div>
+  <aside class="notes"><p>Answer: D. The range comes from the interval 58.1% to 59.7% against 57.5%.</p></aside>
+</section>
+
+<section class="slide lab top" id="lab-4-4" data-auto="lab" data-lab="4.4" data-label="Lab 4.4" data-n="35" data-session="4">
+  <div class="cols cols-2 mid"><div><div class="lab-tag">Lab 4.4 · 25 min</div><h2>One-page summary and the capstone brief</h2><p class="lead small">Draft a one-page summary of the rule for the director from the supplied results, list the edge cases for caseworker review, and choose the capstone brief.</p><a class="nb" href="../labs/D4_4_summary.ipynb">D4_4_summary.ipynb</a></div><ul class="checklist"><li>Gather the numbers <span class="min">5 min</span></li><li>Write the rule summary <span class="min">10 min</span></li><li>Edge cases for human review <span class="min">5 min</span></li><li>Choose the capstone brief <span class="min">5 min</span></li><li class="stretch">✱ Stretch: Cut the summary to what the director would repeat</li></ul></div>
+  <aside class="notes"><p>Common problems: numbers typed by hand instead of computed; headings in a different order; a page that says "proven". Make sure every participant leaves with a brief chosen and three first steps written.</p></aside>
+</section>
+
+<!-- ======================= CLOSING ======================= -->
+<section class="slide" data-label="Recap" id="day-4-recap" data-n="36" data-session="4">
+  <div class="kicker">Day 4 recap</div>
+  <h2>Learn a readable rule, decide what may drive it, audit it, price constraints, plan the trial</h2>
+  <div class="cols cols-4 gap-s">
+    <div class="card c-teal"><h4>Rule</h4><p class="small mb0">Depth two, under the budget, from DR scores.</p></div>
+    <div class="card c-cyan"><h4>Register</h4><p class="small mb0">Drive, audit, exclude; measure its price.</p></div>
+    <div class="card c-coral"><h4>Audit</h4><p class="small mb0">Rates and gains by group; proxies.</p></div>
+    <div class="card c-purple"><h4>Trial</h4><p class="small mb0">Dilution, unit, stopping, limits.</p></div>
+  </div>
+  <aside class="notes"><p>Close the week's case: Wijdan's three questions now have answers. Q1: coaching helped (Day 1, about 11 points). Q2: the 11-to-15-month band, audited and with a trial. Q3: no, the risk score is the worst use of a place.</p></aside>
+</section>
+
+<section class="slide dark" data-label="Next" id="next-capstone" data-n="37" data-session="4">
+  <div class="kicker">Next · Capstone</div>
+  <h2>Your brief, your repository, your defence</h2>
+  <p class="lead">The capstone asks for the week's chain on your brief, reported in a public repository, then a 15-minute defence in which the assessor changes the budget or the constraint and you predict what happens before you re-run.</p>
+  <aside class="notes"><p>Point to the capstone deck and labs/capstone/README.md for the submission checklist and rubric.</p></aside>
+</section>
+</div>
+<script type="application/json" id="academy-data">{"v":1,"engine":"1.0.0","build":{"at":"2026-11-15T22:53:29Z","version":"2027.1.0","commit":"0067d77"},"course":{"id":"ds-402","code":"DS-402","title":"Causal Machine Learning and Policy Evaluation","track":"data-science","lang":"en","dir":"ltr","url":"https://sdaiaacademy.github.io/ds-402/","repo":"SDAIAAcademy/ds-402","home":"../index.html"},"deck":{"id":"day4","kind":"day","day":4,"label":"Day 4","title":"Choosing and testing a policy","prev":"day3.html","next":"capstone.html","md":"day4.md","alt":{}},"sessions":[{"n":1,"label":"Session 1","title":"Policy learning under a budget","slide":"s1","outcomes":["Compute doubly robust scores from randomised data","Learn a depth-two policy tree under a budget","Compare the rule with treat-all, risk targeting and current practice"],"minutes":50,"lab":{"id":"4.1","title":"A depth-two rule against the alternatives","minutes":25,"href":"../labs/D4_1_policy_tree.ipynb"}},{"n":2,"label":"Session 2","title":"Fair allocation","slide":"s2","outcomes":["Decide which attributes may drive a rule and which may only audit it","Audit a rule by region, gender and disability status","Add a fairness constraint and measure its cost in value"],"minutes":50,"lab":{"id":"4.2","title":"Attributes, audit and a constraint","minutes":25,"href":"../labs/D4_2_fairness.ipynb"}},{"n":3,"label":"Session 3","title":"The confirmatory trial","slide":"s3","outcomes":["State the estimand of a trial of a rule against current practice","Size the trial for the difference diluted by agreeing decisions","Choose a randomisation unit and a stopping rule"],"minutes":50,"lab":{"id":"4.3","title":"Size the trial","minutes":25,"href":"../labs/D4_3_trial.ipynb"}},{"n":4,"label":"Session 4","title":"Explaining a rule","slide":"s4","outcomes":["Summarise a rule, its value and its audit on one page","Name the edge cases that go to human review","Choose a capstone brief and plan its analysis"],"minutes":50,"lab":{"id":"4.4","title":"One-page summary and the capstone brief","minutes":25,"href":"../labs/D4_4_summary.ipynb"}}],"slides":[{"id":"title","n":1,"title":"Choosing and testing a policy","kind":"title","session":0,"hash":"208cf6bc","md":"#### [day4#title] Choosing and testing a policy\n\n*SDAIA Academy · Causal Machine Learning and Policy Evaluation*\n\nDay 4: A rule learned under one place per five seekers, audited by region, gender and disability, and the trial that would confirm it\n\nData Science Track · 4 teaching days + capstone day · 4 sessions · 4 labs · DS-402","notes":"Day 4 answers Wijdan's second question: who should get next year's places. By the end of the day participants have a rule, its value, its audit, the trial that would confirm it, and a one-page summary. Then they choose their capstone brief.","minutes":null,"lo":[]},{"id":"review-day-3","n":2,"title":"Which number do you put next to a rule's offline value?","kind":"quiz","session":0,"hash":"13324e82","md":"#### [day4#review-day-3] Which number do you put next to a rule's offline value?\n\n*Review checkpoint · Day 3*\n\n**Question:** A colleague reports a candidate rule's inverse propensity value as 61.2% employed, with a 95% interval. What else must the report show before anyone relies on it?\n\n- A. Nothing: the interval already shows the uncertainty\n- B. Its effective sample size, and how it moves when weights are clipped\n- C. The outcome model's accuracy on the logs\n- D. The rule's true value from the generator","notes":"Answer: B. Link to Lab 3.3, where the interval was 54.5% to 57.2% yet rested on an effective sample of 58.","minutes":null,"lo":["LO3"]},{"id":"agenda","n":3,"title":"Choosing and testing a policy","kind":"content","session":0,"hash":"973ebd31","md":"#### [day4#agenda] Choosing and testing a policy\n\n*Today*\n\n- **Session 1 · Policy learning under a budget**: Doubly robust scores and an exhaustive shallow tree give a rule people can read, under a budget\n- **Session 2 · Fair allocation**: Some attributes may drive a rule, some may only audit it: purpose limitation, the bias guide, an audit and a constraint with its price\n- **Session 3 · The confirmatory trial**: An offline value is a hypothesis: the rule is confirmed by a trial against current practice, powered for the difference\n- **Session 4 · Explaining a rule**: A rule is recommended in one page: what it does, what it is worth, whom it leaves out, who reviews the edge cases","notes":"Every lab today starts from data/reference/rule_tree.json, the reference rule, or learns it again in Lab 4.1. Nobody is blocked by an unfinished lab.","minutes":null,"lo":[]},{"id":"s1","n":4,"title":"Policy learning under a budget","kind":"section","session":1,"hash":"b893e487","md":"#### [day4#s1] Policy learning under a budget\n\n*Session 1*\n\n- Compute doubly robust scores from randomised data\n- Learn a depth-two policy tree under a budget\n- Compare the rule with treat-all, risk targeting and current practice","notes":"Session 1: from effect estimates to a rule a caseworker can apply. The lab is AI-off.","minutes":null,"lo":["LO4"]},{"id":"ranking-or-rule","n":5,"title":"A ranking by estimated benefit is hard to explain; a short rule can be read at the counter","kind":"content","session":1,"hash":"a6003cb4","md":"#### [day4#ranking-or-rule] A ranking by estimated benefit is hard to explain; a short rule can be read at the counter\n\n*Two ways to allocate*\n\n- **Ranking.** Top fifth by a causal forest's estimate. Each seeker's place depends on 14 attributes and 400 trees.\n- **Rule.** At most two questions about a seeker, each one a threshold. A caseworker can apply it, and a seeker can be told why.\n\n> **Day 3 showed** a hand-written rule on months unemployed matched the ranking's value. Today the rule is learned, not guessed.","notes":"Ask: what would you need to tell a seeker who is refused a place? With a rule, one sentence. With a ranking, nothing you could defend.","minutes":null,"lo":["LO4"]},{"id":"dr-scores","n":6,"title":"Doubly robust scores are noisy for one seeker and unbiased for any group","kind":"content","session":1,"hash":"1486d4aa","md":"#### [day4#dr-scores] Doubly robust scores are noisy for one seeker and unbiased for any group\n\n*The gain of each seeker*\n\n```python\n# file: D4_1_policy_tree.py\nscore = mu1 - mu0 + t * (y - mu1) / e - (1 - t) * (y - mu0) / (1 - e)   # e = 0.5 in the pilot\n```\n\n- **8.8 points** mean score on the training split: the average effect\n- **92 points** standard deviation of one seeker's score","notes":"From the course's run of Lab 4.1. The same score as Day 1's DML, kept per seeker instead of averaged. A tree sums scores over a leaf, so the noise averages out; a ranking of single scores would be useless. Source: Athey and Wager, Policy learning with observational data.","minutes":null,"lo":["LO4"]},{"id":"exhaustive-tree","n":7,"title":"Search every pair of splits; keep the tree whose offered seekers have the largest summed gain","kind":"content","session":1,"hash":"b73ef809","md":"#### [day4#exhaustive-tree] Search every pair of splits; keep the tree whose offered seekers have the largest summed gain\n\n*Policy trees*\n\n1. **Split 1** every allowed attribute, every threshold\n2. **Split 2** the best split inside each side\n3. **Leaves** offer where the summed score beats the cost\n\n> **Unlike a CART tree,** it is not greedy: the first split is chosen for what the second makes possible.","notes":"Depth two over six attributes and 12 thresholds gives 72 candidate splits: 72 first splits, each with the best of 72 splits on either side, so about 10,000 split evaluations cover all of the roughly 370,000 depth-two trees. Exhaustive search is cheap at this size and impossible much beyond depth three. The course's U.policy_tree mirrors the R package policytree.","minutes":null,"lo":["LO4"]},{"id":"budget-as-a-cost","n":8,"title":"A budget becomes a cost per place: raise it until the tree offers at most 20%","kind":"content","session":1,"hash":"df938ce1","md":"#### [day4#budget-as-a-cost] A budget becomes a cost per place: raise it until the tree offers at most 20%\n\n*One place per five seekers*\n\n```python\n# file: D4_1_policy_tree.py\nfor _ in range(12):\n    cost = (lo + hi) / 2\n    t = U.policy_tree(X, g, cost=cost)\n    if U.predict_tree(t, X).mean() \u003c= 0.2:\n        best, hi = (t, cost), cost\n    else:\n        lo = cost\n```\n\n**17 points** the cost per place at which the tree fits the budget\n\nA seeker earns a place only where coaching is expected to raise her chance of work by more than 17 points.","notes":"The cost is the shadow price of a place: what the last place is worth. It is also a number a director can understand: \"we coach where coaching adds at least 17 points\".","minutes":null,"lo":["LO4"]},{"id":"the-learned-rule","n":9,"title":"The search chose one band: unemployed more than 10 and at most 15 months","kind":"content","session":1,"hash":"7ac5bdb1","md":"#### [day4#the-learned-rule] The search chose one band: unemployed more than 10 and at most 15 months\n\n*Lab 4.1, the learned rule*\n\n**months ≤ 10** no offer → **11 to 15 months** offer a place → **more than 15** no offer\n\nOffers 16.3% of logged seekers. Six attributes were allowed; it used only months unemployed.","notes":"Day 2 found the effect peaks near a year unemployed. The band cannot hit 20% exactly because months are whole numbers; Lab 4.2 spends the remaining places. Ask: is the band plausible to a caseworker? Usually yes: early on seekers find work anyway, and after a long spell coaching alone is not enough.","minutes":null,"lo":["LO4"]},{"id":"rule-against-alternatives","n":10,"title":"The rule finds about twice as many jobs per place as current practice","kind":"content","session":1,"hash":"d0eb0a1b","md":"#### [day4#rule-against-alternatives] The rule finds about twice as many jobs per place as current practice\n\n*Lab 4.1, on the logs*\n\n| Rule | Offered | Employed | 95% interval | Jobs per 100 places |\n| --- | --- | --- | --- | --- |\n| Treat-all (five times the budget) | 100% | 65.0 | 63.3 to 66.7 | 9.5 |\n| Depth-two rule | 16.3% | 58.9 | 58.1 to 59.7 | 20.7 |\n| Current practice | 16.9% | 57.5 | 57.0 to 58.0 | 11.4 |\n| Risk, top fifth | 20.0% | 57.0 | 56.1 to 57.9 | 7.4 |\n| No one | 0% | 55.6 | 55.0 to 56.1 | · |\n\n% employed within six months, augmented estimator, 36,039 decisions without RUM-2. Jobs per 100 places compared with offering no one.","notes":"From the course's run. Generator truth: rule 59.0, current 57.5, risk 57.4, treat-all 66.0. Treat-all has the highest value only because it uses five times the places. This table answers Wijdan's Q2 and Q3 together: the risk score is the worst use of a place.","minutes":null,"lo":["LO4"]},{"id":"check-policy-tree","n":11,"title":"Why learn the tree from scores, not from outcomes?","kind":"quiz","session":1,"hash":"a9a08a21","md":"#### [day4#check-policy-tree] Why learn the tree from scores, not from outcomes?\n\n*Checkpoint*\n\n**Question:** A colleague proposes to learn the allocation tree by predicting employment within six months and offering places to the leaves with the lowest predicted employment. What is wrong?\n\n- A. It targets need, not gain: it rebuilds the risk score\n- B. A depth-two tree is too simple to predict employment well\n- C. The pilot is too small for prediction\n- D. Nothing, if the leaves are chosen on held-out data","notes":"Answer: A. This is Day 1's risk-is-not-benefit lesson again, now inside a tree.","minutes":null,"lo":["LO4"]},{"id":"lab-4-1","n":12,"title":"A depth-two rule against the alternatives","kind":"lab","session":1,"hash":"61ade312","md":"#### [day4#lab-4-1] A depth-two rule against the alternatives\n\nLab 4.1 · 25 min\n\nLearn a depth-two policy tree from doubly robust scores on the pilot under one place per five seekers, and compare its value on the logs with treat-all, risk targeting and current practice.\n\n[D4_1_policy_tree.ipynb](https://sdaiaacademy.github.io/ds-402/labs/D4_1_policy_tree.ipynb)\n\n- [ ] Doubly robust scores on the training split (6 min)\n- [ ] An exhaustive depth-two tree under the budget (8 min)\n- [ ] Value against treat-all, risk and current practice (7 min)\n- [ ] Read the tree (4 min)\n- [ ] ✱ Stretch: Depth one against depth two","notes":"AI off. The tree search takes about a minute on a laptop at full resolution. Common problems: a bisection that moves the wrong bound; valuing current practice with the augmented estimator instead of the logs' mean outcome; comparing rules that use different numbers of places without a per-place column. Early finishers: depth one against depth two.","minutes":null,"lo":[]},{"id":"s2","n":13,"title":"Fair allocation","kind":"section","session":2,"hash":"948ecc79","md":"#### [day4#s2] Fair allocation\n\n*Session 2*\n\n- Decide which attributes may drive a rule and which may only audit it\n- Audit a rule by region, gender and disability status\n- Add a fairness constraint and measure its cost in value","notes":"Session 2: which attributes may decide, how to audit, and what a fairness constraint costs. This is where the data protection officer joins the discussion.","minutes":null,"lo":["LO4"]},{"id":"attribute-register","n":14,"title":"Every attribute gets a role: drive the rule, only audit it, or stay out","kind":"content","session":2,"hash":"ac2b6be0","md":"#### [day4#attribute-register] Every attribute gets a role: drive the rule, only audit it, or stay out\n\n*Before learning any rule*\n\n- **Drive.** Months unemployed, digital skills, education, prior jobs, licence, distance: registered facts a caseworker can explain.\n- **Audit.** Region, gender, disability, age: never used to decide; every result is checked across them.\n- **Exclude.** Prior wage, dependants, the motivation rating, the risk score.","notes":"Shuruq Al-Obaikan, the DPO, asks for this table before any model is fitted. The course's choices are defensible, not the only ones: prior wage carries past pay gaps; dependants were collected for benefits; motivation is a subjective rating seekers would learn to game; the risk score is built partly from age and disability.","minutes":null,"lo":["LO4"]},{"id":"law-and-guidance","n":15,"title":"Purpose limitation, sensitive data and historical bias each remove an attribute","kind":"content","session":2,"hash":"04270364","md":"#### [day4#law-and-guidance] Purpose limitation, sensitive data and historical bias each remove an attribute\n\n*What the register rests on*\n\n| Source | What it says | Effect on the register |\n| --- | --- | --- |\n| PDPL, Article 10 | Process personal data only for the purposes they were collected for, with listed exceptions | Dependants out |\n| PDPL, Article 1 | Health data are sensitive data | Disability audits, never drives |\n| AI Bias Reference Guide | Historical bias: data that encode past unequal treatment carry it forward | Prior wage out |\n| AI Ethics Principles | Fairness and transparency of automated decisions | Only attributes a caseworker can explain drive |","notes":"PDPL is the Personal Data Protection Law. Not legal advice: the course shows how the documents shape a technical register; the DPO decides. The full references are in the README.","minutes":null,"lo":["LO4"]},{"id":"price-of-the-register","n":16,"title":"A tree allowed every attribute chose the same band: here the register costs nothing","kind":"content","session":2,"hash":"3a99be46","md":"#### [day4#price-of-the-register] A tree allowed every attribute chose the same band: here the register costs nothing\n\n*Lab 4.2, a tree free to use everything*\n\n**58.9% = 58.9%** value with six allowed attributes, and with all thirteen\n\n- The free tree added one split on the risk score that offers almost no one new.\n- The two rules agree on practically every seeker.\n- In another programme the excluded attributes could carry value: then report the register's price.","notes":"From the course's run. A finding, not a rule. Measure the price instead of assuming it is zero or large.","minutes":null,"lo":["LO4"]},{"id":"audit-selection-rates","n":17,"title":"The rule offers every group at similar rates; the benefit ranking leaves Nijad behind","kind":"content","session":2,"hash":"34c98eed","md":"#### [day4#audit-selection-rates] The rule offers every group at similar rates; the benefit ranking leaves Nijad behind\n\n*Lab 4.2, Fairlearn's MetricFrame*\n\n| Rule | Attribute | Lowest group | Lowest rate | Highest | Ratio |\n| --- | --- | --- | --- | --- | --- |\n| Depth-two rule | Region | Nijad | 15.5% | 17.0% | 0.91 |\n| Depth-two rule | Gender | Women | 16.2% | 16.4% | 0.99 |\n| Depth-two rule | Disability | Without | 16.3% | 16.4% | 0.99 |\n| Benefit, top fifth | Region | Nijad | 7.0% | 23.2% | 0.30 |\n\nSelection rates: the share of each group offered a place.","notes":"The benefit ranking's gender and disability ratios are 0.92 and 0.96. Ask: the ranking never saw region; how did it leave Nijad out? Next slide.","minutes":null,"lo":["LO4"]},{"id":"proxies","n":18,"title":"The ranking reached Nijad through months unemployed and distance","kind":"content","session":2,"hash":"393d4a97","md":"#### [day4#proxies] The ranking reached Nijad through months unemployed and distance\n\n*Leaving an attribute out does not remove it*\n\n| Item | Value |\n| --- | --- |\n| Nijad: unemployed over 15 months | 52% |\n| Other regions | 26% |\n| Nijad: over 60 km from an office | 78% |\n| Other regions | 1% |","notes":"Both lower coaching's effect in the generator, as in Day 2's forest. So the ranking is not wrong about gains; it is the audit that makes its consequence for one region visible. Whether Nijad should get places anyway is Wijdan's decision, made with the price in front of her.","minutes":null,"lo":["LO4"]},{"id":"regional-floor","n":19,"title":"A regional floor costs nothing measurable here: report it as an interval, not as free","kind":"content","session":2,"hash":"73b1929c","md":"#### [day4#regional-floor] A regional floor costs nothing measurable here: report it as an interval, not as free\n\n*Lab 4.2, spending the last places*\n\n- **National.** Rule, then the top estimated gains anywhere, to 20%. Nijad 15.9%.\n- **Regional floor.** Rule, then the top gains in each region, to 20% of that region. Nijad 20.0%.\n\n**−0.2 points** price of the floor, paired 95% interval −0.5 to 0.1; true price 0.0","notes":"From the course's run. The paired interval cancels the noise the two rules share. Had the base been the benefit ranking, the floor would move many places into Nijad and its price would be real.","minutes":null,"lo":["LO4"]},{"id":"check-fairness","n":20,"title":"What does an equal selection rate prove?","kind":"quiz","session":2,"hash":"67017217","md":"#### [day4#check-fairness] What does an equal selection rate prove?\n\n*Checkpoint*\n\n**Question:** A rule offers places to disabled and non-disabled seekers at the same rate. A board member calls it fair to disabled seekers. What do you add?\n\n- A. Nothing: equal rates are the definition of fairness\n- B. The rule should use disability to offer more places\n- C. Rates show who is offered, not who gains\n- D. Equal rates show the rule ignores disability, which is discrimination","notes":"Answer: C. The 26 against 21 points come from the stretch of Lab 4.2, with the generator's truth.","minutes":null,"lo":["LO4"]},{"id":"lab-4-2","n":21,"title":"Attributes, audit and a constraint","kind":"lab","session":2,"hash":"3c11fcb1","md":"#### [day4#lab-4-2] Attributes, audit and a constraint\n\nLab 4.2 · 25 min\n\nDecide which attributes may drive the rule and which may only audit it, audit the rule by region, gender and disability status, then add a regional floor and price it in jobs.\n\n[D4_2_fairness.ipynb](https://sdaiaacademy.github.io/ds-402/labs/D4_2_fairness.ipynb)\n\n- [ ] Drive or audit: sort the attributes (6 min)\n- [ ] Learn the rule on the allowed attributes (5 min)\n- [ ] Audit by region, gender and disability (7 min)\n- [ ] Add a regional floor and price it (7 min)\n- [ ] ✱ Stretch: The same audit of the true gains with Fairlearn","notes":"Common problems: putting age in the drive list without a reason; reading a selection-rate ratio of 0.91 as unfair (it is a number to report, against a threshold the agency sets); comparing the national and floor values with separate intervals. The free-attribute tree takes about 30 seconds.","minutes":null,"lo":[]},{"id":"s3","n":22,"title":"The confirmatory trial","kind":"section","session":3,"hash":"e2464ad9","md":"#### [day4#s3] The confirmatory trial\n\n*Session 3*\n\n- State the estimand of a trial of a rule against current practice\n- Size the trial for the difference diluted by agreeing decisions\n- Choose a randomisation unit and a stopping rule","notes":"Session 3: the offline value is a hypothesis. A trial confirms it, and sizing the trial is where most plans fail.","minutes":null,"lo":["LO6"]},{"id":"trial-estimand","n":23,"title":"Randomise seekers to policies, not to coaching","kind":"content","session":3,"hash":"b94324ae","md":"#### [day4#trial-estimand] Randomise seekers to policies, not to coaching\n\n*What the trial compares*\n\n- **Arm A.** The depth-two rule decides whether the seeker is offered a place.\n- **Arm B.** Current practice decides: the caseworker, with the allocation tool.\n\n> **Estimand.** The difference in employment within six months between the arms, among all randomised seekers (intention to treat).","notes":"The pilot already showed coaching works. The question now is whether deciding by the rule beats deciding as today. An offline value, however careful, is the hypothesis; this trial is the test.","minutes":null,"lo":["LO6"]},{"id":"where-policies-disagree","n":24,"title":"The two policies disagree on a quarter of seekers: only they can show a difference","kind":"content","session":3,"hash":"c0bd5f0d","md":"#### [day4#where-policies-disagree] The two policies disagree on a quarter of seekers: only they can show a difference\n\n*Lab 4.3, rule against caseworker on the logs*\n\n|  | Caseworker: no | Caseworker: offer |\n| --- | --- | --- |\n| Rule: no | 69.8% | 13.9% |\n| Rule: offer | 13.3% | 3.0% |\n\n5.3 points among the 27.2% who disagree is 1.4 points among everyone.","notes":"From the course's run of Lab 4.3. Each policy offers about one seeker in six, mostly different ones. The overlap (3.0%) is small because caseworkers favour the hardest cases and the rule favours the 11-to-15-month band.","minutes":null,"lo":["LO6"]},{"id":"seekers-per-arm","n":25,"title":"A 1.4-point difference needs about 18,000 seekers per arm: nearly two years of registrations","kind":"content","session":3,"hash":"4f17cb33","md":"#### [day4#seekers-per-arm] A 1.4-point difference needs about 18,000 seekers per arm: nearly two years of registrations\n\n*Lab 4.3, sizing*\n\n- **18,246** seekers per arm, 5% two-sided, 80% power\n- **1.8 years** of Fursa's registrations, about 19,900 a year\n- **1,328** per arm if only disagreeing seekers could be enrolled","notes":"The disagreeing seekers cannot be identified in advance, because the caseworker's decision is not known until it is made; the last number shows what dilution costs. Ask: what could shorten the trial? A larger difference (a better rule), a more sensitive outcome, or pooling several agencies.","minutes":null,"lo":["LO6"]},{"id":"randomisation-unit","n":26,"title":"Randomising Fursa's 12 offices would multiply the sample by 109","kind":"content","session":3,"hash":"5a15170d","md":"#### [day4#randomisation-unit] Randomising Fursa's 12 offices would multiply the sample by 109\n\n*Seekers or offices?*\n\n- **Offices.** No mixing of policies inside an office, but the design effect `1 + (m − 1) ICC` with ICC 0.036 and thousands of seekers per office is 109.\n- **Seekers, stratified by office.** Feasible. Contamination is checked by caseworker compliance with the assigned policy.\n\n> **What neither design sees:** displacement. Crépon and colleagues found job-search help for some seekers partly at the expense of others in the same labour markets.","notes":"Source: Crépon, Duflo, Gurgand, Rathelot and Zamora, Do labor market policies have displacement effects? (2013). Measuring displacement needs randomisation at the level of labour markets, with varying shares treated: far beyond one agency.","minutes":null,"lo":["LO6"]},{"id":"stopping-rule","n":27,"title":"O'Brien–Fleming boundaries spend almost nothing at the halfway look","kind":"content","session":3,"hash":"afea9ea2","md":"#### [day4#stopping-rule] O'Brien–Fleming boundaries spend almost nothing at the halfway look\n\n*Lab 4.3, one interim look*\n\n- **|z| > 2.79** to stop at half the seekers\n- **|z| > 1.97** at the end, instead of 1.96\n\nFound by simulating pairs of correlated z-statistics until the chance of crossing either boundary under no difference is 5%. Simulated power with 1% more seekers: about 80%.","notes":"Looking twice at 1.96 would push the false-positive rate to about 8%. The boundary at the halfway look is strict enough that the trial stops early only for a large difference, or for harm.","minutes":null,"lo":["LO6"]},{"id":"check-trial","n":28,"title":"Why is the trial so large when the rule finds twice the jobs per place?","kind":"quiz","session":3,"hash":"91623027","md":"#### [day4#check-trial] Why is the trial so large when the rule finds twice the jobs per place?\n\n*Checkpoint*\n\n**Question:** The rule finds 20.7 jobs per 100 places against 11.4 for current practice, yet the trial needs about 18,000 seekers per arm. Why?\n\n- A. The per-place gain is too small to detect\n- B. The arms mostly agree, so across everyone the difference is 1.4 points\n- C. The interim look doubles the sample size\n- D. Offices are clustered, so the design effect inflates the sample","notes":"Answer: B. Dilution is the most common reason trials of targeting rules are underpowered.","minutes":null,"lo":["LO6"]},{"id":"lab-4-3","n":29,"title":"Size the trial","kind":"lab","session":3,"hash":"338b1a8b","md":"#### [day4#lab-4-3] Size the trial\n\nLab 4.3 · 25 min\n\nSize a trial of the learned rule against current practice: the arms and the primary metric, where the two policies disagree, seekers per arm, the design effect of office clusters and a stopping rule.\n\n[D4_3_trial.ipynb](https://sdaiaacademy.github.io/ds-402/labs/D4_3_trial.ipynb)\n\n- [ ] The estimand and the arms (4 min)\n- [ ] Where the two policies disagree (6 min)\n- [ ] Seekers per arm, then the design effect (8 min)\n- [ ] A stopping rule and the protocol table (7 min)\n- [ ] ✱ Stretch: Simulate the trial to check its power","notes":"Common problems: sizing for the per-place gain instead of the population difference; computing the ICC from seekers instead of office rates; treating the design effect as optional. Early finishers: simulate the trial.","minutes":null,"lo":[]},{"id":"s4","n":30,"title":"Explaining a rule","kind":"section","session":4,"hash":"0920f431","md":"#### [day4#s4] Explaining a rule\n\n*Session 4*\n\n- Summarise a rule, its value and its audit on one page\n- Name the edge cases that go to human review\n- Choose a capstone brief and plan its analysis","notes":"Session 4: the rule on one page, the cases for human review, and the capstone brief.","minutes":null,"lo":["LO4","LO6"]},{"id":"one-page","n":31,"title":"Five headings, in the order she will ask them","kind":"content","session":4,"hash":"1bdc5b0a","md":"#### [day4#one-page] Five headings, in the order she will ask them\n\n*What the director reads*\n\n| Heading | What it says |\n| --- | --- |\n| What the rule does | The rule in one sentence; 16% of seekers offered a place |\n| What it is worth | 58.9% employed against 57.5%: about 14 more in work per 1,000 seekers |\n| Who it leaves out | The audit by group; the 29% unemployed over 15 months |\n| Who reviews | The edge cases that go to caseworkers |\n| What would confirm it | A trial of about two years against current practice |","notes":"The course's page is 275 words. No term she would need explained: places, seekers, employed within six months. Jobs per 1,000 seekers rather than points, because people repeat counts.","minutes":null,"lo":["LO4"]},{"id":"edge-cases","n":32,"title":"A rule with thresholds needs human review where it is blind or arbitrary","kind":"content","session":4,"hash":"2a57d5c6","md":"#### [day4#edge-cases] A rule with thresholds needs human review where it is blind or arbitrary\n\n*Lab 4.4, where the rule is weakest*\n\n| Case | Seekers in the logs | Why review |\n| --- | --- | --- |\n| Exactly 10 or 16 months unemployed | 2,341 | One month from the band |\n| Unemployed over 36 months | 1,505 | No evidence in the logs (Lab 3.3) |\n| Disability, over 15 months | 721 | Gain more on average; the rule cannot see it |\n| Months recorded as 0 | 624 | Often a re-registration |\n| In the band, over 60 km away | 419 | May not be able to attend |","notes":"Review is not a loophole: it is where accountability lives. The national AI ethics principles ask for human oversight of automated decisions; this table is what that means in practice.","minutes":null,"lo":["LO4"]},{"id":"capstone-briefs","n":33,"title":"Choose one brief and run the whole week's chain on it","kind":"content","session":4,"hash":"80187066","md":"#### [day4#capstone-briefs] Choose one brief and run the whole week's chain on it\n\n*The capstone*\n\n- **Siraj Power Distribution.** Energy-saving visits; 15% of households; outcome: % of summer use saved.\n- **Al-Nakheel food safety.** Unannounced inspections; 25% of restaurants; outcome: compliant at follow-up.\n- **Fursa 2027.** A new pilot and logs; 20% of seekers; an independent check of the course.\n\nEach has a randomised pilot, logs with recorded probabilities and a BRIEF.md with its budget, constraint and audit groups.","notes":"All three are fictional and synthetic. Each brief has a planted overlap problem in one district or office. Encourage participants who know Fursa's data well to take a different brief: transfer is the point.","minutes":null,"lo":["LO6"]},{"id":"check-summary","n":34,"title":"Which sentence belongs on the director's page?","kind":"quiz","session":4,"hash":"e7045406","md":"#### [day4#check-summary] Which sentence belongs on the director's page?\n\n*Checkpoint*\n\n**Question:** You are writing the \"What it is worth\" section. Which sentence is right for it?\n\n- A. The policy's doubly robust value proves a CATE-driven uplift of 1.4 points\n- B. The rule will employ 58.9% of seekers\n- C. The rule guarantees more jobs than current practice\n- D. On past records, about 14 more per 1,000 in work than today (6 to 22)","notes":"Answer: D. The range comes from the interval 58.1% to 59.7% against 57.5%.","minutes":null,"lo":["LO4"]},{"id":"lab-4-4","n":35,"title":"One-page summary and the capstone brief","kind":"lab","session":4,"hash":"308b1d30","md":"#### [day4#lab-4-4] One-page summary and the capstone brief\n\nLab 4.4 · 25 min\n\nDraft a one-page summary of the rule for the director from the supplied results, list the edge cases for caseworker review, and choose the capstone brief.\n\n[D4_4_summary.ipynb](https://sdaiaacademy.github.io/ds-402/labs/D4_4_summary.ipynb)\n\n- [ ] Gather the numbers (5 min)\n- [ ] Write the rule summary (10 min)\n- [ ] Edge cases for human review (5 min)\n- [ ] Choose the capstone brief (5 min)\n- [ ] ✱ Stretch: Cut the summary to what the director would repeat","notes":"Common problems: numbers typed by hand instead of computed; headings in a different order; a page that says \"proven\". Make sure every participant leaves with a brief chosen and three first steps written.","minutes":null,"lo":[]},{"id":"day-4-recap","n":36,"title":"Learn a readable rule, decide what may drive it, audit it, price constraints, plan the trial","kind":"content","session":4,"hash":"69603016","md":"#### [day4#day-4-recap] Learn a readable rule, decide what may drive it, audit it, price constraints, plan the trial\n\n*Day 4 recap*\n\n- **Rule.** Depth two, under the budget, from DR scores.\n- **Register.** Drive, audit, exclude; measure its price.\n- **Audit.** Rates and gains by group; proxies.\n- **Trial.** Dilution, unit, stopping, limits.","notes":"Close the week's case: Wijdan's three questions now have answers. Q1: coaching helped (Day 1, about 11 points). Q2: the 11-to-15-month band, audited and with a trial. Q3: no, the risk score is the worst use of a place.","minutes":null,"lo":[]},{"id":"next-capstone","n":37,"title":"Your brief, your repository, your defence","kind":"content","session":4,"hash":"b6c4e1f2","md":"#### [day4#next-capstone] Your brief, your repository, your defence\n\n*Next · Capstone*\n\nThe capstone asks for the week's chain on your brief, reported in a public repository, then a 15-minute defence in which the assessor changes the budget or the constraint and you predict what happens before you re-run.","notes":"Point to the capstone deck and labs/capstone/README.md for the submission checklist and rubric.","minutes":null,"lo":[]}],"activities":[{"id":"review-day-3-q1","slide":"review-day-3","type":"single","prompt":"A colleague reports a candidate rule's inverse propensity value as 61.2% employed, with a 95% interval. What else must the report show before anyone relies on it?","options":[{"key":"A","text":"Nothing: the interval already shows the uncertainty"},{"key":"B","text":"Its effective sample size, and how it moves when weights are clipped"},{"key":"C","text":"The outcome model's accuracy on the logs"},{"key":"D","text":"The rule's true value from the generator"}],"correct":[1],"explanation":"An interval computed from a few heavy weights can look precise and still rest on a handful of decisions; the diagnostics show whether it does.","misconceptions":["Thinks a narrow interval rules out instability from a few weights","","Checks the outcome model, which plain IPW does not use","Uses the generator's truth, which real data never give"],"lo":["LO3"]},{"id":"check-policy-tree-q1","slide":"check-policy-tree","type":"single","prompt":"A colleague proposes to learn the allocation tree by predicting employment within six months and offering places to the leaves with the lowest predicted employment. What is wrong?","options":[{"key":"A","text":"It targets need, not gain: it rebuilds the risk score"},{"key":"B","text":"A depth-two tree is too simple to predict employment well"},{"key":"C","text":"The pilot is too small for prediction"},{"key":"D","text":"Nothing, if the leaves are chosen on held-out data"}],"correct":[0],"explanation":"Leaves with low employment are where seekers struggle, not where coaching helps; the tree must sum gains, which the scores estimate.","misconceptions":["","Thinks the problem is the model class, not the target","Thinks prediction on the pilot is biased; randomisation does not change that the target is wrong","Inverts the advice: lowest employment is exactly what risk targeting picks"],"lo":["LO4"]},{"id":"check-fairness-q1","slide":"check-fairness","type":"single","prompt":"A rule offers places to disabled and non-disabled seekers at the same rate. A board member calls it fair to disabled seekers. What do you add?","options":[{"key":"A","text":"Nothing: equal rates are the definition of fairness"},{"key":"B","text":"The rule should use disability to offer more places"},{"key":"C","text":"Rates show who is offered, not who gains"},{"key":"D","text":"Equal rates show the rule ignores disability, which is discrimination"}],"correct":[2],"explanation":"Selection rates are one view; gains by group are another. Disabled seekers truly gain 26 points per place against 21; deciding whether that justifies priority is a policy choice.","misconceptions":["Treats one metric as a full fairness assessment","Proposes using a sensitive attribute to decide without a policy decision","","Inverts the direction: unequal rates are what the audit looks for"],"lo":["LO4"]},{"id":"check-trial-q1","slide":"check-trial","type":"single","prompt":"The rule finds 20.7 jobs per 100 places against 11.4 for current practice, yet the trial needs about 18,000 seekers per arm. Why?","options":[{"key":"A","text":"The per-place gain is too small to detect"},{"key":"B","text":"The arms mostly agree, so across everyone the difference is 1.4 points"},{"key":"C","text":"The interim look doubles the sample size"},{"key":"D","text":"Offices are clustered, so the design effect inflates the sample"}],"correct":[1],"explanation":"The trial compares everyone in one arm with everyone in the other: a large gain for a few is a small difference for all.","misconceptions":["Thinks the sample size is driven by the per-place gain, not by the population difference","","Confuses the stopping rule's small cost with the main driver","Office clustering applies only if offices are randomised"],"lo":["LO6"]},{"id":"check-summary-q1","slide":"check-summary","type":"single","prompt":"You are writing the \"What it is worth\" section. Which sentence is right for it?","options":[{"key":"A","text":"The policy's doubly robust value proves a CATE-driven uplift of 1.4 points"},{"key":"B","text":"The rule will employ 58.9% of seekers"},{"key":"C","text":"The rule guarantees more jobs than current practice"},{"key":"D","text":"On past records, about 14 more per 1,000 in work than today (6 to 22)"}],"correct":[3],"explanation":"It names the source, compares with current practice, counts people, and keeps the uncertainty.","misconceptions":["Uses jargon and overclaims a proven effect","States a precise number without uncertainty or comparison","Turns an offline estimate into a promise",""],"lo":["LO4"]}],"ai":{"context":{"course":"../context/course.md","courseJs":"../context/course.js","day":"day4.md","llms":"../llms.txt"},"tasks":[],"tools":[]},"bridge":{"allowedOrigins":[]},"features":{},"strings":{}}</script>
+<script src="../_engine/academy.js"></script>
+</body>
+</html>

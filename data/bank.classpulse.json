@@ -1,0 +1,1943 @@
+{
+  "format": "classpulse-bank",
+  "version": 1,
+  "course": {
+    "name": "Causal Machine Learning and Policy Evaluation",
+    "los": [
+      {
+        "code": "LO1",
+        "description": "Implement double machine learning with cross-fitting for an average effect and compare it with regression adjustment, given logged data with 60 confounders and a known effect"
+      },
+      {
+        "code": "LO2",
+        "description": "Build conditional average treatment effect (CATE) estimators by three methods and validate them on held-out randomised data, given the randomised coaching pilot"
+      },
+      {
+        "code": "LO3",
+        "description": "Evaluate allocation rules offline with inverse propensity and augmented estimators and diagnose untrustworthy estimates, given logged decisions with recorded propensities and poor overlap in places"
+      },
+      {
+        "code": "LO4",
+        "description": "Design an allocation rule under a budget and a fairness constraint and compare it with treat-all, risk targeting and current practice, given unit-level effect estimates and one place per five job seekers"
+      },
+      {
+        "code": "LO5",
+        "description": "Review a heterogeneous-effect claim for overfitting, unstable subgroups and reuse of data for discovery and evaluation, given an analysis with seeded faults"
+      },
+      {
+        "code": "LO6",
+        "description": "Design a confirmatory trial for a learned rule, powered for the comparison with current practice, given the capstone rule and its offline value"
+      }
+    ]
+  },
+  "questions": [
+    {
+      "id": "check-q3-estimand-q1",
+      "type": "single",
+      "prompt": "Wijdan asks whether next year's places should go to the highest risk scores. Which quantity should you estimate first?",
+      "options": [
+        "The AUC of the risk score for unemployment at six months",
+        "The value of top-fifth-by-risk against top-fifth-by-effect, same budget",
+        "The effect of coaching on the seekers offered it in 2025",
+        "The average effect of coaching over all seekers"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO4"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "Q3 compares two rules under the same budget, so its estimand is a difference in policy values. The score's accuracy and the average effect describe other things.",
+      "misconceptions": [
+        "Treats predicting the outcome as predicting the effect: the score's accuracy is about Y(0)",
+        "",
+        "Answers Q1 about past offers, not a choice between two future rules",
+        "Ignores the budget: treat-all is not one of the options"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 14
+    },
+    {
+      "id": "check-overlap-q1",
+      "type": "single",
+      "prompt": "A colleague's propensity model for the 2026 offers has a cross-fitted AUC of 0.95 and calls it excellent. What do you conclude?",
+      "options": [
+        "The adjustment will be reliable because the model fits well",
+        "Employment within six months is easy to predict from the logs",
+        "Decisions are nearly determined by the covariates, so overlap is probably poor",
+        "Cross-fitting has already solved any extreme-weight problem"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO3"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "A propensity model that separates the arms well means similar seekers rarely received different decisions. That is the definition of poor overlap.",
+      "misconceptions": [
+        "Carries the logic of outcome prediction over to propensity: a sharp score is a warning here",
+        "Confuses a model of the offer with a model of employment",
+        "",
+        "Believes cross-fitting removes extreme scores; it only removes in-sample overfitting"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 23
+    },
+    {
+      "id": "check-crossfitting-q1",
+      "type": "single",
+      "prompt": "A colleague fits the propensity and outcome models on all 40,000 decisions, then plugs their predictions into the same score. What is the main risk?",
+      "options": [
+        "The fit takes five times longer than with folds",
+        "The estimate targets the effect on the offered instead of everyone",
+        "No risk: the orthogonal score makes nuisance errors irrelevant",
+        "Overfitted predictions shrink the residuals, biasing the estimate and its interval"
+      ],
+      "key": {
+        "indices": [
+          3
+        ]
+      },
+      "lo": [
+        "LO1"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "A flexible model that has seen a decision predicts it too well. Its residual in the score is too small, which biases the estimate and makes the interval too narrow.",
+      "misconceptions": [
+        "Treats cross-fitting as a speed trick; it costs more fits, not fewer",
+        "Believes folding changes the estimand; it changes only how predictions are made",
+        "Thinks the orthogonal score alone protects against overfitting; it protects against small errors, not fitted noise",
+        ""
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 32
+    },
+    {
+      "id": "check-hidden-confounder-q1",
+      "type": "single",
+      "prompt": "On the 2027 extract, without the motivation note, a colleague proposes to switch from gradient boosting to a deep neural network to remove the bias. What do you tell her?",
+      "options": [
+        "Yes: a more flexible model can learn motivation from the other columns",
+        "No: report the estimate with a sensitivity bound and its robustness value",
+        "Drop more columns so the model cannot overfit the remaining ones",
+        "Raise the folds from five to ten to reduce the bias"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO1"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "Bias from an omitted confounder comes from information absent from the data. Only a sensitivity analysis, a new column or a randomised comparison addresses it.",
+      "misconceptions": [
+        "Believes model capacity can recreate an omitted variable",
+        "",
+        "Thinks dropping covariates is a remedy; it adds confounding",
+        "Confuses sampling noise with bias: more folds narrow nothing that is missing"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 41
+    },
+    {
+      "id": "review-day-1-q1",
+      "type": "single",
+      "prompt": "On the logs, regression with 60 controls gives 13.5 points with a narrow interval; cross-fitted DML gives 10.8 points with a wider one. The DML robustness value is 8.5%. What do you report?",
+      "options": [
+        "The regression estimate, because its interval is narrower",
+        "The average of the two estimates",
+        "The DML estimate, its interval and its robustness value",
+        "Nothing: the robustness value shows the effect may be zero"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO1"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "DML allows the nonlinear confounding the regression cannot follow, and the robustness value tells the director how strong a hidden factor would have to be.",
+      "misconceptions": [
+        "Treats a narrow interval as evidence that the model is right",
+        "Averages a biased and an unbiased estimator, keeping half the bias",
+        "",
+        "Reads a sensitivity analysis as a test that the effect is zero"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 2
+    },
+    {
+      "id": "check-meta-learners-q1",
+      "type": "single",
+      "prompt": "A colleague's S-learner on the pilot gives nearly the same effect, about 8 points, for every seeker. The trial was 1:1 and large. What is the most likely reason?",
+      "options": [
+        "Coaching truly has the same effect for everyone",
+        "Confounding in the pilot has flattened the effects",
+        "The pilot is too small for any learner to find differences",
+        "Trees seldom split on coaching, so its interactions shrink"
+      ],
+      "key": {
+        "indices": [
+          3
+        ]
+      },
+      "lo": [
+        "LO2"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "The S-learner's regularisation treats coaching like any other feature; differences in effect need interactions with it, which shallow, regularised trees often leave out.",
+      "misconceptions": [
+        "Takes a model's output as a fact about the world",
+        "Blames confounding in a randomised pilot, where there is none",
+        "Thinks the sample is the problem; the S-learner shrinks effects at any size",
+        ""
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 11
+    },
+    {
+      "id": "check-causal-forest-q1",
+      "type": "single",
+      "prompt": "An analyst grows a causal tree on all 3,600 training seekers and estimates each leaf's effect on the same seekers that chose the splits. What goes wrong?",
+      "options": [
+        "Leaf effects are inflated by the noise that chose the splits",
+        "The splits follow employment levels rather than effects",
+        "The estimates are confounded by who was coached",
+        "The fit takes twice as long as it needs to"
+      ],
+      "key": {
+        "indices": [
+          0
+        ]
+      },
+      "lo": [
+        "LO2"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "A split search finds the cut where the observed difference is largest, noise included; estimating on the same seekers reports that noise as effect.",
+      "misconceptions": [
+        "",
+        "Confuses honesty with residualising, which handles the outcome level",
+        "Thinks honesty is about confounding; the pilot was randomised",
+        "Believes reusing data only costs computing time"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 20
+    },
+    {
+      "id": "check-validation-q1",
+      "type": "single",
+      "prompt": "On held-out randomised seekers, an estimator's predicted effects range from 5 to 14 points and its best-linear-predictor slope is 3.1 (standard error 0.6). What do you conclude?",
+      "options": [
+        "The estimator has no useful signal",
+        "It ranks well, but real differences are about three times larger",
+        "It exaggerates differences between seekers",
+        "Its average effect is three times too small"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO2"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "The slope scales differences around the mean: each point of predicted difference brings about three points of observed difference.",
+      "misconceptions": [
+        "Reads any slope far from 1 as failure; a steep slope still means strong signal",
+        "",
+        "Inverts the slope: below 1 would mean overconfident",
+        "Treats calibration of scale as a property of the average, not of differences"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 28
+    },
+    {
+      "id": "check-qini-q1",
+      "type": "single",
+      "prompt": "An estimator's Qini curve lies well above the random line at every share. Which claim does that support?",
+      "options": [
+        "Its predicted effects are correct in size",
+        "It will rank next year's seekers just as well",
+        "Its top seekers gain more than a random pick would",
+        "No other ranking could do better at any budget"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO2"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "A Qini curve measures how the ranking concentrates the effect; it says nothing about the scale of the predictions or about other rankings.",
+      "misconceptions": [
+        "Confuses ranking with calibration in scale",
+        "Treats a curve on one sample as proof for every population",
+        "",
+        "Takes a curve that dominates random for one that dominates every alternative"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 35
+    },
+    {
+      "id": "review-day-2-q1",
+      "type": "single",
+      "prompt": "An effect model will decide next year's coaching places. Its builder shows a high correlation between predicted effects and observed outcomes on the training seekers. What do you ask for?",
+      "options": [
+        "Nothing more: a high correlation on 3,600 seekers is enough",
+        "The correlation of its predictions with the risk score",
+        "Bootstrap intervals for the same training correlation",
+        "Observed effects by prediction group on held-out randomised seekers"
+      ],
+      "key": {
+        "indices": [
+          3
+        ]
+      },
+      "lo": [
+        "LO2"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "Effects are only observable for groups of randomised seekers, and only seekers the model never saw give an honest check.",
+      "misconceptions": [
+        "Accepts outcome prediction on seen data as evidence about effects",
+        "Checks the model's agreement with another model, not with effects",
+        "Asks for precision on the same seekers, which repeats the flaw",
+        ""
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 2
+    },
+    {
+      "id": "check-logged-q1",
+      "type": "single",
+      "prompt": "In an agency's logs, the mean of offered divided by the recorded probability is 1.15, with a standard error of 0.02. What follows?",
+      "options": [
+        "Coaching raised employment by 15%",
+        "More offers happened than recorded: some probabilities are too low",
+        "Nothing: weights are noisy and a mean of 1.15 is normal",
+        "The tool records probabilities that are too high"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO3"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "With correct probabilities, a/p averages to 1. Above 1 means offers were more frequent than recorded, so recorded p is too small somewhere.",
+      "misconceptions": [
+        "Thinks the check measures coaching's effect rather than the records",
+        "",
+        "Reads a 15% gap as sampling noise despite eight standard errors",
+        "Inverts the direction: a/p above 1 means p is too small"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 10
+    },
+    {
+      "id": "check-augmented-q1",
+      "type": "single",
+      "prompt": "You value a rule with the augmented estimator. The recorded probabilities have been checked and are right; the outcome model is poor. What happens?",
+      "options": [
+        "The estimate is biased, because the outcome model is wrong",
+        "The estimate is right and as precise as with a good model",
+        "It stays consistent, with a wider interval",
+        "The estimate equals the IPW value exactly"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO3"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "With correct weights the residual term corrects any outcome model on average; a poor model leaves larger residuals, so more variance.",
+      "misconceptions": [
+        "Thinks both parts must be right; one is enough",
+        "Confuses consistency with precision: a poor model costs variance, not validity",
+        "",
+        "Assumes the augmented estimator reduces to plain IPW whatever the model"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 18
+    },
+    {
+      "id": "check-heavy-weights-q1",
+      "type": "single",
+      "prompt": "The \"reach the unreached\" rule has an IPW value 1.6 points below current practice, an effective sample size of 58 among the seekers it would coach, and moves by a point when weights are clipped. What do you recommend?",
+      "options": [
+        "Reject the rule: the logs show it adds nothing",
+        "Report the value clipped at 20 as the estimate",
+        "Say the logs cannot value it; propose a small pilot",
+        "Report the augmented value, which does not depend on the weights"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO3"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "The estimate rests on a few heavy weights and an extrapolating outcome model; only new data on these seekers can answer the question.",
+      "misconceptions": [
+        "Reads an unreliable estimate as evidence of no effect",
+        "Treats clipping as a fix rather than a sensitivity check",
+        "",
+        "Assumes an outcome model can stand in for missing data"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 25
+    },
+    {
+      "id": "check-review-q1",
+      "type": "single",
+      "prompt": "A colleague wants to keep the analyst's best cell but make it credible. Which step does that?",
+      "options": [
+        "Report the p-value to three decimals so readers see it is 0.001",
+        "Search more cells to show the finding is robust",
+        "Bootstrap the cell's 36 seekers and report the interval",
+        "Test the cell on seekers outside the search"
+      ],
+      "key": {
+        "indices": [
+          3
+        ]
+      },
+      "lo": [
+        "LO5"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "Only data not used in the search can estimate the effect of a cell without the inflation that selection added.",
+      "misconceptions": [
+        "Thinks a smaller p-value repairs selection; it was selected for being small",
+        "Adds more searching, which makes selection worse",
+        "Uses the same seekers twice in a different way",
+        ""
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 34
+    },
+    {
+      "id": "review-day-3-q1",
+      "type": "single",
+      "prompt": "A colleague reports a candidate rule's inverse propensity value as 61.2% employed, with a 95% interval. What else must the report show before anyone relies on it?",
+      "options": [
+        "Nothing: the interval already shows the uncertainty",
+        "Its effective sample size, and how it moves when weights are clipped",
+        "The outcome model's accuracy on the logs",
+        "The rule's true value from the generator"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO3"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "An interval computed from a few heavy weights can look precise and still rest on a handful of decisions; the diagnostics show whether it does.",
+      "misconceptions": [
+        "Thinks a narrow interval rules out instability from a few weights",
+        "",
+        "Checks the outcome model, which plain IPW does not use",
+        "Uses the generator's truth, which real data never give"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 2
+    },
+    {
+      "id": "check-policy-tree-q1",
+      "type": "single",
+      "prompt": "A colleague proposes to learn the allocation tree by predicting employment within six months and offering places to the leaves with the lowest predicted employment. What is wrong?",
+      "options": [
+        "It targets need, not gain: it rebuilds the risk score",
+        "A depth-two tree is too simple to predict employment well",
+        "The pilot is too small for prediction",
+        "Nothing, if the leaves are chosen on held-out data"
+      ],
+      "key": {
+        "indices": [
+          0
+        ]
+      },
+      "lo": [
+        "LO4"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "Leaves with low employment are where seekers struggle, not where coaching helps; the tree must sum gains, which the scores estimate.",
+      "misconceptions": [
+        "",
+        "Thinks the problem is the model class, not the target",
+        "Thinks prediction on the pilot is biased; randomisation does not change that the target is wrong",
+        "Inverts the advice: lowest employment is exactly what risk targeting picks"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 11
+    },
+    {
+      "id": "check-fairness-q1",
+      "type": "single",
+      "prompt": "A rule offers places to disabled and non-disabled seekers at the same rate. A board member calls it fair to disabled seekers. What do you add?",
+      "options": [
+        "Nothing: equal rates are the definition of fairness",
+        "The rule should use disability to offer more places",
+        "Rates show who is offered, not who gains",
+        "Equal rates show the rule ignores disability, which is discrimination"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO4"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "Selection rates are one view; gains by group are another. Disabled seekers truly gain 26 points per place against 21; deciding whether that justifies priority is a policy choice.",
+      "misconceptions": [
+        "Treats one metric as a full fairness assessment",
+        "Proposes using a sensitive attribute to decide without a policy decision",
+        "",
+        "Inverts the direction: unequal rates are what the audit looks for"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 20
+    },
+    {
+      "id": "check-trial-q1",
+      "type": "single",
+      "prompt": "The rule finds 20.7 jobs per 100 places against 11.4 for current practice, yet the trial needs about 18,000 seekers per arm. Why?",
+      "options": [
+        "The per-place gain is too small to detect",
+        "The arms mostly agree, so across everyone the difference is 1.4 points",
+        "The interim look doubles the sample size",
+        "Offices are clustered, so the design effect inflates the sample"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO6"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "The trial compares everyone in one arm with everyone in the other: a large gain for a few is a small difference for all.",
+      "misconceptions": [
+        "Thinks the sample size is driven by the per-place gain, not by the population difference",
+        "",
+        "Confuses the stopping rule's small cost with the main driver",
+        "Office clustering applies only if offices are randomised"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 28
+    },
+    {
+      "id": "check-summary-q1",
+      "type": "single",
+      "prompt": "You are writing the \"What it is worth\" section. Which sentence is right for it?",
+      "options": [
+        "The policy's doubly robust value proves a CATE-driven uplift of 1.4 points",
+        "The rule will employ 58.9% of seekers",
+        "The rule guarantees more jobs than current practice",
+        "On past records, about 14 more per 1,000 in work than today (6 to 22)"
+      ],
+      "key": {
+        "indices": [
+          3
+        ]
+      },
+      "lo": [
+        "LO4"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 30,
+      "displayMode": "full",
+      "explanation": "It names the source, compares with current practice, counts people, and keeps the uncertainty.",
+      "misconceptions": [
+        "Uses jargon and overclaims a proven effect",
+        "States a precise number without uncertainty or comparison",
+        "Turns an offline estimate into a promise",
+        ""
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 34
+    },
+    {
+      "id": "q-estimand-01",
+      "type": "single",
+      "prompt": "Duhaim, head of caseworkers, asks: \"Did coaching raise employment for the seekers my caseworkers chose to coach last year?\" Which summary answers him?",
+      "options": [
+        "The effect on the seekers who were offered coaching",
+        "The average effect over every registered seeker",
+        "The value of the best rule under next year's budget",
+        "The difference in employment between coached and uncoached seekers"
+      ],
+      "key": {
+        "indices": [
+          0
+        ]
+      },
+      "lo": [
+        "LO1"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "He asks about the seekers who were offered coaching, so the estimand is the effect on the offered (ATT), not the average over everyone.",
+      "misconceptions": [
+        "",
+        "Answers for everyone, though he asked about the seekers his team chose",
+        "Answers a forward-looking decision, not a question about last year",
+        "Reads an observed difference as the effect, ignoring how caseworkers chose"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 8
+    },
+    {
+      "id": "q-risk-benefit-01",
+      "type": "single",
+      "prompt": "A vendor shows that Fursa's risk score predicts unemployment at six months with an AUC of 0.85 and proposes giving places to the top fifth by score. What is the main flaw?",
+      "options": [
+        "An AUC of 0.85 is too low for a public decision",
+        "It ranks need without coaching, not what coaching changes",
+        "The score was trained on old data and may have drifted",
+        "Places should be given at random to be fair"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO4"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "The score predicts the outcome without coaching; the places should follow the difference coaching makes, which is a different quantity.",
+      "misconceptions": [
+        "Treats the score's accuracy as the issue; a perfect score would have the same flaw",
+        "",
+        "Names a real risk, but not the one that makes the ranking wrong",
+        "Confuses fairness of process with getting the most jobs from a budget"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 11
+    },
+    {
+      "id": "q-overlap-01",
+      "type": "single",
+      "prompt": "In the logs, disabled seekers in Nijad were offered coaching in under 1% of decisions. A colleague still reports a doubly robust effect for them. What do you say?",
+      "options": [
+        "The doubly robust estimator protects the estimate, so it can stand",
+        "Trim them out and report the trimmed effect as the effect for all seekers",
+        "It rests on the outcome model's extrapolation; say so or drop it",
+        "Increase the number of folds so the group appears in every fold"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO1"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Without offered seekers like them, no weighting or matching can compare; only a model's extrapolation speaks for them.",
+      "misconceptions": [
+        "Believes double robustness repairs a lack of overlap",
+        "Trims without saying that the estimand changed",
+        "",
+        "Thinks a resampling choice can create data that were never collected"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 18
+    },
+    {
+      "id": "q-dml-01",
+      "type": "single",
+      "prompt": "Why does double machine learning use a score with residual corrections instead of averaging the difference of two outcome-model predictions?",
+      "options": [
+        "The corrections speed up the fitting of gradient boosting",
+        "The corrections remove the need for a propensity model",
+        "The corrections make the estimate unbiased even with a hidden confounder",
+        "The corrections make the estimate insensitive to small errors in the nuisance models"
+      ],
+      "key": {
+        "indices": [
+          3
+        ]
+      },
+      "lo": [
+        "LO1"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "The orthogonal score has zero derivative in the nuisance models at the truth, so their regularisation errors enter only to second order.",
+      "misconceptions": [
+        "Mistakes a statistical property for a computational one",
+        "Inverts the role of the corrections: they are built from the propensity model",
+        "Expects an estimator to fix information missing from the data",
+        ""
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 27
+    },
+    {
+      "id": "q-dml-02",
+      "type": "single",
+      "prompt": "On 40,000 logged decisions, regression adjustment with 60 controls gives 13.5 points (12.4 to 14.7) and DoubleML gives 10.8 (9.6 to 12.1). Without knowing the truth, which reasoning should guide the report?",
+      "options": [
+        "DoubleML: flexible nuisances follow nonlinear confounding",
+        "Report the average of the two as a compromise",
+        "Report the regression: its interval is narrower",
+        "Report neither: the two disagree, so the data cannot answer"
+      ],
+      "key": {
+        "indices": [
+          0
+        ]
+      },
+      "lo": [
+        "LO1"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "The regression assumes linear confounding; DoubleML does not, and its interval is valid under weaker assumptions.",
+      "misconceptions": [
+        "",
+        "Averages a biased and an unbiased estimator, keeping part of the bias",
+        "Treats a narrow interval as evidence of a correct model",
+        "Takes disagreement between a restrictive and a flexible model as a sign that nothing is identified"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 31
+    },
+    {
+      "id": "q-sensitivity-01",
+      "type": "single",
+      "prompt": "On the 2027 extract the DoubleML estimate is 12.8 points with a robustness value of 8.5%. What may you tell the director?",
+      "options": [
+        "Coaching raised employment by 12.8 points, whatever is missing from the data",
+        "A hidden factor explaining under 8.5% of both cannot erase it",
+        "There is an 8.5% chance that the effect is zero",
+        "The bias from the missing column is at most 8.5 points"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO1"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "The robustness value is the confounder strength, on both partial R2 scales, that would bring the estimate to zero.",
+      "misconceptions": [
+        "Reads a point estimate as robust to hidden confounding",
+        "",
+        "Reads the robustness value as a probability",
+        "Confuses the strength of a confounder with the size of the bias"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 39
+    },
+    {
+      "id": "q-learners-01",
+      "type": "single",
+      "prompt": "Four nuisance learners give DML estimates from 11.0 to 14.2 points. How should the learner for the report be chosen?",
+      "options": [
+        "By the smallest standard error",
+        "By the estimate closest to what the caseworkers expect",
+        "By out-of-fold nuisance losses, fixed before the estimates",
+        "By the median of the four estimates"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO1"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Nuisance learners are judged by how well they predict, out of fold; choosing by the estimate invalidates the interval.",
+      "misconceptions": [
+        "Treats precision as accuracy",
+        "Lets the desired answer choose the method: a forking path",
+        "",
+        "Averages over learners known to be poor, keeping their bias"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 36
+    },
+    {
+      "id": "q-meta-01",
+      "type": "single",
+      "prompt": "In the X-learner on a 1:1 pilot, what is the imputed effect for a coached seeker who found work?",
+      "options": [
+        "1 minus the coached model's predicted chance for her",
+        "The difference between the two models' predictions for her",
+        "The uncoached model's predicted chance minus 1",
+        "1 minus the uncoached model's predicted chance for her"
+      ],
+      "key": {
+        "indices": [
+          3
+        ]
+      },
+      "lo": [
+        "LO2"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "For a coached seeker the missing outcome is the uncoached one, so the imputed effect is her observed outcome minus the uncoached model's prediction.",
+      "misconceptions": [
+        "Uses her own arm's model, which predicts her observed outcome, not her missing one",
+        "Describes the T-learner, not the imputation step",
+        "Reverses the sign used for the coached arm",
+        ""
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 9
+    },
+    {
+      "id": "q-meta-02",
+      "type": "single",
+      "prompt": "A T-learner fitted with lightly regularised boosting on 1,800 seekers per arm predicts effects from minus 40 to plus 60 points. The true effects range from minus 10 to plus 30. What is the most likely cause?",
+      "options": [
+        "Each arm's model fits its own noise, which the difference adds up",
+        "Confounding between the arms in the pilot",
+        "The outcome is binary, so effects cannot be estimated",
+        "The T-learner always shrinks effects towards zero"
+      ],
+      "key": {
+        "indices": [
+          0
+        ]
+      },
+      "lo": [
+        "LO2"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Two separately fitted models subtract their errors; with weak regularisation the spread of predicted effects is mostly noise.",
+      "misconceptions": [
+        "",
+        "Blames confounding in a lottery",
+        "Treats a binary outcome as a barrier rather than a source of noise",
+        "Describes the S-learner's failure, the opposite of this one"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 8
+    },
+    {
+      "id": "q-forest-01",
+      "type": "single",
+      "prompt": "The causal forest ranks distance to the office as the second driver of effect variation. A manager proposes moving coaching closer to remote seekers to raise its effect. What do you say?",
+      "options": [
+        "Agree: the forest shows distance causes smaller effects",
+        "Disagree: importance describes, a trial of the change would tell",
+        "Disagree: importance near the top is always an artefact of correlated features",
+        "Agree, if the forest's importance has a confidence interval above zero"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO2"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "The effect of coaching is causal; how it varies with distance is a description, and moving the service is a different intervention.",
+      "misconceptions": [
+        "Reads a moderator as a lever that can be changed",
+        "",
+        "Overgeneralises a real caveat into a rule",
+        "Thinks statistical precision turns a description into a causal claim about a different intervention"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 19
+    },
+    {
+      "id": "q-validate-01",
+      "type": "single",
+      "prompt": "You want to check whether an effect model trained on the pilot's training split can be trusted. Which check is valid?",
+      "options": [
+        "Compare its predictions with the observed outcomes of the training seekers",
+        "Compute the correlation between its predictions and the risk score",
+        "Compare group effects by prediction on held-out randomised seekers",
+        "Report its R-squared on the held-out outcomes"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO2"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Individual effects are never observed, but group effects on held-out randomised data are, so groups formed by the prediction can be checked.",
+      "misconceptions": [
+        "Uses outcomes, which are not effects, and seekers the model has seen",
+        "Checks agreement with another model, not with effects",
+        "",
+        "Measures outcome prediction, not effect prediction"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 24
+    },
+    {
+      "id": "q-validate-02",
+      "type": "single",
+      "prompt": "On held-out seekers, estimator A has a best-linear-predictor slope of 0.9 (se 0.2) and estimator B a slope of 0.1 (se 0.2). Both have the same mean prediction. Which conclusion holds?",
+      "options": [
+        "A overstates differences by 10%",
+        "B is better calibrated because its slope is closer to zero",
+        "Both are equally useful because their averages agree",
+        "A carries real signal about effect differences; B almost none"
+      ],
+      "key": {
+        "indices": [
+          3
+        ]
+      },
+      "lo": [
+        "LO2"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "The slope measures how much observed differences follow predicted ones: near 1 is calibrated, near 0 is no signal.",
+      "misconceptions": [
+        "Reads a slope below 1, within one standard error, as a precise overstatement",
+        "Thinks the target slope is zero",
+        "Judges an effect model by its average, which says nothing about targeting",
+        ""
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 25
+    },
+    {
+      "id": "q-qini-01",
+      "type": "single",
+      "prompt": "Why do the Qini curves of every ranking end at the same point?",
+      "options": [
+        "At 100% every ranking coaches everyone",
+        "Because every ranking was trained on the same data",
+        "Because the curves are normalised to end at 1",
+        "Because random allocation is the best any ranking can do at full budget"
+      ],
+      "key": {
+        "indices": [
+          0
+        ]
+      },
+      "lo": [
+        "LO2"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "At full budget the ranking no longer matters: everyone is coached.",
+      "misconceptions": [
+        "",
+        "Confuses training data with the end point of the curve",
+        "Assumes a normalisation the Qini curve does not use",
+        "Reads the shared end point as a limit on rankings"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 32
+    },
+    {
+      "id": "q-uplift-01",
+      "type": "single",
+      "prompt": "Switching from ranking by risk to ranking by estimated benefit would move 84% of the places to different seekers and raise the jobs found. What is the data scientist's responsibility here?",
+      "options": [
+        "Recommend the switch: more jobs settle the question",
+        "Show who gains and loses a place, and leave priority to its owner",
+        "Recommend keeping the risk score, because changing who gets support is unfair",
+        "Average the two rankings to split the difference"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO4"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Who should be prioritised is a value choice; the analysis makes the trade-off visible and audited.",
+      "misconceptions": [
+        "Treats a value choice about who receives support as a technical result",
+        "",
+        "Decides the value question in the other direction without showing the trade-off",
+        "Mixes two rules without measuring what the mixture buys or costs"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 34
+    },
+    {
+      "id": "q-logs-01",
+      "type": "single",
+      "prompt": "An agency hands you 30,000 logged decisions with the probability its tool recorded for each. Before valuing any rule, what do you check first?",
+      "options": [
+        "That the outcome model fitted on the logs has a high AUC",
+        "That the recorded probabilities lie between 0.05 and 0.95",
+        "That offered divided by recorded probability averages to 1, by office",
+        "That the offer rate equals the target budget"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO3"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "With correct probabilities the weights average to 1; a group where they do not is a group whose records misdescribe the decisions.",
+      "misconceptions": [
+        "Checks the outcome model, which the recorded probabilities do not depend on",
+        "Checks a range, which says nothing about whether they describe what happened",
+        "",
+        "Compares with a plan rather than with the records"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 7
+    },
+    {
+      "id": "q-logs-02",
+      "type": "single",
+      "prompt": "One office overrode the allocation tool for a year while the tool kept recording its own probabilities. A candidate rule targets seekers in that office's region. What do you do?",
+      "options": [
+        "Use the recorded probabilities: they are the official record",
+        "Drop the office and value the rule on the other offices only, without comment",
+        "Clip the office's weights at 20",
+        "Re-estimate that office's propensities from its covariates and say so in the report"
+      ],
+      "key": {
+        "indices": [
+          3
+        ]
+      },
+      "lo": [
+        "LO3"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "When the office matters to the rule, its propensities must be modelled as on Day 1, and the report must say the records were replaced.",
+      "misconceptions": [
+        "Trusts a record the check has shown to be wrong",
+        "Drops the region the rule targets and hides the change of population",
+        "Treats wrong probabilities as a variance problem",
+        ""
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 9
+    },
+    {
+      "id": "q-ope-01",
+      "type": "single",
+      "prompt": "In inverse propensity valuation of a rule, a seeker whom the logs did not coach but the rule would coach contributes what?",
+      "options": [
+        "Nothing: the logs did not do what the rule would do",
+        "Her outcome, weighted by one over the probability of coaching",
+        "Her outcome plus the average effect of coaching",
+        "Her outcome with weight one"
+      ],
+      "key": {
+        "indices": [
+          0
+        ]
+      },
+      "lo": [
+        "LO3"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Only decisions where the logs agree with the rule show the outcome the rule would produce; the weights let them stand in for the rest.",
+      "misconceptions": [
+        "",
+        "Uses an outcome observed without coaching as if it were under coaching",
+        "Imputes an effect the plain IPW estimator never imputes",
+        "Forgets that disagreeing decisions are dropped"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 13
+    },
+    {
+      "id": "q-ope-02",
+      "type": "single",
+      "prompt": "You value three rules with inverse propensity weighting and with the augmented estimator. The augmented intervals are all narrower. Why?",
+      "options": [
+        "The augmented estimator uses more data",
+        "The weighted residuals vary less than the weighted outcomes",
+        "The augmented estimator clips the weights",
+        "The augmented estimator assumes no confounding and IPW does not"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO3"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Weighting residuals rather than raw outcomes shrinks the variance, while the correction keeps the estimate consistent.",
+      "misconceptions": [
+        "Both use the same decisions",
+        "",
+        "Confuses augmentation with clipping",
+        "Both rely on the same identification; the difference is variance"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 14
+    },
+    {
+      "id": "q-ope-03",
+      "type": "single",
+      "prompt": "Two rules have the same estimated value, within 0.1 points: a caseworker rule on months unemployed and a top fifth ranked by a causal forest. Which choice is best defended?",
+      "options": [
+        "The forest: a model that uses more information must be better",
+        "Either, chosen by coin toss, since they are equal",
+        "The readable rule, unless a paired interval favours the other",
+        "Neither, until a larger dataset separates them"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO4"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "When the values tie, transparency, auditability and ease of use decide; a paired interval for the difference checks the tie.",
+      "misconceptions": [
+        "Ignores that the table shows no difference in value",
+        "Ignores what else separates them",
+        "",
+        "Delays a decision that the table already supports"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 16
+    },
+    {
+      "id": "q-ess-01",
+      "type": "single",
+      "prompt": "A rule would coach 3,000 seekers. The logs coached 130 of them, and their weights have an effective sample size of 60. What does this mean for the value estimate?",
+      "options": [
+        "It is fine if the logs hold 40,000 decisions in total",
+        "It is fine, because 130 coached seekers is above the usual minimum of 30",
+        "It is biased downwards by a factor of 60 over 3,000",
+        "It rests on the equivalent of about 60 decisions, so it can move a lot with a few of them"
+      ],
+      "key": {
+        "indices": [
+          3
+        ]
+      },
+      "lo": [
+        "LO3"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Kish's effective sample size tells how many equally weighted decisions carry the estimate; 60 cannot speak reliably for 3,000.",
+      "misconceptions": [
+        "Looks at the whole file, not at the seekers the rule changes",
+        "Counts decisions without regard to how unequal their weights are",
+        "Treats the effective sample size as a bias correction",
+        ""
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 22
+    },
+    {
+      "id": "q-ess-02",
+      "type": "single",
+      "prompt": "Clipping the weights at 20 moves a rule's value from 55.9% to 54.8%; the next best rule differs by 0.8 points. What do you report?",
+      "options": [
+        "That the logs cannot rank it, with both values and the ESS",
+        "The unclipped value, since clipping adds bias",
+        "The average of the two",
+        "The clipped value, since clipping reduces variance"
+      ],
+      "key": {
+        "indices": [
+          0
+        ]
+      },
+      "lo": [
+        "LO3"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "When the sensitivity to a few weights exceeds the gap between rules, the honest report is that the data cannot decide.",
+      "misconceptions": [
+        "",
+        "Hides a sensitivity that is larger than the decision margin",
+        "Invents an estimator with no justification",
+        "Treats a biased fix as the estimate"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 23
+    },
+    {
+      "id": "q-review-01",
+      "type": "single",
+      "prompt": "An analyst reports that seekers who attended four or more coaching sessions gained 27 points. Which flaw matters most?",
+      "options": [
+        "The subgroup is too small",
+        "It is defined after the lottery, so it is selected",
+        "The p-value should be corrected for multiple tests",
+        "The analyst should have used a causal forest"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO5"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Attendance exists only for coached seekers and depends on traits like motivation; the comparison mixes coaching with selection.",
+      "misconceptions": [
+        "Over 1,500 seekers: size is not the problem",
+        "",
+        "One pre-chosen comparison; the flaw is in its design",
+        "A different estimator cannot fix a subgroup defined after treatment"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 29
+    },
+    {
+      "id": "q-review-02",
+      "type": "single",
+      "prompt": "A memo picks the largest of 60 subgroup effects, 49.5 points in 36 seekers, estimated on the same data used to search. What is your best estimate of its true effect without new data?",
+      "options": [
+        "49.5 points, since the p-value is 0.001",
+        "Zero, because dredged findings are always false",
+        "Much smaller: noise helped it win the search",
+        "Exactly the average effect, since all cells are equal"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO5"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Selection inflates the largest estimate; honest searches show winners shrinking by about half on fresh seekers.",
+      "misconceptions": [
+        "Ignores that the cell was chosen for being large",
+        "Overcorrects: the cell may still benefit",
+        "",
+        "Assumes no real heterogeneity"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 30
+    },
+    {
+      "id": "q-review-03",
+      "type": "single",
+      "prompt": "Of 60 cells, 52 have p above 0.05. The memo says coaching \"showed no effect\" in them. What is wrong?",
+      "options": [
+        "Nothing: p above 0.05 means no effect",
+        "Those cells should be merged into one and tested again",
+        "The threshold should have been 0.10",
+        "Cells this small rarely detect a real 10-point effect"
+      ],
+      "key": {
+        "indices": [
+          3
+        ]
+      },
+      "lo": [
+        "LO5"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "A non-significant small cell is uninformative; its interval includes both no effect and the average effect.",
+      "misconceptions": [
+        "Reads absence of significance as evidence of absence",
+        "A remedy, not a diagnosis of what the memo got wrong",
+        "Moves the threshold instead of reading the uncertainty",
+        ""
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 31
+    },
+    {
+      "id": "q-tree-01",
+      "type": "single",
+      "prompt": "Without a cost per place, an exhaustive depth-two tree offers coaching to 55% of seekers; the budget allows 20%. What do you change?",
+      "options": [
+        "Raise the cost per place until it offers at most 20%",
+        "Prune the tree to depth one",
+        "Keep the tree and offer places to the first 20% who register",
+        "Lower the threshold of every split by 20%"
+      ],
+      "key": {
+        "indices": [
+          0
+        ]
+      },
+      "lo": [
+        "LO4"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "A cost per place is the budget in Lagrangian form: only leaves whose summed gain beats it are offered.",
+      "misconceptions": [
+        "",
+        "Changes the shape of the rule, not how many it offers",
+        "Replaces the learned rule with arrival order",
+        "Treats thresholds as a budget dial, with no link to gains"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 8
+    },
+    {
+      "id": "q-tree-02",
+      "type": "single",
+      "prompt": "Treat-all has the highest value on the logs, 65.0% employed against the rule's 58.9%. A board member asks why not recommend it. What is the best answer?",
+      "options": [
+        "Treat-all is biased on the logs",
+        "It needs five times the places; per place it does worse",
+        "Treat-all harms some seekers",
+        "Treat-all cannot be audited by region"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO4"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "With one place per five seekers, the comparison that matters is jobs per place within the budget.",
+      "misconceptions": [
+        "Its estimate is fine; the issue is cost",
+        "",
+        "A real concern in general, but not why it loses here",
+        "Every rule can be audited; treat-all offers every region the same"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 10
+    },
+    {
+      "id": "q-fair-01",
+      "type": "single",
+      "prompt": "An agency stores each seeker's number of dependants, collected to calculate family benefits. A colleague wants the coaching rule to use it. Which role fits best, and why?",
+      "options": [
+        "Drive: it predicts who benefits",
+        "Audit: every result should be checked by number of dependants",
+        "Exclude: collected for another purpose",
+        "Drive, as long as it is transformed into a score"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO4"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Purpose limitation applies to the use of data, whatever the model gains from it; the register records the decision and its reason.",
+      "misconceptions": [
+        "Puts predictive value above the purpose the data were collected for",
+        "Possible, but does not answer whether it may decide",
+        "",
+        "Thinks a transformation changes what the data are used for"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 14
+    },
+    {
+      "id": "q-fair-02",
+      "type": "single",
+      "prompt": "A benefit ranking never uses region, yet offers one remote region 7% of its seekers against 23% in another. What explains this?",
+      "options": [
+        "A coding error, since region was not in the model",
+        "The region was over-represented in the pilot",
+        "Random noise in the forest",
+        "Attributes that differ by region act as proxies"
+      ],
+      "key": {
+        "indices": [
+          3
+        ]
+      },
+      "lo": [
+        "LO4"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Leaving an attribute out does not remove its influence: correlated attributes act as proxies, which only an audit reveals.",
+      "misconceptions": [
+        "Assumes an attribute left out cannot be reached",
+        "Representation affects precision, not this systematic gap",
+        "A gap of this size across thousands of seekers is not noise",
+        ""
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 18
+    },
+    {
+      "id": "q-fair-03",
+      "type": "single",
+      "prompt": "A regional floor changes the rule's value by -0.2 points, with a paired 95% interval from -0.5 to 0.1. How do you report it?",
+      "options": [
+        "Its cost is not distinguishable from zero",
+        "The floor costs 0.2 points",
+        "The floor is free",
+        "The floor improves the rule"
+      ],
+      "key": {
+        "indices": [
+          0
+        ]
+      },
+      "lo": [
+        "LO4"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "The interval is the finding: the decision owner sees the range of what the constraint may cost.",
+      "misconceptions": [
+        "",
+        "Reports the point estimate as if it were certain",
+        "Reads an interval that includes zero as proof of zero",
+        "Reads a negative price as a gain without its uncertainty"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 19
+    },
+    {
+      "id": "q-trial-01",
+      "type": "single",
+      "prompt": "A rule and current practice disagree on 25% of seekers, and among them the rule is expected to raise employment by 6 points. What difference must a trial randomising all seekers detect?",
+      "options": [
+        "6 points",
+        "About 1.5 points",
+        "24 points",
+        "It cannot be computed without the trial"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO6"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Seekers on whom the policies agree contribute no difference, so the difference across everyone is 0.25 times 6.",
+      "misconceptions": [
+        "Ignores the seekers on whom the two policies agree",
+        "",
+        "Divides instead of multiplying by the share",
+        "The expected difference is what sizing needs, and it can be computed"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 24
+    },
+    {
+      "id": "q-trial-02",
+      "type": "single",
+      "prompt": "An agency has 12 offices and wants to randomise whole offices so caseworkers never mix the two policies. Employment rates differ between offices (ICC about 0.04). What do you advise?",
+      "options": [
+        "Randomise offices: mixing is the bigger risk",
+        "Randomise offices, and add more seekers to compensate",
+        "Randomise seekers within offices and check compliance",
+        "Skip randomisation and compare offices before and after"
+      ],
+      "key": {
+        "indices": [
+          2
+        ]
+      },
+      "lo": [
+        "LO6"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "With a design effect above 100, office randomisation cannot detect the difference; seeker randomisation with a compliance check can.",
+      "misconceptions": [
+        "Ignores that 11 clusters cannot power a 1.4-point difference",
+        "More seekers per office barely helps when there are only 11 clusters",
+        "",
+        "Gives up the comparison the trial exists for"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 26
+    },
+    {
+      "id": "q-trial-03",
+      "type": "single",
+      "prompt": "Why does a trial with one interim look use O'Brien–Fleming boundaries instead of testing at 1.96 both times?",
+      "options": [
+        "Regulators require exactly two looks",
+        "O'Brien–Fleming boundaries make the trial smaller",
+        "The interim data are less accurate",
+        "Two tests at 1.96 push false positives above 5%"
+      ],
+      "key": {
+        "indices": [
+          3
+        ]
+      },
+      "lo": [
+        "LO6"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Two looks give two chances to cross by luck; strict early boundaries keep the overall false-positive rate at 5%.",
+      "misconceptions": [
+        "Confuses a design choice with a rule",
+        "The boundaries slightly increase, not decrease, the sample",
+        "The data are the same kind; the issue is repeated testing",
+        ""
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 27
+    },
+    {
+      "id": "q-trial-04",
+      "type": "single",
+      "prompt": "A seeker-level trial finds the rule raises employment by 1.5 points. A labour economist says the true gain to the region could be smaller. Why?",
+      "options": [
+        "Coached seekers may take jobs others would have found",
+        "Seekers in the rule arm may have been more motivated",
+        "The trial used intention to treat",
+        "The interim look biased the estimate"
+      ],
+      "key": {
+        "indices": [
+          0
+        ]
+      },
+      "lo": [
+        "LO6"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Displacement moves jobs between seekers in the same market; measuring it needs randomisation at the level of labour markets.",
+      "misconceptions": [
+        "",
+        "Randomisation balances motivation between arms",
+        "Intention to treat makes the estimate conservative for compliance, not for displacement",
+        "A pre-planned boundary keeps the test valid"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 26
+    },
+    {
+      "id": "q-summary-01",
+      "type": "single",
+      "prompt": "A rule offers places to seekers unemployed 11 to 15 months. Which group should go to caseworker review first?",
+      "options": [
+        "Seekers unemployed 13 months",
+        "Seekers at 10 or 16 months, and doubtful records",
+        "All seekers the rule offers",
+        "Seekers with the highest risk scores"
+      ],
+      "key": {
+        "indices": [
+          1
+        ]
+      },
+      "lo": [
+        "LO4"
+      ],
+      "weight": 1,
+      "scored": true,
+      "timer": 90,
+      "displayMode": "full",
+      "explanation": "Review belongs where the rule is arbitrary (at thresholds) or blind (data it cannot see or trust).",
+      "misconceptions": [
+        "In the middle of the band, where the rule is most clearly right",
+        "",
+        "Reviewing everything removes the point of a rule",
+        "Brings back risk targeting through review"
+      ],
+      "liveContext": false,
+      "basis": "best",
+      "confidence": true,
+      "createdAt": 1794783209000,
+      "updatedAt": 1794783209000,
+      "slide": 32
+    }
+  ]
+}
